@@ -248,36 +248,67 @@ class NewsSearchWatcherAgent {
         const el = document.createElement('div');
         el.id = 'ss-catalyst-banner';
         el.style.cssText = `
-          position: fixed; bottom: 24px; right: 24px; z-index: 2147483647;
-          background: rgba(4, 8, 20, 0.97); border: 2px solid #38bdf8;
-          border-radius: 14px; padding: 14px 22px; font-family: 'Courier New', monospace;
-          pointer-events: none; max-width: 360px;
-          box-shadow: 0 0 35px #38bdf888, 0 20px 60px rgba(0,0,0,0.9);
-          animation: ss-slide-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+          position: fixed; bottom: 28px; right: 28px; z-index: 2147483647;
+          background: rgba(8, 12, 22, 0.95);
+          backdrop-filter: blur(20px) saturate(190%);
+          -webkit-backdrop-filter: blur(20px) saturate(190%);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-left: 3px solid #38bdf8;
+          border-radius: 12px; padding: 16px 20px;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+          pointer-events: none; max-width: 420px;
+          box-shadow: 0 20px 50px -10px rgba(0,0,0,0.85), 0 0 25px rgba(56, 189, 248, 0.25);
+          animation: ss-slide-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
         `;
         el.innerHTML = `
-          <div style="color:#38bdf8;font-size:9px;letter-spacing:3px;font-weight:900;margin-bottom:6px;text-transform:uppercase;">
-            A2 // SEARCH CATALYST · ${src}
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; gap: 7px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8;"></span>
+              <span style="font-family: 'JetBrains Mono', Menlo, monospace; font-size: 9px; font-weight: 800; letter-spacing: 1.2px; color: #38bdf8; text-transform: uppercase;">
+                AGENT A2 // CATALYST DETECTED
+              </span>
+            </div>
+            <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-family: 'JetBrains Mono', monospace; font-size: 8.5px; font-weight: 700; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.6px;">
+              LIVE WIRE
+            </span>
           </div>
-          <div style="color:#f8fafc;font-size:13px;font-weight:700;line-height:1.4;margin-bottom:4px;">
-            ${(art.headline || '').slice(0, 90)}${(art.headline || '').length > 90 ? '...' : ''}
+
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="background: #38bdf81a; border: 1px solid #38bdf855; color: #f8fafc; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 5px;">
+              NSE:${art.ticker || 'WATCHLIST'}
+            </span>
+            <span style="font-size: 10px; color: #94a3b8; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.3px;">
+              ${src}
+            </span>
           </div>
-          <div style="color:#38bdf8;font-size:10px;font-weight:600;">
-            ${art.ticker || ''} · Forwarding to Strategist
+
+          <div style="color: #f1f5f9; font-size: 13px; font-weight: 600; line-height: 1.45; margin-bottom: 10px; letter-spacing: -0.1px;">
+            ${(art.headline || '').slice(0, 105)}${(art.headline || '').length > 105 ? '...' : ''}
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.08); font-size: 9.5px; font-family: 'JetBrains Mono', monospace;">
+            <span style="color: #10b981; font-weight: 700; letter-spacing: 0.5px;">
+              ▲ CATALYST CONFIRMED
+            </span>
+            <span style="color: #94a3b8;">
+              SYNTHESIZING VIA STRATEGIST →
+            </span>
           </div>
         `;
 
-        const style = document.createElement('style');
-        style.textContent = `@keyframes ss-slide-in { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }`;
-        document.head.appendChild(style);
-        document.body.appendChild(el);
+        if (!document.getElementById('ss-catalyst-style')) {
+          const style = document.createElement('style');
+          style.id = 'ss-catalyst-style';
+          style.textContent = `@keyframes ss-slide-in { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }`;
+          document.head.appendChild(style);
+        }
 
         setTimeout(() => {
-          el.style.transition = 'opacity 0.4s, transform 0.4s';
+          el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
           el.style.opacity = '0';
-          el.style.transform = 'translateX(40px)';
-          setTimeout(() => el.remove(), 400);
-        }, 3200);
+          el.style.transform = 'translateY(16px) scale(0.96)';
+          setTimeout(() => el.remove(), 420);
+        }, 3600);
       }, article, sourceName);
     } catch (e) {}
   }

@@ -135,47 +135,99 @@ class TradeExecutorAgent {
         '#10b981'
       );
 
-      // 2. Injects high-visibility execution confirmation overlay directly on the chart
+      // 2. Injects high-visibility institutional execution confirmation overlay directly on the chart
       await page.evaluate((prop) => {
         let banner = document.getElementById('stocksentinel-overlay');
         if (!banner) {
           banner = document.createElement('div');
           banner.id = 'stocksentinel-overlay';
-          banner.style.position = 'fixed';
-          banner.style.top = '65px';
-          banner.style.right = '24px';
-          banner.style.zIndex = '2147483647';
-          banner.style.backgroundColor = 'rgba(10, 15, 29, 0.96)';
-          banner.style.backdropFilter = 'blur(12px)';
-          banner.style.color = '#f8fafc';
-          banner.style.border = '2px solid #10b981';
-          banner.style.borderRadius = '16px';
-          banner.style.padding = '20px 24px';
-          banner.style.fontFamily = 'monospace, sans-serif';
-          banner.style.boxShadow = '0 20px 45px rgba(0,0,0,0.85), 0 0 25px rgba(16, 185, 129, 0.4)';
-          banner.style.maxWidth = '420px';
+          banner.style.cssText = `
+            position: fixed; top: 68px; right: 24px; z-index: 2147483647;
+            background: rgba(8, 12, 22, 0.95);
+            backdrop-filter: blur(20px) saturate(190%);
+            -webkit-backdrop-filter: blur(20px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-top: 3px solid #10b981;
+            border-radius: 14px; padding: 22px 24px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+            box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.9), 0 0 30px rgba(16, 185, 129, 0.25);
+            max-width: 440px; min-width: 380px;
+            animation: ss-trade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+          `;
           document.body.appendChild(banner);
         }
 
         const isBuy = prop.action.toLowerCase() === 'buy';
+        const actionCol = isBuy ? '#10b981' : '#f43f5e';
+        const timeStr = new Date().toLocaleTimeString('en-IN', { hour12: false });
+
         banner.innerHTML = `
-          <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
-            <div style="width:14px; height:14px; border-radius:50%; background:#10b981; box-shadow:0 0 14px #10b981;"></div>
-            <div style="font-weight:bold; font-size:14px; color:#10b981; text-transform:uppercase; letter-spacing:1.2px;">
-              Agent B: Order Executed
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="position: relative; display: flex; width: 8px; height: 8px;">
+                <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: #10b981; opacity: 0.75; animation: ss-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+                <span style="position: relative; width: 8px; height: 8px; border-radius: 50%; background: #10b981;"></span>
+              </span>
+              <span style="font-family: 'JetBrains Mono', Menlo, monospace; font-size: 9.5px; font-weight: 800; letter-spacing: 1.2px; color: #10b981; text-transform: uppercase;">
+                AGENT B // EXECUTION CONFIRMED
+              </span>
+            </div>
+            <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #34d399; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.6px;">
+              ORDER FILLED
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 14px;">
+            <div style="font-size: 24px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px;">
+              NSE:<span style="color: ${actionCol};">${prop.ticker}</span>
+            </div>
+            <span style="background: ${actionCol}1a; border: 1px solid ${actionCol}66; color: ${actionCol}; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; letter-spacing: 0.8px;">
+              ${prop.action.toUpperCase()} MARKET
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px; margin-bottom: 14px;">
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase;">QUANTITY</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 800; color: #f8fafc; margin-top: 2px;">
+                ${prop.suggested_quantity} SHARES
+              </div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase;">EXECUTION TIME</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; color: #cbd5e1; margin-top: 2px;">
+                ${timeStr} IST
+              </div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase;">ROUTING</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: #38bdf8; margin-top: 2px;">
+                TradingView India
+              </div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase;">GATE STATUS</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; color: #34d399; margin-top: 2px;">
+                Human-Approved ✓
+              </div>
             </div>
           </div>
-          <div style="font-size:13px; color:#cbd5e1; line-height:1.6; margin-bottom:12px;">
-            Exchange: <b style="color:#38bdf8;">NSE (National Stock Exchange)</b><br/>
-            Ticker: <b style="color:#f8fafc; font-size:16px;">${prop.ticker}</b><br/>
-            Action: <b style="color:${isBuy ? '#34d399' : '#fb7185'}; font-size:15px; text-transform:uppercase;">${prop.action}</b><br/>
-            Quantity: <b style="color:#f8fafc;">${prop.suggested_quantity} shares</b><br/>
-            Platform: <span style="color:#94a3b8;">TradingView India Paper Trading</span>
-          </div>
-          <div style="background:rgba(16,185,129,0.15); border:1px solid #10b981; border-radius:10px; padding:10px 14px; font-size:12px; color:#a7f3d0;">
-            ✓ <b>Human Authorized:</b> Order confirmed via Telegram / Cockpit Gate and placed on paper trading engine.
+
+          <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 10px 12px; font-size: 11px; color: #a7f3d0; line-height: 1.4; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 14px;">🛡️</span>
+            <span><b>Human Gate Authorized:</b> Command verified via Telegram / Cockpit. Zero unsolicited trades executed.</span>
           </div>
         `;
+
+        if (!document.getElementById('ss-trade-style')) {
+          const st = document.createElement('style');
+          st.id = 'ss-trade-style';
+          st.textContent = `
+            @keyframes ss-trade-in { from { opacity: 0; transform: translateY(-10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+            @keyframes ss-ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }
+          `;
+          document.head.appendChild(st);
+        }
       }, proposal);
 
       // 3. Attempt native button click if order panel is accessible

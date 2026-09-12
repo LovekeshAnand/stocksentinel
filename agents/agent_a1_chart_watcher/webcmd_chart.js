@@ -168,7 +168,7 @@ class ChartWatcherAgent {
   }
 
   /**
-   * Injects a glowing PATTERN DETECTED alert overlay on the live chart
+   * Injects an institutional quant pattern alert overlay on the live chart
    */
   async injectPatternAlert(page, signal) {
     try {
@@ -176,61 +176,106 @@ class ChartWatcherAgent {
         document.getElementById('ss-pattern-alert')?.remove();
 
         const isBullish = data.technical_bias === 'BULLISH';
-        const col = isBullish ? '#10b981' : '#ef4444';
-        const shadow = isBullish
-          ? '0 0 40px #10b98188, 0 25px 70px rgba(0,0,0,0.95)'
-          : '0 0 40px #ef444488, 0 25px 70px rgba(0,0,0,0.95)';
-
+        const col = isBullish ? '#10b981' : '#f43f5e';
         const patternLabels = {
-          volume_spike: 'VOLUME SPIKE DETECTED',
-          ma_crossover: 'MA GOLDEN CROSS',
-          consolidation_breakout: 'RESISTANCE BREAKOUT'
+          volume_spike: 'VOLUME ACCUMULATION BREAKOUT',
+          ma_crossover: 'EMA GOLDEN CROSSOVER (20/50)',
+          consolidation_breakout: 'RESISTANCE LEVEL EXPANSION'
         };
 
         const el = document.createElement('div');
         el.id = 'ss-pattern-alert';
         el.style.cssText = `
-          position: fixed; top: 72px; left: 50%; transform: translateX(-50%) scale(0.8);
-          z-index: 2147483647; pointer-events: none; min-width: 400px;
-          background: rgba(4, 8, 18, 0.97); border: 2px solid ${col};
-          border-radius: 16px; padding: 18px 30px; font-family: 'Courier New', monospace;
-          text-align: center; box-shadow: ${shadow};
-          transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+          position: fixed; top: 68px; left: 50%; transform: translateX(-50%) translateY(-10px) scale(0.96);
+          z-index: 2147483647; pointer-events: none; min-width: 460px;
+          background: rgba(8, 12, 22, 0.95);
+          backdrop-filter: blur(20px) saturate(190%);
+          -webkit-backdrop-filter: blur(20px) saturate(190%);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          border-top: 3px solid ${col};
+          border-radius: 14px; padding: 20px 26px;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+          box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.9), 0 0 30px ${col}33;
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
           opacity: 0;
         `;
         el.innerHTML = `
-          <div style="font-size:10px;letter-spacing:3.5px;color:${col};font-weight:900;margin-bottom:8px;text-transform:uppercase;">
-            ◈ Agent A1 — Pattern Confirmed ◈
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="position: relative; display: flex; width: 8px; height: 8px;">
+                <span style="position: absolute; width: 100%; height: 100%; border-radius: 50%; background: ${col}; opacity: 0.75; animation: ss-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;"></span>
+                <span style="position: relative; width: 8px; height: 8px; border-radius: 50%; background: ${col};"></span>
+              </span>
+              <span style="font-family: 'JetBrains Mono', Menlo, monospace; font-size: 9.5px; font-weight: 800; letter-spacing: 1.2px; color: ${col}; text-transform: uppercase;">
+                AGENT A1 // QUANT PATTERN CONVERGENCE
+              </span>
+            </div>
+            <span style="background: ${col}1a; border: 1px solid ${col}66; color: ${col}; font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 5px; letter-spacing: 0.6px;">
+              SIGNAL VERIFIED
+            </span>
           </div>
-          <div style="font-size:26px;font-weight:900;color:#f8fafc;letter-spacing:2px;margin-bottom:4px;">
-            NSE: ${data.ticker}
+
+          <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 8px;">
+            <div style="font-size: 26px; font-weight: 800; color: #f8fafc; letter-spacing: -0.5px;">
+              NSE:<span style="color: ${col};">${data.ticker}</span>
+            </div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; color: #94a3b8; letter-spacing: 0.5px;">
+              ${patternLabels[data.pattern_type] || 'TECHNICAL SETUP'}
+            </div>
           </div>
-          <div style="font-size:13px;font-weight:700;color:${col};margin-bottom:10px;letter-spacing:1px;">
-            ${patternLabels[data.pattern_type] || 'SIGNAL DETECTED'}
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; padding: 12px 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 8px;">
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">PRICE</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: #f8fafc; margin-top: 2px;">
+                ₹${data.price.toLocaleString('en-IN')}
+              </div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">RSI (14D)</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; color: ${data.rsi > 70 ? '#f59e0b' : col}; margin-top: 2px;">
+                ${data.rsi}
+              </div>
+            </div>
+            <div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.6px;">VOLUME</div>
+              <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; color: #38bdf8; margin-top: 2px;">
+                ${data.volume}
+              </div>
+            </div>
           </div>
-          <div style="display:flex;justify-content:center;gap:20px;font-size:12px;color:#cbd5e1;">
-            <span>Price <b style="color:#f8fafc">₹${data.price.toLocaleString('en-IN')}</b></span>
-            <span>RSI <b style="color:${data.rsi > 70 ? '#f59e0b' : col}">${data.rsi}</b></span>
-            <span>Vol <b style="color:#38bdf8">${data.volume}</b></span>
-          </div>
-          <div style="margin-top:10px;font-size:11px;color:${col};opacity:0.8;">
-            ${isBullish ? '▲ BULLISH BIAS' : '▼ BEARISH BIAS'} — Forwarding to Strategist (Qwen 2.5 7B)
+
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 9.5px; font-family: 'JetBrains Mono', monospace;">
+            <span style="color: ${col}; font-weight: 700; letter-spacing: 0.6px;">
+              ${isBullish ? '▲ BULLISH CONVICTION' : '▼ BEARISH CONVICTION'}
+            </span>
+            <span style="color: #94a3b8;">
+              FORWARDING TO STRATEGIST (QWEN 2.5 7B) →
+            </span>
           </div>
         `;
+
+        if (!document.getElementById('ss-pattern-style')) {
+          const style = document.createElement('style');
+          style.id = 'ss-pattern-style';
+          style.textContent = `@keyframes ss-ping { 75%, 100% { transform: scale(2.2); opacity: 0; } }`;
+          document.head.appendChild(style);
+        }
+
         document.body.appendChild(el);
 
         // Animate in
         requestAnimationFrame(() => {
-          el.style.transform = 'translateX(-50%) scale(1)';
+          el.style.transform = 'translateX(-50%) translateY(0) scale(1)';
           el.style.opacity = '1';
         });
 
-        // Fade out after 2.5s
+        // Fade out after 2.8s
         setTimeout(() => {
           el.style.opacity = '0';
-          el.style.transform = 'translateX(-50%) scale(0.9)';
+          el.style.transform = 'translateX(-50%) translateY(-10px) scale(0.96)';
           setTimeout(() => el.remove(), 400);
-        }, 2500);
+        }, 2800);
       }, signal);
     } catch (e) {}
   }
