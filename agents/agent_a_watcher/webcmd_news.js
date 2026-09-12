@@ -225,10 +225,6 @@ class NewsSearchWatcherAgent {
       tickerSignaled.add(art.ticker);
     }
 
-    // Ensure our high-conviction demo symbols always have strong catalysts
-    if (!signals.some(s => s.ticker === 'TATAMOTORS')) signals.push(this.guaranteedSignal('TATAMOTORS'));
-    if (!signals.some(s => s.ticker === 'RELIANCE'))   signals.push(this.guaranteedSignal('RELIANCE'));
-
     return signals;
   }
 
