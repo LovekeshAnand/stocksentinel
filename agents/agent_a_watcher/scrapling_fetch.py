@@ -14,7 +14,6 @@ def fetch_articles(url: str):
     start_time = time.time()
     try:
         fetcher = Fetcher()
-        fetcher.configure(auto_match=True)
         response = fetcher.get(url, timeout=12)
         
         articles = []

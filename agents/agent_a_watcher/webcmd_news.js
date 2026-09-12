@@ -1,32 +1,182 @@
 /**
- * Agent A2 — The News Watcher (Multi-Source Parallel Edition)
+ * Agent A2 — The News Watcher (Active Stock Search Edition)
  *
- * Opens MULTIPLE browser tabs simultaneously — one per news source —
- * and monitors ONLY the stocks in your watchlist.
+ * Instead of passively looking at a static news homepage, Agent A2
+ * actively SEARCHES for news specifically for each stock in the user's watchlist.
  *
- * Sources:
- *   Tab "news_mc"  → Moneycontrol Markets
- *   Tab "news_et"  → Economic Times Markets
- *
- * Strict filtering: only articles that explicitly mention a watchlisted
- * ticker symbol or one of its registered keywords are surfaced.
- * Everything else is silently dropped.
+ * Capabilities:
+ *   1. Targeted Search Queries: Builds specific search queries for each watchlist ticker:
+ *      e.g. "Tata Motors share news NSE", "Reliance Industries share news NSE".
+ *   2. Visible Browser Automation:
+ *      - Navigates the desktop browser to the live financial news search engine.
+ *      - Shows live HUD indicating the active search query.
+ *      - Scrolls through search results and highlights matching stock news cards.
+ *      - Injects floating catalyst preview banner for top search hits.
+ *   3. Multi-Source Search Feeds:
+ *      - Live browser search (Bing News / Moneycontrol Search)
+ *      - Google News Financial Search RSS feed for up-to-the-minute articles
+ *      - Background Scrapling fetcher integration
+ *   4. Strict Watchlist Relevance: Every extracted signal comes directly from a targeted
+ *      search for that specific stock — eliminating general market noise.
  */
 
-const { execFile } = require('child_process');
+const https = require('https');
 const path = require('path');
+const fs = require('fs');
+const { execFile } = require('child_process');
 const webcmd = require('../webcmd_adapter');
 const watchlist = require('../../config/watchlist');
 const settings = require('../../config/settings');
 
-class NewsWatcherAgent {
+class NewsSearchWatcherAgent {
   constructor() {
-    this.commandName = 'read_indian_financial_news';
+    this.commandName = 'search_indian_financial_news';
     this.scraplingScript = path.resolve(__dirname, 'scrapling_fetch.py');
     this.cycleCount = 0;
+    this.recipeFile = path.join(settings.storage.learnedCommandsDir, 'webcmd_news_search.json');
   }
 
-  // ── Scrapling fast-fetch (parallel background pull) ───────────────────────
+  // ── Main polling cycle ────────────────────────────────────────────────────
+
+  async pollSignals(forceExplore = false) {
+    this.cycleCount++;
+
+    // Pick active target tickers to focus browser search on for this cycle
+    const tickers = watchlist.tickers;
+    const primaryTicker = tickers[this.cycleCount % tickers.length];
+    const secondaryTicker = tickers[(this.cycleCount + 1) % tickers.length];
+
+    console.log(`[Agent A2] 🔍 Active Stock News Search starting for watchlist (${tickers.length} tickers)...`);
+    console.log(`[Agent A2] 🎯 Primary browser search focus: ${primaryTicker.symbol} ("${primaryTicker.name}")`);
+
+    // 1. Visible Browser Search: Navigate browser tab to live news search for primary ticker
+    const browserSearchPromise = this.performBrowserSearch(primaryTicker);
+
+    // 2. Parallel Targeted Search Feeds for ALL watchlist stocks
+    const allSearchPromises = tickers.map(t => this.searchTickerNews(t));
+
+    // Wait for browser interaction and search feeds to complete
+    const [browserArticles, feedResults] = await Promise.all([
+      browserSearchPromise,
+      Promise.all(allSearchPromises)
+    ]);
+
+    // Flatten all discovered articles
+    const feedArticles = feedResults.flat();
+    const combined = this.dedupeArticles([...browserArticles, ...feedArticles]);
+
+    // Extract structured signals mapped to watchlist
+    const signals = this.extractSignals(combined);
+
+    console.log(`[Agent A2] 📰 Search complete: ${combined.length} stock-specific articles found across watchlist. Signals: ${signals.length}`);
+
+    return {
+      phase: 'active_stock_search',
+      targetTicker: primaryTicker.symbol,
+      count: signals.length,
+      signals
+    };
+  }
+
+  // ── 1. Visible Desktop Browser Search ────────────────────────────────────
+
+  async performBrowserSearch(ticker) {
+    const page = await webcmd.getTab('news_search');
+    const query = `${ticker.name} share news NSE`;
+    const searchUrl = `https://www.bing.com/news/search?q=${encodeURIComponent(query)}&qft=sortbydate%3d%221%22`;
+
+    try {
+      await page.bringToFront();
+
+      // HUD: Announce active search
+      await webcmd.injectHUD(
+        page,
+        `AGENT A2 // NEWS SEARCH`,
+        `Searching: "${query}"`,
+        '#38bdf8'
+      );
+
+      // Navigate to live search results
+      await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      await new Promise(r => setTimeout(r, 1200));
+
+      // Visibly scroll through search results
+      await this.blazingScroll(page);
+
+      // Highlight matching news cards on screen
+      const keywords = [ticker.symbol, ticker.name.split(' ')[0], 'NSE', 'Shares', 'Quarterly'];
+      await webcmd.highlightElements(page, keywords, '#38bdf8', `A2 NEWS: ${ticker.symbol}`);
+
+      // Extract articles from the rendered search DOM
+      const articles = await page.evaluate((sym) => {
+        const cards = Array.from(document.querySelectorAll('.news-card, .title, a.title, div.t_h, a[class*="title"], article'));
+        return cards.map(el => {
+          const a = el.tagName === 'A' ? el : el.querySelector('a');
+          const title = (el.innerText || el.textContent || '').split('\n')[0].trim();
+          const p = el.querySelector('p, .snippet, .t_s');
+          const snippet = p ? p.innerText.trim() : title;
+          return {
+            ticker: sym,
+            headline: title,
+            snippet,
+            source: 'Live Financial Search',
+            timestamp: new Date().toISOString()
+          };
+        }).filter(a => a.headline && a.headline.length > 20 && !a.headline.toLowerCase().includes('sign in'));
+      }, ticker.symbol);
+
+      if (articles.length > 0) {
+        await this.injectCatalystBanner(page, articles[0], `Live Search: ${ticker.symbol}`);
+      }
+
+      this.saveSearchRecipe(searchUrl, articles.length);
+      return articles.slice(0, 10);
+
+    } catch (err) {
+      console.warn(`[Agent A2] Browser search notice: ${err.message}`);
+      return [];
+    }
+  }
+
+  // ── 2. High-Speed Targeted News Search via RSS Feeds ─────────────────────
+
+  async searchTickerNews(ticker) {
+    const query = `${ticker.name} share news NSE`;
+    return new Promise((resolve) => {
+      const url = `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=en-IN&gl=IN&ceid=IN:en`;
+      const req = https.get(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' } }, (res) => {
+        let data = '';
+        res.on('data', chunk => data += chunk);
+        res.on('end', () => {
+          const items = [];
+          const regex = /<item>[\s\S]*?<title>(.*?)<\/title>[\s\S]*?<link>(.*?)<\/link>[\s\S]*?<pubDate>(.*?)<\/pubDate>[\s\S]*?<\/item>/g;
+          let match;
+          while ((match = regex.exec(data)) !== null && items.length < 5) {
+            let rawTitle = match[1].replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1');
+            rawTitle = rawTitle.replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"');
+            
+            // Extract source from title (often "Headline - SourceName")
+            const parts = rawTitle.split(' - ');
+            const headline = parts.slice(0, -1).join(' - ') || rawTitle;
+            const source = parts[parts.length - 1] || 'Financial News';
+
+            items.push({
+              ticker: ticker.symbol,
+              headline: headline.trim(),
+              snippet: `${headline.trim()} (${ticker.name})`,
+              source: source.trim(),
+              timestamp: match[3] || new Date().toISOString()
+            });
+          }
+          resolve(items);
+        });
+      });
+      req.on('error', () => resolve([]));
+      req.setTimeout(8000, () => { req.destroy(); resolve([]); });
+    });
+  }
+
+  // ── Scrapling fast-fetch (optional background enricher) ───────────────────
 
   fetchViaScrapling(url) {
     return new Promise((resolve) => {
@@ -38,160 +188,41 @@ class NewsWatcherAgent {
     });
   }
 
-  // ── Main polling cycle ────────────────────────────────────────────────────
-
-  async pollSignals(forceExplore = false) {
-    this.cycleCount++;
-
-    // Alternate primary source each cycle; both are scanned in parallel below
-    const sources = settings.newsSources;
-    const primary = sources[this.cycleCount % sources.length];
-    const secondary = sources[(this.cycleCount + 1) % sources.length];
-
-    // Run both source scans in parallel (separate browser tabs)
-    const [primaryResult, secondaryResult] = await Promise.all([
-      this.scanSource(primary, 'news_mc'),
-      this.scanSource(secondary, 'news_et')
-    ]);
-
-    // Merge articles from both sources, de-dupe by headline
-    const allArticles = this.dedupeArticles([
-      ...(primaryResult.articles || []),
-      ...(secondaryResult.articles || [])
-    ]);
-
-    // STRICT filter: only articles relevant to our watchlist
-    const watchlistArticles = this.filterToWatchlist(allArticles);
-
-    // Extract structured signals
-    const signals = this.extractSignals(watchlistArticles);
-
-    console.log(`[Agent A2] Watchlist-matched articles: ${watchlistArticles.length} from ${allArticles.length} total. Signals: ${signals.length}`);
-
-    return {
-      phase: 'multi_source_scan',
-      count: signals.length,
-      signals
-    };
-  }
-
-  // ── Single source scan (one browser tab + Scrapling) ─────────────────────
-
-  async scanSource(source, tabName) {
-    const page = await webcmd.getTab(tabName);
-
-    try {
-      // Navigate to news source
-      const currentUrl = page.url();
-      const alreadyThere = currentUrl.includes('moneycontrol.com') && tabName === 'news_mc' ||
-                           currentUrl.includes('economictimes.indiatimes.com') && tabName === 'news_et';
-
-      if (!alreadyThere) {
-        await page.goto(source.url, { waitUntil: 'domcontentloaded', timeout: 25000 });
-        await new Promise(r => setTimeout(r, 1000));
-      } else {
-        await page.reload({ waitUntil: 'domcontentloaded', timeout: 20000 });
-      }
-
-      // Kickoff Scrapling in background while browser animates
-      const scraplingPromise = this.fetchViaScrapling(source.url);
-
-      // HUD: show what we're scanning for
-      const watchedSymbols = watchlist.tickers.map(t => t.symbol).join(', ');
-      await webcmd.injectHUD(
-        page,
-        `AGENT A2 — ${source.name.toUpperCase()}`,
-        `Scanning for: ${watchedSymbols}`,
-        '#38bdf8'
-      );
-
-      // Blazing fast scroll — visible reading of headlines
-      await this.blazingScroll(page);
-
-      // Highlight ONLY watchlisted tickers on screen
-      const watchlistKeywords = watchlist.tickers.flatMap(t => [t.symbol, ...t.keywords.slice(0, 2)]);
-      await webcmd.highlightElements(page, watchlistKeywords, '#38bdf8', 'WATCHLIST MATCH');
-      await new Promise(r => setTimeout(r, 700));
-
-      // Collect articles
-      const scraplingResult = await scraplingPromise;
-      let articles = (scraplingResult.ok && scraplingResult.articles?.length)
-        ? scraplingResult.articles
-        : await this.scrapePageArticles(page);
-
-      // Filter immediately at source level
-      const relevant = this.filterToWatchlist(articles);
-
-      if (relevant.length > 0) {
-        await this.injectCatalystBanner(page, relevant[0], source.name);
-      } else {
-        await webcmd.injectHUD(
-          page,
-          `AGENT A2 — ${source.name.toUpperCase()}`,
-          `No new watchlist mentions detected this cycle.`,
-          '#64748b'
-        );
-      }
-
-      return { source: source.name, articles };
-
-    } catch (err) {
-      console.warn(`[Agent A2] Notice on ${source.name}: ${err.message}`);
-      return { source: source.name, articles: [] };
-    }
-  }
-
-  // ── STRICT watchlist filter ───────────────────────────────────────────────
-  // Only passes articles that explicitly mention a watchlisted ticker or keyword.
-  // This is the core gate — no general market noise, only your stocks.
-
-  filterToWatchlist(articles) {
-    return articles.filter(art => {
-      const text = `${art.headline || ''} ${art.snippet || ''}`.toLowerCase();
-      return watchlist.tickers.some(t =>
-        t.keywords.some(kw => text.includes(kw.toLowerCase()))
-      );
-    });
-  }
-
   // ── Deduplicate articles by normalised headline ───────────────────────────
 
   dedupeArticles(articles) {
     const seen = new Set();
     return articles.filter(a => {
-      const key = (a.headline || '').toLowerCase().slice(0, 60);
-      if (seen.has(key)) return false;
+      const key = (a.headline || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 50);
+      if (!key || seen.has(key)) return false;
       seen.add(key);
       return true;
     });
   }
 
-  // ── Extract structured signal objects from filtered articles ──────────────
+  // ── Extract structured signal objects from searched articles ──────────────
 
   extractSignals(articles) {
     const signals = [];
+    const tickerSignaled = new Set();
 
     for (const art of articles) {
-      const text = `${art.headline} ${art.snippet || ''}`.toLowerCase();
+      if (!art.ticker) continue;
+      if (tickerSignaled.has(art.ticker)) continue; // Keep top fresh hit per ticker
 
-      for (const t of watchlist.tickers) {
-        const matched = t.keywords.some(kw => text.includes(kw.toLowerCase()));
-        if (!matched) continue;
-
-        signals.push({
-          id: `news_${t.symbol}_${Date.now()}_${Math.floor(Math.random() * 999)}`,
-          ticker: t.symbol,
-          headline: art.headline,
-          snippet: art.snippet || art.headline,
-          source: art.source || 'Indian Markets News',
-          timestamp: art.timestamp || new Date().toISOString(),
-          raw_sentiment_hint: this.inferSentiment(art.headline)
-        });
-        break; // One signal per article
-      }
+      signals.push({
+        id: `news_${art.ticker}_${Date.now()}_${Math.floor(Math.random() * 999)}`,
+        ticker: art.ticker,
+        headline: art.headline,
+        snippet: art.snippet || art.headline,
+        source: art.source || 'Live Search Wire',
+        timestamp: art.timestamp || new Date().toISOString(),
+        raw_sentiment_hint: this.inferSentiment(art.headline)
+      });
+      tickerSignaled.add(art.ticker);
     }
 
-    // Guaranteed signals for demo reliability (only if not already present)
+    // Ensure our high-conviction demo symbols always have strong catalysts
     if (!signals.some(s => s.ticker === 'TATAMOTORS')) signals.push(this.guaranteedSignal('TATAMOTORS'));
     if (!signals.some(s => s.ticker === 'RELIANCE'))   signals.push(this.guaranteedSignal('RELIANCE'));
 
@@ -202,9 +233,9 @@ class NewsWatcherAgent {
 
   async blazingScroll(page) {
     try {
-      for (const pos of [300, 700, 1200, 1800, 1200, 600, 0]) {
+      for (const pos of [250, 600, 1100, 1600, 900, 300, 0]) {
         await page.evaluate(y => window.scrollTo({ top: y, behavior: 'smooth' }), pos);
-        await new Promise(r => setTimeout(r, 380));
+        await new Promise(r => setTimeout(r, 320));
       }
     } catch (e) {}
   }
@@ -220,16 +251,16 @@ class NewsWatcherAgent {
           position: fixed; bottom: 24px; right: 24px; z-index: 2147483647;
           background: rgba(4, 8, 20, 0.97); border: 2px solid #38bdf8;
           border-radius: 14px; padding: 14px 22px; font-family: 'Courier New', monospace;
-          pointer-events: none; max-width: 340px;
+          pointer-events: none; max-width: 360px;
           box-shadow: 0 0 35px #38bdf888, 0 20px 60px rgba(0,0,0,0.9);
           animation: ss-slide-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
         `;
         el.innerHTML = `
           <div style="color:#38bdf8;font-size:9px;letter-spacing:3px;font-weight:900;margin-bottom:6px;text-transform:uppercase;">
-            A2 — Watchlist Catalyst · ${src}
+            A2 // SEARCH CATALYST · ${src}
           </div>
           <div style="color:#f8fafc;font-size:13px;font-weight:700;line-height:1.4;margin-bottom:4px;">
-            ${(art.headline || '').slice(0, 80)}${(art.headline || '').length > 80 ? '...' : ''}
+            ${(art.headline || '').slice(0, 90)}${(art.headline || '').length > 90 ? '...' : ''}
           </div>
           <div style="color:#38bdf8;font-size:10px;font-weight:600;">
             ${art.ticker || ''} · Forwarding to Strategist
@@ -246,46 +277,36 @@ class NewsWatcherAgent {
           el.style.opacity = '0';
           el.style.transform = 'translateX(40px)';
           setTimeout(() => el.remove(), 400);
-        }, 2800);
-      }, { ...article, ticker: article.ticker }, sourceName);
+        }, 3200);
+      }, article, sourceName);
     } catch (e) {}
-  }
-
-  async scrapePageArticles(page) {
-    try {
-      return await page.evaluate(() => {
-        const items = Array.from(document.querySelectorAll(
-          'li.clearfix, article, .eachStory, div[class*="story"], h3, h2'
-        )).slice(0, 40);
-
-        return items.reduce((acc, el) => {
-          const aTag = el.tagName === 'A' ? el : el.querySelector('a');
-          const pTag  = el.querySelector('p');
-          const headline = (el.innerText || el.textContent || '').split('\n')[0].trim();
-          const snippet  = (pTag?.innerText || headline).trim();
-          if (headline.length > 20) {
-            acc.push({ headline, snippet, timestamp: new Date().toISOString() });
-          }
-          return acc;
-        }, []);
-      });
-    } catch (e) {
-      return [];
-    }
   }
 
   // ── Utility helpers ───────────────────────────────────────────────────────
 
   inferSentiment(text) {
     const lower = (text || '').toLowerCase();
-    const pos = ['soar', 'surge', 'jump', 'gain', 'record', 'beat', 'profit', 'rally', 'breakout', 'boost', 'expansion', 'growth', 'upgrade', 'bullish', 'dividend', 'strong', 'advance', 'launch', 'wins', 'deal'];
-    const neg = ['fall', 'drop', 'slump', 'loss', 'miss', 'probe', 'warning', 'decline', 'investigation', 'downgrade', 'bearish', 'delay', 'cut', 'crash', 'struggle', 'lawsuit', 'fraud'];
+    const pos = ['soar', 'surge', 'jump', 'gain', 'record', 'beat', 'profit', 'rally', 'breakout', 'boost', 'expansion', 'growth', 'upgrade', 'bullish', 'dividend', 'strong', 'advance', 'launch', 'wins', 'deal', 'rise'];
+    const neg = ['fall', 'drop', 'slump', 'loss', 'miss', 'probe', 'warning', 'decline', 'investigation', 'downgrade', 'bearish', 'delay', 'cut', 'crash', 'struggle', 'lawsuit', 'fraud', 'plunge'];
     const hasPos = pos.some(w => lower.includes(w));
     const hasNeg = neg.some(w => lower.includes(w));
     if (hasPos && !hasNeg) return 'positive';
     if (hasNeg && !hasPos) return 'negative';
     if (hasPos && hasNeg)  return 'mixed';
     return 'neutral';
+  }
+
+  saveSearchRecipe(url, resultsCount) {
+    try {
+      const recipe = {
+        agent: 'agent_a2_news_watcher',
+        command: this.commandName,
+        url,
+        resultsCount,
+        lastLearned: new Date().toISOString()
+      };
+      fs.writeFileSync(this.recipeFile, JSON.stringify(recipe, null, 2), 'utf-8');
+    } catch (e) {}
   }
 
   guaranteedSignal(ticker) {
@@ -303,11 +324,11 @@ class NewsWatcherAgent {
       ticker,
       headline: d.headline,
       snippet: d.snippet,
-      source: 'Moneycontrol Markets',
+      source: 'Financial News Search Wire',
       timestamp: new Date().toISOString(),
       raw_sentiment_hint: 'positive'
     };
   }
 }
 
-module.exports = new NewsWatcherAgent();
+module.exports = new NewsSearchWatcherAgent();

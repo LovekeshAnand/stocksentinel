@@ -79,10 +79,10 @@ class SentinelPipeline extends EventEmitter {
       const chartResult = await chartWatcher.pollChartSignals(forceExplore);
       console.log(`[Pipeline] [A1] Done — ${chartResult.count} pattern signal(s) confirmed.`);
 
-      // ── Agent A2: Live news scan (opens Moneycontrol / ET) ──────────────────
-      console.log(`[Pipeline] [A2] News Watcher: scanning Indian market news wires...`);
+      // ── Agent A2: Active news search (searches specifically for watchlist stocks) ──
+      console.log(`[Pipeline] [A2] News Watcher: searching live financial news specifically for watchlist tickers...`);
       const newsResult = await newsWatcher.pollSignals(forceExplore);
-      console.log(`[Pipeline] [A2] Done — ${newsResult.count} catalyst signal(s) ingested.`);
+      console.log(`[Pipeline] [A2] Done — ${newsResult.count} targeted catalyst signal(s) ingested from stock search.`);
 
       // ── Correlate signals by ticker ─────────────────────────────────────────
       const tickerMap = new Map();

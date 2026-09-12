@@ -515,6 +515,29 @@
       "volume": "9.3M",
       "technical_bias": "BULLISH",
       "receivedAt": "2026-09-12T07:06:00.773Z"
+    },
+    {
+      "id": "chart_RELIANCE_1789197749384",
+      "ticker": "RELIANCE",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:22:29.384Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+      "price": 2942,
+      "rsi": 67.8,
+      "volume": "8.6M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:22:59.653Z"
+    },
+    {
+      "id": "news_RELIANCE_1789197779652",
+      "ticker": "RELIANCE",
+      "headline": "Reliance Jio Deploys Nationwide 5G with AI Cloud Partnership Announcement",
+      "snippet": "Chairman confirms accelerated expansion into cloud data centers.",
+      "source": "Moneycontrol Markets",
+      "timestamp": "2026-09-12T07:22:59.652Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:22:59.654Z"
     }
   ],
   "proposals": [
