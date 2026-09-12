@@ -207,7 +207,12 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
         '*Open Positions:*',
         posStr
       ].join('\n');
-      return this.sendMessage(chatId, portMsg);
+
+      const inlineKeyboard = posList.length > 0
+        ? posList.map(p => [{ text: `🔴 Quick Sell: ${p.quantity} ${p.ticker}`, callback_data: `quick_sell:${p.ticker}:${p.quantity}` }])
+        : null;
+
+      return this.sendMessage(chatId, portMsg, inlineKeyboard);
     }
 
     if (text.startsWith('/simulate')) {
@@ -310,6 +315,44 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
           message_id: messageId,
           text: (query.message.text || '') + `\n\n✅ STATUS: APPROVED BY YOU\n⚡ Agent B executing live paper trade simulation on TradingView...\nInteractive Order Pad, Fill Modal & Position Dock live in browser.`
         });
+      } else if (action === 'sell') {
+        const proposal = gateLogic.pendingProposals.get(param) || memoryStore.getProposal(param);
+        const ticker = proposal?.ticker?.toUpperCase() || 'TATAMOTORS';
+        const port = memoryStore.getPortfolio();
+        const heldPos = (port.positions || []).find(p => p.ticker === ticker);
+        const sellQty = heldPos ? heldPos.quantity : (proposal?.suggested_quantity || 10);
+
+        gateLogic.modifyAndApprove(param, { action: 'sell', quantity: sellQty });
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Selling ${sellQty} shares of ${ticker}...` });
+        await this.callApi('editMessageText', {
+          chat_id: chatId,
+          message_id: messageId,
+          text: (query.message.text || '') + `\n\n🔴 STATUS: EXITED / SOLD BY YOU (${sellQty} shares of ${ticker})\n⚡ Agent B executing paper trade SELL on TradingView...\nRealized profit/loss credited to portfolio balance.`
+        });
+      } else if (action === 'buymore') {
+        const proposal = gateLogic.pendingProposals.get(param) || memoryStore.getProposal(param);
+        const ticker = proposal?.ticker?.toUpperCase() || 'TATAMOTORS';
+        gateLogic.modifyAndApprove(param, { action: 'buy', quantity: 10 });
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Buying 10 more ${ticker}...` });
+        await this.callApi('editMessageText', {
+          chat_id: chatId,
+          message_id: messageId,
+          text: (query.message.text || '') + `\n\n🟢 STATUS: BUY APPROVED BY YOU (+10 shares of ${ticker})\n⚡ Agent B executing paper trade BUY on TradingView...`
+        });
+      } else if (action === 'quick_sell') {
+        const [_, ticker, qtyStr] = data.split(':');
+        const qty = parseInt(qtyStr, 10) || 10;
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Exiting ${qty} ${ticker}...` });
+        const executor = require('../agents/agent_b_executor/webcmd_trade');
+        const tradeRes = await executor.executeApprovedTrade({
+          id: `quick_sell_${Date.now()}`,
+          ticker,
+          action: 'SELL',
+          suggested_quantity: qty,
+          price: executor.getBenchmarkPrice(ticker)
+        });
+        const port = memoryStore.getPortfolio();
+        await this.sendMessage(chatId, `🔴 <b>POSITION EXITED / SOLD</b>\n\nSecurity: <b>NSE:${ticker}</b>\nSide: <b>SELL</b>\nQuantity: <b>${qty} shares</b>\nFill Price: <b>₹${tradeRes.price}</b>\nRealized P&L: <b>₹${port.realizedPnl.toLocaleString('en-IN')}</b>\nRemaining Cash: <b>₹${port.cash.toLocaleString('en-IN')}</b>`, null, 'HTML');
       } else if (action === 'reject') {
         gateLogic.rejectProposal(param, 'Rejected via Telegram button');
         await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Trade Rejected' });
@@ -452,6 +495,14 @@ Whenever breaking news or a chart breakout signals on these tickers, I'll formul
 
     const rationaleClean = escapeHtml(proposal.rationale || '');
 
+    const port = memoryStore.getPortfolio();
+    const tickerUpper = (proposal.ticker || '').toUpperCase();
+    const heldPos = (port.positions || []).find(p => p.ticker === tickerUpper);
+
+    const positionInfo = (heldPos && heldPos.quantity > 0)
+      ? `💼 <b>Portfolio Position:</b> Currently holding <b>${heldPos.quantity} shares</b> @ avg ₹${heldPos.entryPrice} (Unrealized P&L: <b>${heldPos.pnl >= 0 ? '+' : ''}₹${heldPos.pnl || 0}</b>)\n`
+      : '';
+
     const text = `
 🚨 <b>STOCKSENTINEL TRADE PROPOSAL</b> 🚨
 ━━━━━━━━━━━━━━━━━━━━━━━━
@@ -460,7 +511,7 @@ Whenever breaking news or a chart breakout signals on these tickers, I'll formul
 🔢 <b>Quantity:</b> <code>${proposal.suggested_quantity}</code> units
 📊 <b>Confidence:</b> <code>${(proposal.confidence || 'medium').toUpperCase()}</code>
 🧠 <b>Engine:</b> <code>${escapeHtml(proposal.engine || 'Local Qwen 2.5 7B')}</code>
-
+${positionInfo ? `\n${positionInfo}` : ''}
 ${chartInfo}
 
 ${newsInfo}
@@ -469,18 +520,47 @@ ${newsInfo}
 ${rationaleClean}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 <b>HUMAN DECISION REQUIRED:</b>
-Tap below to approve, reject, or adjust quantity.
+Tap below to approve, sell existing position, reject, or adjust quantity.
 `.trim();
 
-    const inline_keyboard = [
-      [
-        { text: `✅ Approve (${proposal.suggested_quantity} ${proposal.ticker})`, callback_data: `approve:${proposal.id}` },
+    let inline_keyboard = [];
+    const actionUpper = (proposal.action || '').toUpperCase();
+
+    if (actionUpper === 'BUY') {
+      inline_keyboard.push([
+        { text: `✅ Approve BUY (${proposal.suggested_quantity} ${proposal.ticker})`, callback_data: `approve:${proposal.id}` },
         { text: '❌ Reject', callback_data: `reject:${proposal.id}` }
-      ],
-      [
+      ]);
+      if (heldPos && heldPos.quantity > 0) {
+        inline_keyboard.push([
+          { text: `🔴 SELL / Exit Holding (${heldPos.quantity} ${proposal.ticker})`, callback_data: `sell:${proposal.id}` }
+        ]);
+      }
+      inline_keyboard.push([
         { text: '✏️ Modify Quantity', callback_data: `modify:${proposal.id}` }
-      ]
-    ];
+      ]);
+    } else if (actionUpper === 'SELL') {
+      const sellQty = heldPos ? Math.min(heldPos.quantity, proposal.suggested_quantity || heldPos.quantity) : (proposal.suggested_quantity || 10);
+      inline_keyboard.push([
+        { text: `🔴 Approve SELL (${sellQty} ${proposal.ticker})`, callback_data: `approve:${proposal.id}` },
+        { text: '❌ Reject', callback_data: `reject:${proposal.id}` }
+      ]);
+      inline_keyboard.push([
+        { text: '✏️ Modify Quantity', callback_data: `modify:${proposal.id}` }
+      ]);
+    } else {
+      // HOLD / WATCH_ONLY
+      const row1 = [];
+      if (heldPos && heldPos.quantity > 0) {
+        row1.push({ text: `🔴 SELL / Exit (${heldPos.quantity} ${proposal.ticker})`, callback_data: `sell:${proposal.id}` });
+      }
+      row1.push({ text: '❌ Dismiss', callback_data: `reject:${proposal.id}` });
+      inline_keyboard.push(row1);
+      inline_keyboard.push([
+        { text: `🟢 Buy More (+10 ${proposal.ticker})`, callback_data: `buymore:${proposal.id}` },
+        { text: '✏️ Modify Quantity', callback_data: `modify:${proposal.id}` }
+      ]);
+    }
 
     const res = await this.sendMessage(targetChat, text, inline_keyboard, 'HTML');
     if (res && res.ok) {

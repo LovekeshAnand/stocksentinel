@@ -28,6 +28,9 @@ class ContextBuilder {
       signalsConsidered.push(`news: ${newsSignal.raw_sentiment_hint} sentiment ("${newsSignal.headline}")`);
     }
 
+    const port = memoryStore.getPortfolio();
+    const heldPos = (port.positions || []).find(p => p.ticker === symbol);
+
     const formattedText = `
 === DUAL-LENS MARKET SIGNALS FOR ${symbol} ===
 
@@ -36,7 +39,7 @@ ${chartSignal ? `
 - Pattern Type: ${chartSignal.pattern_type}
 - Technical Bias: ${chartSignal.technical_bias || 'NEUTRAL'}
 - Details: ${chartSignal.pattern_details}
-- Current Price: $${chartSignal.price || 'N/A'}
+- Current Price: ₹${chartSignal.price || 'N/A'}
 - Volume: ${chartSignal.volume || 'N/A'}
 - RSI Indicator: ${chartSignal.rsi || 'N/A'}
 - Observed: ${chartSignal.timestamp}
@@ -51,6 +54,13 @@ ${newsSignal ? `
 - Published: ${newsSignal.timestamp}
 ` : '- Status: No breaking news catalyst detected in this cycle.'}
 
+=== USER PORTFOLIO HOLDINGS FOR ${symbol} ===
+${heldPos && heldPos.quantity > 0 ? `
+- CURRENTLY HELD: YES (${heldPos.quantity} shares @ avg ₹${heldPos.entryPrice})
+- Unrealized P&L: ₹${heldPos.pnl || 0}
+- PORTFOLIO DIRECTIVE: User already holds this position. If RSI > 70 (overbought), technical momentum weakens, or negative news emerges, strongly consider proposing SELL / TAKE_PROFIT to defend capital or harvest gains!
+` : `- CURRENTLY HELD: NO (0 shares held)`}
+
 === USER MEMORY & TRUST PROFILE ===
 - Historical Approval Rate: ${(trustContext.trustScore * 100).toFixed(0)}%
 - Total Approved Trades on ${symbol}: ${trustContext.approvedCount}
@@ -61,6 +71,7 @@ ${newsSignal ? `
 1. Cross-Signal Synthesis:
    - If Chart and News AGREE (e.g. Bullish Chart + Positive News) -> High confidence BUY.
    - If Chart and News AGREE BEARISH (e.g. Breakdown + Negative News) -> High confidence SELL.
+   - If User Holds Shares AND signals are overbought (RSI > 70) or bearish -> High confidence SELL (Take Profit / Stop Loss).
    - If Chart and News CONFLICT (e.g. Bullish Chart + Negative News) -> Low confidence HOLD or WATCH_ONLY.
    - If only ONE lens is active -> Base proposal on available evidence, and explicitly state that only one source contributed.
 2. Formulate concise 1-3 sentence plain-English rationale naming the exact signals that drove the proposal.
@@ -74,6 +85,7 @@ ${newsSignal ? `
       sourceSignalIds,
       signalsConsidered,
       trustContext,
+      heldPos,
       formattedText
     };
   }

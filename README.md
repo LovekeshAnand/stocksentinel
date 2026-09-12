@@ -398,10 +398,12 @@ Open your browser to:
 http://localhost:3000
 ```
 The visual cockpit provides:
-- **Live Paper Trading Portfolio Tray**: Displays Virtual Cash (₹10,00,000 baseline), Realized P&L in ₹, Total Trades, and active open position pills.
+- **Live Paper Trading Portfolio Tray**: Displays Virtual Cash (₹10,00,000 baseline), Realized P&L in ₹, Total Trades, active open positions, and instant `[Sell]` exit buttons for every holding.
 - **Dual-Lens Perception Feeds**: Agent A1 live technical chart patterns & Agent A2 live news catalysts streaming side-by-side.
 - **Interactive Action Deck**: One-click buttons to `Run Market Scan`, `Simulate TATAMOTORS`, `Demonstrate Self-Healing`, and `Trigger Proposal`.
-- **In-Cockpit Approvals**: Review and Approve/Reject proposals directly in the browser as well as via Telegram.
+- **In-Cockpit Approvals & Position-Aware Selling**:
+  - Review and Approve/Reject proposals directly in the browser.
+  - **Dynamic Holding Detection**: If you already hold shares of the proposed stock, the card displays your holding badge (`Holding X shares @ avg ₹Y`) and equips a prominent **`🔴 Sell / Exit Holding (X shares)`** button right next to the BUY button!
 - **Dynamic Memory & Trust Graph**: Visualizes approval vs rejection history per ticker.
 - **Streaming Telemetry Terminal**: Live execution milestones with timestamps.
 
@@ -409,7 +411,7 @@ The visual cockpit provides:
 | Command | Bot | Description |
 |---|---|---|
 | `/start` | Both | Connects chat and auto-registers Chat ID |
-| `/portfolio` | Main Bot | Shows virtual cash balance, realized P&L, and open positions |
+| `/portfolio` | Main Bot | Shows virtual cash balance, realized P&L, open positions, and **inline Quick-Sell buttons** |
 | `/simulate [ticker]` | Main Bot | Runs live browser paper trade execution on TradingView |
 | `/heal` | Main Bot | Demonstrates live DOM self-healing & auto-recovery |
 | `/scan` | Main Bot | Triggers an on-demand multi-agent market scan |
@@ -418,6 +420,75 @@ The visual cockpit provides:
 | `/trust` | Main Bot | Shows per-ticker memory trust scores and rejection history |
 | `/demo` | Main Bot | Triggers a simulated trade proposal end-to-end |
 | `/help` | Both | Command guide and syntax |
+
+---
+
+## 8. Complete User Guide: How to Use All Features
+
+### Step 1: Starting the Entire System
+Run:
+```bash
+npm start
+```
+This launches:
+1. **Agent A1 (Chart Watcher)**: Opens live TradingView India chart in an automated Chrome window with an institutional neon scanline and RSI/Volume HUD.
+2. **Agent A2 (News Watcher)**: Starts active targeted news searches for watchlist tickers (`TATAMOTORS`, `RELIANCE`, `HDFCBANK`, `TCS`, `INFY`, `ICICIBANK`).
+3. **Approval Gate & Web Cockpit**: Starts server at `http://localhost:3000` and activates WebSocket broadcasting.
+4. **Dual Telegram Bots**: Activates `@stocksentinxl_bot` (Decision Bot) and `@stocksentinel_news_bot` (News Wire Bot).
+
+---
+
+### Step 2: Connecting Telegram & Receiving High-Confidence Alerts
+1. Open Telegram on your phone and search for `@stocksentinxl_bot`.
+2. Tap `/start`. The bot links your account and confirms with your Chat ID.
+3. You will receive **zero-noise alerts** only when high/medium conviction signals converge.
+
+---
+
+### Step 3: Buying Stocks Through Automation
+1. When a bullish setup occurs (or when you trigger a scan via `/scan` or `/demo`), a trade proposal alert arrives on Telegram and the Web Cockpit.
+2. Review the **Agent A1 Chart Evidence** (Pattern, Price in ₹, RSI) and **Agent A2 News Catalyst** (Headline & Sentiment).
+3. Review the **Qwen 2.5 7B Strategist Rationale**.
+4. Tap **`[✅ Approve (10 TATAMOTORS)]`**.
+5. **Agent B** instantly brings TradingView to the front, enters the order, visually clicks `BUY`, pops up the FIX 4.4 order fill modal, and credits the position to your portfolio with ₹20 fee deduction.
+
+---
+
+### Step 4: Selling / Exiting Stocks (Two Intuitive Ways)
+
+#### Option A: Position-Aware Sell on the Next Proposal Popup (Recommended)
+- Whenever a new proposal or scan cycle arrives for a stock you already own (e.g. `TATAMOTORS`):
+  - The alert clearly informs you:
+    `💼 Portfolio Position: Currently holding 10 shares @ avg ₹980.00 (P&L: +₹300.00)`
+  - The alert provides an immediate **`🔴 SELL / Exit Holding (10 shares)`** button alongside the standard BUY button!
+  - **Overbought Auto-Detection**: If the stock becomes overbought (RSI > 70) or negative news strikes, the Strategist will proactively formulate a **`SELL (Take-Profit / Risk-Reduction)`** proposal to help you lock in gains!
+  - Simply tap `[🔴 SELL / Exit Holding]` — Agent B will execute the sell on TradingView, credit the cash back to your portfolio, update realized P&L, and clear the position.
+
+#### Option B: Instant Exit from `/portfolio` or Web Cockpit
+- **On Telegram**: Type `/portfolio`. Under the list of open positions, you will see direct inline buttons like **`[🔴 Quick Sell: 10 TATAMOTORS]`**. Tap it to exit immediately at benchmark price without waiting for a proposal!
+- **On Web Cockpit**: In the top Portfolio Tray at `http://localhost:3000`, each position pill has a quick **`[Sell]`** button. Click it to exit instantly.
+
+---
+
+### Step 5: Using the Institutional Web Cockpit (`http://localhost:3000`)
+1. **Live Portfolio Tray**: Monitor your virtual capital (₹10,00,000 baseline), realized P&L, and active positions.
+2. **Action Deck**:
+   - `Run Scan`: Runs an on-demand cycle of both perception agents.
+   - `Simulate`: Launches a live visual paper trade simulation in the browser.
+   - `Self-Heal`: Demonstrates automated selector recovery live.
+   - `Trigger Proposal`: Simulates an incoming proposal for instant UI testing.
+3. **Dual-Lens Wire**: Watch candlestick patterns and news catalysts stream into the dashboard in real time.
+4. **Approval Cards**: Click `Approve`, `Sell`, or `Reject` directly in the cockpit.
+
+---
+
+### Step 6: Testing Self-Healing & The 4-Act Grand Presentation
+- **Self-Healing Test**:
+  - Run `npm run demo:heal` in your terminal or send `/heal` in Telegram.
+  - Watch webcmd detect a broken DOM recipe, automatically re-explore selectors, compile a new `v2` recipe, and recover without crashing!
+- **4-Act Competition Demo**:
+  - Run `npm run demo`.
+  - Sit back and watch the comprehensive scripted narration of Acts 1 to 4 demonstrating perception, memory adaptation, supervised TradingView execution, and self-healing resilience.
 
 ---
 

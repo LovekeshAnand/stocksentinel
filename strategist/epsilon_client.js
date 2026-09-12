@@ -158,8 +158,20 @@ Respond strictly with a single JSON object in this exact schema:
     let qty = 10;
     let rationale = '';
 
-    // Condition 0: Low user trust on this ticker from past rejections (< 0.50)
-    if (trustScore < 0.50 && trustContext && trustContext.rejectedCount > 0) {
+    const memoryStore = require('../memory/store');
+    const port = memoryStore.getPortfolio();
+    const heldPosition = (port.positions || []).find(p => p.ticker === ticker);
+
+    // Condition 0A: User holds shares and signals indicate Overbought RSI (>70) or Bearish Breakdown -> Take Profit / Exit SELL
+    if (heldPosition && heldPosition.quantity > 0 && ((chartSignal?.rsi && chartSignal.rsi >= 70) || chartBearish || newsNegative)) {
+      action = 'sell';
+      confidence = 'high';
+      qty = heldPosition.quantity;
+      const trigger = chartSignal?.rsi >= 70 ? `Overbought RSI (${chartSignal.rsi})` : (chartBearish ? `Technical breakdown (${chartSignal.pattern_details})` : `Negative news catalyst ("${newsSignal.headline}")`);
+      rationale = `🎯 Take-Profit / Risk-Reduction: Portfolio currently holds ${heldPosition.quantity} shares of ${ticker} @ avg ₹${heldPosition.entryPrice}. ${trigger} signals opportune exit to secure gains or protect capital.`;
+    }
+    // Condition 0B: Low user trust on this ticker from past rejections (< 0.50)
+    else if (trustScore < 0.50 && trustContext && trustContext.rejectedCount > 0) {
       action = 'hold';
       confidence = 'low';
       qty = 0;
@@ -170,8 +182,9 @@ Respond strictly with a single JSON object in this exact schema:
       action = 'buy';
       confidence = trustScore >= 0.80 ? 'high' : 'medium';
       qty = Math.min(25, Math.max(5, Math.round(15 * trustScore)));
+      const holdNote = (heldPosition && heldPosition.quantity > 0) ? ` (Holding ${heldPosition.quantity} shares)` : '';
       const trustBonus = trustScore >= 0.80 ? ` [Memory Trust: ${(trustScore*100).toFixed(0)}% aligns]` : '';
-      rationale = `High-conviction bullish convergence${trustBonus}: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}, reinforced by Agent A2 detecting positive news catalyst: "${newsSignal.headline}". Both technical and fundamental lenses align.`;
+      rationale = `High-conviction bullish convergence${holdNote}${trustBonus}: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}, reinforced by Agent A2 detecting positive news catalyst: "${newsSignal.headline}". Both technical and fundamental lenses align.`;
     }
     // Condition 2: Both signals agree BEARISH
     else if (chartBearish && newsNegative) {

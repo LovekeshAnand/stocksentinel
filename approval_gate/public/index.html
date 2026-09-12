@@ -509,8 +509,11 @@
       if (stats.portfolio) renderPortfolio(stats.portfolio);
     }
 
+    let currentPortfolioData = null;
+
     function renderPortfolio(port) {
       if (!port) return;
+      currentPortfolioData = port;
       portCash.innerText = '₹' + Number(port.cash || 1000000).toLocaleString('en-IN');
       const pnl = Number(port.realizedPnl || 0);
       portRealizedPnl.innerText = (pnl >= 0 ? '+' : '') + '₹' + pnl.toLocaleString('en-IN');
@@ -529,6 +532,7 @@
             <span><b>${pos.ticker}</b> (${pos.quantity})</span>
             <span>@ ₹${pos.entryPrice}</span>
             <span class="pos-pnl-pos">+0.30%</span>
+            <button class="btn" style="background:rgba(239,68,68,0.25); color:#fca5a5; border:1px solid #ef4444; padding:2px 7px; font-size:10px; border-radius:4px; margin-left:6px; cursor:pointer;" onclick="exitPositionDirect('${pos.ticker}', ${pos.quantity})">Sell</button>
           </div>
         `).join('');
       }
@@ -584,6 +588,15 @@
       proposalsList.innerHTML = proposals.map(p => {
         const badgeClass = p.action === 'buy' ? 'badge-buy' : (p.action === 'sell' ? 'badge-sell' : 'badge-hold');
 
+        const heldPos = (currentPortfolioData?.positions || []).find(pos => pos.ticker === p.ticker);
+
+        const holdingBox = (heldPos && heldPos.quantity > 0)
+          ? `<div style="background:rgba(234, 179, 8, 0.12); border:1px solid rgba(234, 179, 8, 0.35); border-radius:6px; padding:6px 10px; font-size:12px; color:#fde047; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+               <span>💼 <b>Current Position:</b> Holding <b>${heldPos.quantity} shares</b> @ avg ₹${heldPos.entryPrice}</span>
+               <span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:#4ade80;">P&L: ${heldPos.pnl >= 0 ? '+' : ''}₹${heldPos.pnl || 0}</span>
+             </div>`
+          : '';
+
         const chartEvidence = p.chartSignal
           ? `<div class="evidence-box evidence-chart">
                <b>📊 Agent A1 (Chart Pattern):</b> <code>${p.chartSignal.pattern_type}</code> — ${p.chartSignal.pattern_details || ''} (₹${p.chartSignal.price || 'N/A'} | RSI: ${p.chartSignal.rsi || '58'})
@@ -596,12 +609,19 @@
              </div>`
           : '';
 
+        const sellBtn = (heldPos && heldPos.quantity > 0)
+          ? `<button class="btn" style="background:#ef4444; color:#fff; font-weight:800; border:none; box-shadow:0 0 10px rgba(239,68,68,0.3);" onclick="sellHeldTrade('${p.id}', '${p.ticker}', ${heldPos.quantity})">
+               🔴 Sell / Exit (${heldPos.quantity} shares)
+             </button>`
+          : '';
+
         return `
           <div class="proposal-card" id="card-${p.id}">
             <div class="proposal-top">
               <div class="proposal-ticker">NSE:${p.ticker}</div>
               <div class="badge ${badgeClass}">${p.action}</div>
             </div>
+            ${holdingBox}
             ${chartEvidence}
             ${newsEvidence}
             <div class="rationale-box">
@@ -614,8 +634,9 @@
             </div>
             <div class="actions-row">
               <button class="btn btn-approve" onclick="approveTrade('${p.id}')">
-                ✅ Approve & Execute Trade
+                ✅ Approve & Execute (${p.action.toUpperCase()} ${p.suggested_quantity})
               </button>
+              ${sellBtn}
               <button class="btn btn-reject" onclick="rejectTrade('${p.id}')">
                 ❌ Reject
               </button>
@@ -650,6 +671,27 @@
     async function approveTrade(id) {
       log(`User clicked Approve for proposal ${id}...`);
       await fetch(`/api/proposals/${id}/approve`, { method: 'POST' });
+    }
+
+    async function sellHeldTrade(id, ticker, qty) {
+      log(`Selling ${qty} shares of ${ticker} from proposal ${id}...`);
+      await fetch(`/api/proposals/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sell', quantity: qty })
+      });
+      fetchPending();
+      fetchStats();
+    }
+
+    async function exitPositionDirect(ticker, qty) {
+      log(`Quick-selling ${qty} shares of ${ticker}...`);
+      await fetch('/api/portfolio/sell', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ticker, quantity: qty })
+      });
+      fetchStats();
     }
 
     async function rejectTrade(id) {

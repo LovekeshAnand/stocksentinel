@@ -60,12 +60,40 @@ class DashboardServer {
       });
     });
 
-    // API: Web-based Approval
+    // API: Web-based Approval (Supports action/qty override, e.g. SELL held stock)
     this.app.post('/api/proposals/:id/approve', (req, res) => {
       try {
-        const result = gateLogic.approveProposal(req.params.id, 'Approved via Web Dashboard');
+        let result;
+        if (req.body && (req.body.action || req.body.quantity)) {
+          result = gateLogic.modifyAndApprove(req.params.id, {
+            action: req.body.action,
+            quantity: req.body.quantity
+          });
+        } else {
+          result = gateLogic.approveProposal(req.params.id, 'Approved via Web Dashboard');
+        }
         this.broadcast('PORTFOLIO_UPDATED', memoryStore.getPortfolio());
         res.json(result);
+      } catch (err) {
+        res.status(400).json({ error: err.message });
+      }
+    });
+
+    // API: Direct Exit / Sell of held portfolio position
+    this.app.post('/api/portfolio/sell', async (req, res) => {
+      const sym = (req.body.ticker || '').toUpperCase();
+      const qty = parseInt(req.body.quantity, 10) || 10;
+      try {
+        const executor = require('../agents/agent_b_executor/webcmd_trade');
+        const tradeRes = await executor.executeApprovedTrade({
+          id: `web_exit_${Date.now()}`,
+          ticker: sym,
+          action: 'SELL',
+          suggested_quantity: qty,
+          price: executor.getBenchmarkPrice(sym)
+        });
+        this.broadcast('PORTFOLIO_UPDATED', memoryStore.getPortfolio());
+        res.json({ ok: true, trade: tradeRes });
       } catch (err) {
         res.status(400).json({ error: err.message });
       }

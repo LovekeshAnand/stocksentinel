@@ -2,8 +2,8 @@
   "agent": "agent_b_executor",
   "command": "execute_indian_paper_trade",
   "platform": "TradingView India Paper Simulator",
-  "lastSymbol": "TATAMOTORS",
+  "lastSymbol": "RELIANCE",
   "lastAction": "BUY",
-  "url": "https://in.tradingview.com/chart/?symbol=NSE%3ATATAMOTORS",
-  "executedAt": "2026-09-12T08:51:22.845Z"
+  "url": "https://in.tradingview.com/chart/?symbol=NSE%3ARELIANCE",
+  "executedAt": "2026-09-12T08:58:10.462Z"
 }
