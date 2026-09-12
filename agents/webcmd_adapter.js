@@ -29,18 +29,24 @@ class WebcmdAdapter {
    * Detect installed Chrome or Edge executable on Windows
    */
   getExecutablePath() {
+    const localAppData = process.env.LOCALAPPDATA || '';
     const candidates = [
       'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
       'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      localAppData + '\\Google\\Chrome\\Application\\chrome.exe',
       'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
       'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
       process.env.CHROME_BIN || ''
     ];
 
     for (const p of candidates) {
-      if (p && fs.existsSync(p)) return p;
+      if (p && fs.existsSync(p)) {
+        console.log(`[webcmd] Using browser executable: ${p}`);
+        return p;
+      }
     }
-    return 'chrome.exe';
+    console.warn('[webcmd] WARNING: No browser executable found in standard paths. Falling back to "chrome".');
+    return 'chrome';
   }
 
   /**
@@ -49,20 +55,25 @@ class WebcmdAdapter {
   async getBrowser(headless = false) {
     if (!this.browser || !this.browser.connected) {
       const executablePath = this.getExecutablePath();
+      console.log(`[webcmd] Launching visible browser (headless=${headless})...`);
       this.browser = await puppeteer.launch({
         executablePath,
         headless: headless ? 'new' : false,
-        defaultViewport: null, // Full responsive layout
+        slowMo: headless ? 0 : 80, // 80ms slowdown makes every action visibly smooth
+        defaultViewport: null,     // Full responsive layout — no artificial viewport cap
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-blink-features=AutomationControlled',
           '--disable-infobars',
+          '--disable-extensions',
           '--start-maximized',
-          '--window-size=1440,920'
+          '--window-size=1440,900',
+          '--window-position=0,0'
         ]
       });
       this.tabs = {};
+      console.log('[webcmd] Visible browser window launched on desktop.');
     }
     return this.browser;
   }

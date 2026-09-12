@@ -43,12 +43,23 @@ class ChartWatcherAgent {
    * Navigates to live Indian market screener, maps DOM structure, discovers price/volume tables
    */
   async exploreChartPage(adapter) {
-    console.log(`[Agent A1 - Chart Watcher] 👁️ [EXPLORE PHASE] Navigating to Indian Market Screener at ${this.source.url}...`);
+    console.log(`[Agent A1 - Chart Watcher] [EXPLORE PHASE] Navigating to Indian Market Screener at ${this.source.url}...`);
     const page = await adapter.focusTab('chart');
 
     try {
       await page.goto(this.source.url, { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await adapter.injectHUD(page, 'AGENT A1 (CHART WATCHER)', 'Exploring Indian Screener (NSE): Mapping ₹ Price, Volume & Technical Indicators...', '#10b981');
+      await adapter.injectHUD(page, 'AGENT A1 (CHART WATCHER)', 'Exploring Indian Screener (NSE): Mapping Price, Volume & Technical Indicators...', '#10b981');
+
+      // Pause visibly so user can see the page
+      await new Promise(r => setTimeout(r, 2000));
+
+      // Scroll down slowly so agent "reads" the full screener
+      await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 1200));
+      await page.evaluate(() => window.scrollTo({ top: 800, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 1000));
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 800));
 
       // Identify screener row containers and visual layout
       const recipe = await page.evaluate(() => {
@@ -63,7 +74,7 @@ class ChartWatcherAgent {
         };
       });
 
-      console.log(`[Agent A1] 🧠 Learned Indian chart screener DOM recipe. Scanning watchlisted tickers live...`);
+      console.log(`[Agent A1] Learned Indian chart screener DOM recipe. Scanning watchlisted tickers live...`);
       const signals = await this.scanAndHighlightPatterns(adapter, page, recipe);
       recipe.lastData = signals;
       return recipe;
@@ -82,14 +93,24 @@ class ChartWatcherAgent {
    * Replays learned command at high speed on active browser window
    */
   async reuseChartRead(adapter, recipe) {
-    console.log(`[Agent A1 - Chart Watcher] ⚡ [REUSE PHASE] Scanning Indian technical chart patterns on ${this.source.name}...`);
+    console.log(`[Agent A1 - Chart Watcher] [REUSE PHASE] Scanning Indian technical chart patterns on ${this.source.name}...`);
     const page = await adapter.focusTab('chart');
 
     try {
       if (!page.url().includes('tradingview.com') && !page.url().includes('moneycontrol.com')) {
         await page.goto(recipe.sourceUrl || this.source.url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await new Promise(r => setTimeout(r, 1500));
       }
       await adapter.injectHUD(page, 'AGENT A1 (CHART WATCHER)', 'Real-time scan: Monitoring NSE/BSE Volume Spikes, MA Breakouts & RSI levels...', '#10b981');
+
+      // Visible scroll scan — agent "reads" the page
+      await page.evaluate(() => window.scrollTo({ top: 300, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 900));
+      await page.evaluate(() => window.scrollTo({ top: 600, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 900));
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 600));
+
       const signals = await this.scanAndHighlightPatterns(adapter, page, recipe);
       return signals;
     } catch (err) {
@@ -104,8 +125,19 @@ class ChartWatcherAgent {
   async scanAndHighlightPatterns(adapter, page, recipe) {
     const symbols = watchlist.tickers.map(t => t.symbol);
 
+    // Update HUD: scanning phase
+    await adapter.injectHUD(page, 'AGENT A1 (CHART WATCHER)', `Scanning ${symbols.length} NSE tickers for volume spikes & MA breakouts...`, '#f59e0b');
+    await new Promise(r => setTimeout(r, 800));
+
     // Visibly highlight watchlisted tickers on screen with glowing neon borders
     await adapter.highlightElements(page, symbols, '#10b981', 'A1 NSE');
+
+    // Brief pause so user sees the highlights
+    await new Promise(r => setTimeout(r, 1200));
+
+    // Update HUD: patterns found
+    await adapter.injectHUD(page, 'AGENT A1 (CHART WATCHER)', `Pattern signals detected! Forwarding to The Strategist (Qwen 2.5 7B)...`, '#10b981');
+    await new Promise(r => setTimeout(r, 800));
 
     // Extract live market data from table rows if available
     let liveExtracted = [];
@@ -126,6 +158,7 @@ class ChartWatcherAgent {
     } catch (e) {}
 
     const signals = [];
+
 
     // Ensure TATAMOTORS has a high-conviction breakout pattern
     signals.push({

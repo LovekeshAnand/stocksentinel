@@ -236,21 +236,21 @@ You can ask me questions anytime (e.g., "What do you think of TSLA?", "What is y
         await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Type new quantity' });
         await this.sendMessage(chatId, `✏️ Please type the *new quantity* you wish to execute for proposal *${param}*:`);
       } else if (action === 'demo') {
-        const sym = param || 'TSLA';
+        const sym = param || 'TATAMOTORS';
         await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Simulating ${sym}...` });
         gateLogic.submitProposal({
           ticker: sym,
           action: 'buy',
           suggested_quantity: 15,
           confidence: 'high',
-          headline: `${sym} records strong upside catalyst with record market volume`,
-          rationale: `Strong momentum breakout detected on ${sym}. Favorable risk/reward profile for strategic long entry.`,
+          headline: `${sym} records strong upside catalyst with record NSE market volume`,
+          rationale: `Strong momentum breakout detected on ${sym} (NSE). Favorable risk/reward profile for strategic long entry.`,
           engine: 'Local Qwen 2.5 7B'
         });
       } else if (data === 'cmd_status') {
         await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Loading status...' });
         const pending = gateLogic.getPendingList();
-        await this.sendMessage(chatId, `📊 *Cockpit Status*\nPending Approvals: *${pending.length}*\nWatching: *TSLA, NVDA, AAPL, MSFT, GOOGL*`);
+        await this.sendMessage(chatId, `📊 *Cockpit Status*\nPending Approvals: *${pending.length}*\nWatching: *RELIANCE, TATAMOTORS, HDFCBANK, TCS, INFY*`);
       }
     } catch (err) {
       await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Notice: ${err.message}` });
@@ -319,8 +319,8 @@ StockSentinel is an advanced *human-gated trading agent* built for the SLAB Hack
 
 I received: _"${query}"_
 
-I am actively monitoring the markets for: *TSLA, NVDA, AAPL, MSFT, GOOGL*.
-Whenever breaking news breaks on these tickers, I'll formulate a trade proposal and ask for your approval here!
+I am actively monitoring the Indian markets (NSE) for: *RELIANCE, TATAMOTORS, HDFCBANK, TCS, INFY*.
+Whenever breaking news or a chart breakout signals on these tickers, I'll formulate a trade proposal and ask for your approval here!
 
 📌 *Quick Actions:*
 • /status — Check pipeline status
@@ -331,7 +331,7 @@ Whenever breaking news breaks on these tickers, I'll formulate a trade proposal 
 
     return this.sendMessage(chatId, fallbackText, [
       [
-        { text: '⚡ Trigger Demo Signal', callback_data: 'demo:TSLA' },
+        { text: '⚡ Trigger Demo Signal', callback_data: 'demo:TATAMOTORS' },
         { text: '📊 Cockpit Status', callback_data: 'cmd_status' }
       ]
     ]);

@@ -27,23 +27,28 @@ async function bootstrap() {
 
     // 2. Report Telegram Bot status
     if (settings.telegram.token && settings.telegram.token !== 'your_bot_token_here') {
-      console.log('[System] 📱 Telegram Approval Gate: ACTIVE.');
+      console.log('[System] Telegram Approval Gate: ACTIVE — watching for messages from your phone.');
     } else {
-      console.log('[System] ℹ️  Telegram Approval Gate: STANDBY. (Add TELEGRAM_BOT_TOKEN to .env to connect your phone)');
+      console.log('[System] Telegram Approval Gate: STANDBY. (Add TELEGRAM_BOT_TOKEN to .env to connect your phone)');
     }
 
     // 3. Report Local LLM Epsilon Engine status
-    console.log(`[System] 🧠 Reasoning Layer: Local Epsilon Engine (${settings.epsilon.tier.toUpperCase()} / Qwen 2.5 7B)`);
+    console.log(`[System] Reasoning Layer: Local Epsilon Engine (${settings.epsilon.tier.toUpperCase()} / Qwen 2.5 7B)`);
 
     // 4. Pre-launch Visible Browser immediately on desktop
-    console.log('[System] 🚀 Launching visible browser automation window...');
+    console.log('[System] Launching visible browser automation window...');
     const webcmd = require('./agents/webcmd_adapter');
     const chartPage = await webcmd.focusTab('chart');
     const targetUrl = settings.chartSources[0].url;
-    console.log(`[System] 👁️  Opening Indian Market Screener: ${targetUrl}`);
-    chartPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
-      .then(() => webcmd.injectHUD(chartPage, 'AGENT A1 (CHART WATCHER)', 'Monitoring Indian Equities (NSE/BSE): Volume Spikes & MA Breakouts', '#10b981'))
-      .catch(() => {});
+    console.log(`[System] Opening Indian Market Screener: ${targetUrl}`);
+
+    await chartPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await webcmd.injectHUD(chartPage, 'STOCKSENTINEL SYSTEM', 'Browser automation live! Initializing multi-agent monitoring pipeline...', '#6366f1');
+
+    // Hold for 2 seconds so user can clearly see the browser is open
+    await new Promise(r => setTimeout(r, 2000));
+
+    console.log('[System] Browser visible on desktop. Starting multi-agent pipeline...');
 
     // 5. Start Multi-Agent Orchestration Pipeline
     await pipeline.start();

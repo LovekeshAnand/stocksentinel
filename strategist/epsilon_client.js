@@ -12,7 +12,7 @@ const settings = require('../config/settings');
 class EpsilonClient {
   constructor(config = settings.epsilon) {
     this.config = config;
-    this.serverPort = 8089; // Default port for balanced tier (Qwen 2.5 7B)
+    this.serverPort = 8088; // Matches server_port in engine/config.yaml
   }
 
   /**

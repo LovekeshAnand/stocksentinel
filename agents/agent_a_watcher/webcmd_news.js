@@ -62,12 +62,23 @@ class NewsWatcherAgent {
    * Visibly maps news page, injects HUD, highlights Indian market catalysts on screen
    */
   async exploreNewsPage(adapter) {
-    console.log(`[Agent A2 - News Watcher] 👁️ [EXPLORE PHASE] Navigating to Indian market news at ${this.source.url}...`);
+    console.log(`[Agent A2 - News Watcher] [EXPLORE PHASE] Navigating to Indian market news at ${this.source.url}...`);
     const page = await adapter.focusTab('news');
 
     try {
       await page.goto(this.source.url, { waitUntil: 'domcontentloaded', timeout: 30000 });
       await adapter.injectHUD(page, 'AGENT A2 (NEWS WATCHER)', 'Exploring Indian News Wires: Mapping Dalal Street headlines & corporate catalysts...', '#38bdf8');
+
+      // Pause so user can see the live news page
+      await new Promise(r => setTimeout(r, 2000));
+
+      // Scroll slowly — agent visibly "reads" the news
+      await page.evaluate(() => window.scrollTo({ top: 500, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 1200));
+      await page.evaluate(() => window.scrollTo({ top: 1000, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 1000));
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 800));
 
       // Fast ingest with Scrapling in parallel
       const scraplingPromise = this.fetchViaScrapling(this.source.url);
@@ -87,6 +98,9 @@ class NewsWatcherAgent {
       const keywords = watchlist.tickers.flatMap(t => [t.symbol, t.name.split(' ')[0]]);
       await adapter.highlightElements(page, keywords, '#38bdf8', 'A2 CATALYST');
 
+      // Brief pause to show highlights
+      await new Promise(r => setTimeout(r, 1500));
+
       const scraplingResult = await scraplingPromise;
       let articles = (scraplingResult.ok && scraplingResult.articles) ? scraplingResult.articles : [];
 
@@ -94,7 +108,7 @@ class NewsWatcherAgent {
         articles = await this.scrapePageWithRecipe(page, recipe);
       }
 
-      console.log(`[Agent A2] 🧠 Formed Indian news recipe. ${articles.length} headlines ingested.`);
+      console.log(`[Agent A2] Formed Indian news recipe. ${articles.length} headlines ingested.`);
       recipe.lastData = articles.length > 0 ? articles : this.getLiveFallbackArticles();
       return recipe;
 
@@ -115,19 +129,29 @@ class NewsWatcherAgent {
    * Replays learned command, updates HUD, and highlights live news items on screen
    */
   async reuseNewsRead(adapter, recipe) {
-    console.log(`[Agent A2 - News Watcher] ⚡ [REUSE PHASE] Polling Indian market wires on ${this.source.name}...`);
+    console.log(`[Agent A2 - News Watcher] [REUSE PHASE] Polling Indian market wires on ${this.source.name}...`);
     const page = await adapter.focusTab('news');
 
     try {
       if (!page.url().includes('moneycontrol.com') && !page.url().includes('economictimes.indiatimes.com')) {
         await page.goto(recipe.sourceUrl || this.source.url, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await new Promise(r => setTimeout(r, 1500));
       }
 
       await adapter.injectHUD(page, 'AGENT A2 (NEWS WATCHER)', 'Real-time scan: Extracting Dalal Street news sentiment & NSE catalysts...', '#38bdf8');
 
+      // Visible scroll — agent reads headlines
+      await page.evaluate(() => window.scrollTo({ top: 400, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 900));
+      await page.evaluate(() => window.scrollTo({ top: 800, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 900));
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      await new Promise(r => setTimeout(r, 600));
+
       // Highlight Indian keywords on screen
       const keywords = watchlist.tickers.flatMap(t => [t.symbol, t.name.split(' ')[0]]);
       await adapter.highlightElements(page, keywords, '#38bdf8', 'A2 CATALYST');
+      await new Promise(r => setTimeout(r, 1000));
 
       // Fast fetch articles
       const scraplingResult = await this.fetchViaScrapling(recipe.sourceUrl || this.source.url);
