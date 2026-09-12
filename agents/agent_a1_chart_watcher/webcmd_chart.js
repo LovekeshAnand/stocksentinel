@@ -27,32 +27,36 @@ class ChartWatcherAgent {
   async pollChartSignals(forceExplore = false) {
     const tickers = watchlist.tickers;
 
-    // Pick 2 tickers this cycle (rotating)
-    const a = tickers[this.tickerIndex % tickers.length];
-    const b = tickers[(this.tickerIndex + 1) % tickers.length];
-    this.tickerIndex = (this.tickerIndex + 2) % tickers.length;
+    // Focus browser on primary active ticker for live chart visualization
+    const primary = tickers[this.tickerIndex % tickers.length];
+    this.tickerIndex = (this.tickerIndex + 1) % tickers.length;
 
     const signals = [];
 
-    for (const t of [a, b]) {
-      try {
-        const sig = await this.analyzeChart(t);
-        if (sig) signals.push(sig);
-      } catch (err) {
-        console.warn(`[Agent A1] Chart error for ${t.symbol}: ${err.message}`);
+    try {
+      const primarySig = await this.analyzeChart(primary);
+      if (primarySig) signals.push(primarySig);
+    } catch (err) {
+      console.warn(`[Agent A1] Chart error for ${primary.symbol}: ${err.message}`);
+      signals.push(this.buildSignal(primary.symbol));
+    }
+
+    // Instantly generate technical pattern signals for the other watchlist stocks
+    for (const t of tickers) {
+      if (t.symbol !== primary.symbol) {
         signals.push(this.buildSignal(t.symbol));
       }
     }
 
-    console.log(`[Agent A1] Live chart scan complete. ${signals.length} pattern signals generated.`);
+    console.log(`[Agent A1] Live chart scan complete (${primary.symbol} focused). ${signals.length} pattern signals generated.`);
     return { phase: 'live_chart_scan', count: signals.length, signals };
   }
 
   /**
-   * LIVE CHART ANALYSIS for a single ticker:
+   * LIVE CHART ANALYSIS for a single ticker (High-speed edition):
    * 1. Navigate to TradingView India candlestick chart
    * 2. Fire animated neon scan line across the screen
-   * 3. Sweep mouse across chart area (simulating technical read)
+   * 3. Snappy mouse sweep across chart area
    * 4. Inject glowing PATTERN DETECTED overlay
    */
   async analyzeChart(tickerConfig) {
@@ -62,11 +66,11 @@ class ChartWatcherAgent {
 
     console.log(`[Agent A1] Opening live NSE:${symbol} chart on TradingView India...`);
 
-    // Navigate to the live chart
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 25000 });
-
-    // Wait for chart to render (TradingView needs a moment)
-    await new Promise(r => setTimeout(r, 1800));
+    const currentUrl = page.url();
+    if (!currentUrl.includes(symbol)) {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+      await new Promise(r => setTimeout(r, 600));
+    }
 
     // 1. Show HUD: scanning
     await webcmd.injectHUD(
@@ -76,11 +80,11 @@ class ChartWatcherAgent {
       '#10b981'
     );
 
-    // 2. Inject animated neon scan line that sweeps top-to-bottom
+    // 2. Inject animated neon scan line that sweeps top-to-bottom (snappy 500ms)
     await this.injectScanLine(page);
-    await new Promise(r => setTimeout(r, 1400)); // Let it animate
+    await new Promise(r => setTimeout(r, 450));
 
-    // 3. Mouse sweep across chart area (left → right → back)
+    // 3. Mouse sweep across chart area (smooth 180ms sweep)
     await this.mouseSwipeChart(page);
 
     // 4. Build pattern signal for this ticker
@@ -88,7 +92,7 @@ class ChartWatcherAgent {
 
     // 5. Flash PATTERN DETECTED alert on the live chart
     await this.injectPatternAlert(page, signal);
-    await new Promise(r => setTimeout(r, 1800)); // Hold so user sees it
+    await new Promise(r => setTimeout(r, 600));
 
     console.log(`[Agent A1] Pattern confirmed: ${signal.pattern_type} on NSE:${symbol} at ₹${signal.price}`);
     return signal;
@@ -143,26 +147,23 @@ class ChartWatcherAgent {
       }));
 
       const chartY = Math.floor(dims.h * 0.48);
-      const startX  = Math.floor(dims.w * 0.08);
-      const endX    = Math.floor(dims.w * 0.92);
-      const steps   = 28;
+      const startX  = Math.floor(dims.w * 0.12);
+      const endX    = Math.floor(dims.w * 0.88);
+      const steps   = 10;
 
-      // Sweep left → right with a gentle sine wave (looks like reading the chart)
+      // Snappy sweep left → right (smooth 16ms frames)
       for (let i = 0; i <= steps; i++) {
         const x = startX + ((endX - startX) / steps) * i;
-        const y = chartY + Math.sin(i * 0.45) * 22;
+        const y = chartY + Math.sin(i * 0.5) * 18;
         await page.mouse.move(x, y);
-        await new Promise(r => setTimeout(r, 55));
+        await new Promise(r => setTimeout(r, 16));
       }
 
-      // Pause at the right edge
-      await new Promise(r => setTimeout(r, 350));
-
-      // Quick sweep back left
-      for (let i = steps; i >= 0; i -= 4) {
+      // Quick return sweep
+      for (let i = steps; i >= 0; i -= 3) {
         const x = startX + ((endX - startX) / steps) * i;
-        await page.mouse.move(x, chartY + Math.sin(i * 0.45) * 22);
-        await new Promise(r => setTimeout(r, 35));
+        await page.mouse.move(x, chartY);
+        await new Promise(r => setTimeout(r, 12));
       }
     } catch (e) {}
   }

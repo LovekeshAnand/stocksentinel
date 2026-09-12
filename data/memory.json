@@ -647,6 +647,230 @@
       "volume": "6.1M",
       "technical_bias": "BULLISH",
       "receivedAt": "2026-09-12T07:36:31.368Z"
+    },
+    {
+      "id": "chart_RELIANCE_1789199192159",
+      "ticker": "RELIANCE",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:46:32.159Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+      "price": 2942,
+      "rsi": 67.8,
+      "volume": "8.6M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:46:54.858Z"
+    },
+    {
+      "id": "news_RELIANCE_1789199214857_51",
+      "ticker": "RELIANCE",
+      "headline": "Reliance Industries Ltd drops for fifth straight session",
+      "snippet": "Reliance Industries Ltd drops for fifth straight session (Reliance Industries Ltd.)",
+      "source": "Business Standard",
+      "timestamp": "Fri, 11 Sep 2026 10:01:01 GMT",
+      "raw_sentiment_hint": "negative",
+      "receivedAt": "2026-09-12T07:46:54.859Z"
+    },
+    {
+      "id": "chart_TATAMOTORS_1789199203846",
+      "ticker": "TATAMOTORS",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:46:43.846Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+      "price": 988.5,
+      "rsi": 72.4,
+      "volume": "14.2M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:47:09.894Z"
+    },
+    {
+      "id": "news_TATAMOTORS_1789199214857_290",
+      "ticker": "TATAMOTORS",
+      "headline": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+      "snippet": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+      "source": "Live Financial Search",
+      "timestamp": "2026-09-12T07:46:54.724Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:47:09.895Z"
+    },
+    {
+      "id": "news_HDFCBANK_1789199214857_194",
+      "ticker": "HDFCBANK",
+      "headline": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag",
+      "snippet": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag (HDFC Bank Ltd.)",
+      "source": "Moneycontrol.com",
+      "timestamp": "Fri, 11 Sep 2026 08:58:24 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:47:24.911Z"
+    },
+    {
+      "id": "news_TCS_1789199214857_967",
+      "ticker": "TCS",
+      "headline": "TCS Share Price",
+      "snippet": "TCS Share Price (Tata Consultancy Services Ltd.)",
+      "source": "upstox.com",
+      "timestamp": "Wed, 09 Sep 2026 23:59:13 GMT",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:47:39.930Z"
+    },
+    {
+      "id": "news_INFY_1789199214857_107",
+      "ticker": "INFY",
+      "headline": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story",
+      "snippet": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story (Infosys Ltd.)",
+      "source": "Kalkine India",
+      "timestamp": "Wed, 09 Sep 2026 08:46:00 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:47:54.959Z"
+    },
+    {
+      "id": "news_ICICIBANK_1789199214857_1",
+      "ticker": "ICICIBANK",
+      "headline": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart",
+      "snippet": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart (ICICI Bank Ltd.)",
+      "source": "upstox.com",
+      "timestamp": "Fri, 11 Sep 2026 07:22:09 GMT",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:48:09.987Z"
+    },
+    {
+      "id": "chart_RELIANCE_1789199655996",
+      "ticker": "RELIANCE",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:54:15.996Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+      "price": 2942,
+      "rsi": 67.8,
+      "volume": "8.6M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:54:24.970Z"
+    },
+    {
+      "id": "news_RELIANCE_1789199664970_592",
+      "ticker": "RELIANCE",
+      "headline": "Reliance Industries Ltd drops for fifth straight session",
+      "snippet": "Reliance Industries Ltd drops for fifth straight session (Reliance Industries Ltd.)",
+      "source": "Business Standard",
+      "timestamp": "Fri, 11 Sep 2026 10:01:01 GMT",
+      "raw_sentiment_hint": "negative",
+      "receivedAt": "2026-09-12T07:54:24.972Z"
+    },
+    {
+      "id": "chart_TATAMOTORS_1789199655996",
+      "ticker": "TATAMOTORS",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:54:15.996Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+      "price": 988.5,
+      "rsi": 72.4,
+      "volume": "14.2M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:54:24.977Z"
+    },
+    {
+      "id": "news_TATAMOTORS_1789199664970_477",
+      "ticker": "TATAMOTORS",
+      "headline": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+      "snippet": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+      "source": "Live Financial Search",
+      "timestamp": "2026-09-12T07:54:24.838Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:54:24.978Z"
+    },
+    {
+      "id": "chart_HDFCBANK_1789199655996",
+      "ticker": "HDFCBANK",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:54:15.996Z",
+      "pattern_type": "consolidation_breakout",
+      "pattern_details": "Clean break above ₹1,635 resistance zone with expanding volume",
+      "price": 1648.75,
+      "rsi": 64.2,
+      "volume": "11.5M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:54:24.981Z"
+    },
+    {
+      "id": "news_HDFCBANK_1789199664970_73",
+      "ticker": "HDFCBANK",
+      "headline": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag",
+      "snippet": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag (HDFC Bank Ltd.)",
+      "source": "Moneycontrol.com",
+      "timestamp": "Fri, 11 Sep 2026 08:58:24 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:54:24.982Z"
+    },
+    {
+      "id": "chart_TCS_1789199655996",
+      "ticker": "TCS",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:54:15.996Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Bullish flag breakout above ₹3,920 on elevated weekly volume",
+      "price": 3958,
+      "rsi": 61.5,
+      "volume": "4.8M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:54:24.984Z"
+    },
+    {
+      "id": "news_TCS_1789199664970_246",
+      "ticker": "TCS",
+      "headline": "TCS Share Price",
+      "snippet": "TCS Share Price (Tata Consultancy Services Ltd.)",
+      "source": "upstox.com",
+      "timestamp": "Wed, 09 Sep 2026 23:59:13 GMT",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:54:24.984Z"
+    },
+    {
+      "id": "chart_INFY_1789199655996",
+      "ticker": "INFY",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:54:15.996Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870",
+      "price": 1892.3,
+      "rsi": 58.9,
+      "volume": "6.1M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:54:24.987Z"
+    },
+    {
+      "id": "news_INFY_1789199664970_807",
+      "ticker": "INFY",
+      "headline": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story",
+      "snippet": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story (Infosys Ltd.)",
+      "source": "Kalkine India",
+      "timestamp": "Wed, 09 Sep 2026 08:46:00 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:54:24.988Z"
+    },
+    {
+      "id": "chart_ICICIBANK_1789199655996",
+      "ticker": "ICICIBANK",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:54:15.996Z",
+      "pattern_type": "consolidation_breakout",
+      "pattern_details": "Channel breakout above ₹1,180 with RSI momentum confirmation",
+      "price": 1198.45,
+      "rsi": 66.3,
+      "volume": "9.3M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:54:24.990Z"
+    },
+    {
+      "id": "news_ICICIBANK_1789199664970_518",
+      "ticker": "ICICIBANK",
+      "headline": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart",
+      "snippet": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart (ICICI Bank Ltd.)",
+      "source": "upstox.com",
+      "timestamp": "Fri, 11 Sep 2026 07:22:09 GMT",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:54:24.991Z"
     }
   ],
   "proposals": [
@@ -1712,6 +1936,404 @@
       },
       "status": "PENDING",
       "createdAt": "2026-09-12T07:35:27.588Z"
+    },
+    {
+      "id": "prop_RELIANCE_1789199229890",
+      "ticker": "RELIANCE",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Signal conflict detected: Agent A1 indicates technical breakout (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI), but Agent A2 reports conflicting sentiment: \"Reliance Industries Ltd drops for fifth straight session\". Recommending hold until evidence reconciles.",
+      "confidence": "low",
+      "signals_considered": [
+        "chart: ma_crossover (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI)",
+        "news: negative sentiment (\"Reliance Industries Ltd drops for fifth straight session\")"
+      ],
+      "source_signal_ids": [
+        "chart_RELIANCE_1789199192159",
+        "news_RELIANCE_1789199214857_51"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_RELIANCE_1789199192159",
+        "ticker": "RELIANCE",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:46:32.159Z",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+        "price": 2942,
+        "rsi": 67.8,
+        "volume": "8.6M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_RELIANCE_1789199214857_51",
+        "ticker": "RELIANCE",
+        "headline": "Reliance Industries Ltd drops for fifth straight session",
+        "snippet": "Reliance Industries Ltd drops for fifth straight session (Reliance Industries Ltd.)",
+        "source": "Business Standard",
+        "timestamp": "Fri, 11 Sep 2026 10:01:01 GMT",
+        "raw_sentiment_hint": "negative"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:47:09.891Z"
+    },
+    {
+      "id": "prop_TATAMOTORS_1789199244909",
+      "ticker": "TATAMOTORS",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Bullish technical breakout: Agent A1 detected Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA at $988.5, with supportive market backdrop: \"Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live\".",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: volume_spike (Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA)",
+        "news: neutral sentiment (\"Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live\")"
+      ],
+      "source_signal_ids": [
+        "chart_TATAMOTORS_1789199203846",
+        "news_TATAMOTORS_1789199214857_290"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TATAMOTORS_1789199203846",
+        "ticker": "TATAMOTORS",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:46:43.846Z",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+        "price": 988.5,
+        "rsi": 72.4,
+        "volume": "14.2M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_TATAMOTORS_1789199214857_290",
+        "ticker": "TATAMOTORS",
+        "headline": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+        "snippet": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+        "source": "Live Financial Search",
+        "timestamp": "2026-09-12T07:46:54.724Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:47:24.909Z"
+    },
+    {
+      "id": "prop_HDFCBANK_1789199259929",
+      "ticker": "HDFCBANK",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Breaking fundamental catalyst: Agent A2 detected \"Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag\". Favorable risk/reward momentum.",
+      "confidence": "medium",
+      "signals_considered": [
+        "news: positive sentiment (\"Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag\")"
+      ],
+      "source_signal_ids": [
+        "news_HDFCBANK_1789199214857_194"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_HDFCBANK_1789199214857_194",
+        "ticker": "HDFCBANK",
+        "headline": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag",
+        "snippet": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag (HDFC Bank Ltd.)",
+        "source": "Moneycontrol.com",
+        "timestamp": "Fri, 11 Sep 2026 08:58:24 GMT",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:47:39.929Z"
+    },
+    {
+      "id": "prop_TCS_1789199274958",
+      "ticker": "TCS",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for TCS lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "news: neutral sentiment (\"TCS Share Price\")"
+      ],
+      "source_signal_ids": [
+        "news_TCS_1789199214857_967"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_TCS_1789199214857_967",
+        "ticker": "TCS",
+        "headline": "TCS Share Price",
+        "snippet": "TCS Share Price (Tata Consultancy Services Ltd.)",
+        "source": "upstox.com",
+        "timestamp": "Wed, 09 Sep 2026 23:59:13 GMT",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:47:54.959Z"
+    },
+    {
+      "id": "prop_INFY_1789199289986",
+      "ticker": "INFY",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Breaking fundamental catalyst: Agent A2 detected \"Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story\". Favorable risk/reward momentum.",
+      "confidence": "medium",
+      "signals_considered": [
+        "news: positive sentiment (\"Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story\")"
+      ],
+      "source_signal_ids": [
+        "news_INFY_1789199214857_107"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_INFY_1789199214857_107",
+        "ticker": "INFY",
+        "headline": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story",
+        "snippet": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story (Infosys Ltd.)",
+        "source": "Kalkine India",
+        "timestamp": "Wed, 09 Sep 2026 08:46:00 GMT",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:48:09.986Z"
+    },
+    {
+      "id": "prop_RELIANCE_1789199664976",
+      "ticker": "RELIANCE",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Signal conflict detected: Agent A1 indicates technical breakout (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI), but Agent A2 reports conflicting sentiment: \"Reliance Industries Ltd drops for fifth straight session\". Recommending hold until evidence reconciles.",
+      "confidence": "low",
+      "signals_considered": [
+        "chart: ma_crossover (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI)",
+        "news: negative sentiment (\"Reliance Industries Ltd drops for fifth straight session\")"
+      ],
+      "source_signal_ids": [
+        "chart_RELIANCE_1789199655996",
+        "news_RELIANCE_1789199664970_592"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_RELIANCE_1789199655996",
+        "ticker": "RELIANCE",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:54:15.996Z",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+        "price": 2942,
+        "rsi": 67.8,
+        "volume": "8.6M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_RELIANCE_1789199664970_592",
+        "ticker": "RELIANCE",
+        "headline": "Reliance Industries Ltd drops for fifth straight session",
+        "snippet": "Reliance Industries Ltd drops for fifth straight session (Reliance Industries Ltd.)",
+        "source": "Business Standard",
+        "timestamp": "Fri, 11 Sep 2026 10:01:01 GMT",
+        "raw_sentiment_hint": "negative"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:54:24.976Z"
+    },
+    {
+      "id": "prop_TATAMOTORS_1789199664980",
+      "ticker": "TATAMOTORS",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Bullish technical breakout: Agent A1 detected Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA at $988.5, with supportive market backdrop: \"Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live\".",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: volume_spike (Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA)",
+        "news: neutral sentiment (\"Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live\")"
+      ],
+      "source_signal_ids": [
+        "chart_TATAMOTORS_1789199655996",
+        "news_TATAMOTORS_1789199664970_477"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TATAMOTORS_1789199655996",
+        "ticker": "TATAMOTORS",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:54:15.996Z",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+        "price": 988.5,
+        "rsi": 72.4,
+        "volume": "14.2M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_TATAMOTORS_1789199664970_477",
+        "ticker": "TATAMOTORS",
+        "headline": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+        "snippet": "Edelweiss BSE LargeMid 60:40 Stable Divi. 50 ETF Share Price Live",
+        "source": "Live Financial Search",
+        "timestamp": "2026-09-12T07:54:24.838Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:54:24.980Z"
+    },
+    {
+      "id": "prop_HDFCBANK_1789199664983",
+      "ticker": "HDFCBANK",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Clean break above ₹1,635 resistance zone with expanding volume at $1648.75, reinforced by Agent A2 detecting positive news catalyst: \"Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: consolidation_breakout (Clean break above ₹1,635 resistance zone with expanding volume)",
+        "news: positive sentiment (\"Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag\")"
+      ],
+      "source_signal_ids": [
+        "chart_HDFCBANK_1789199655996",
+        "news_HDFCBANK_1789199664970_73"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_HDFCBANK_1789199655996",
+        "ticker": "HDFCBANK",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:54:15.996Z",
+        "pattern_type": "consolidation_breakout",
+        "pattern_details": "Clean break above ₹1,635 resistance zone with expanding volume",
+        "price": 1648.75,
+        "rsi": 64.2,
+        "volume": "11.5M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_HDFCBANK_1789199664970_73",
+        "ticker": "HDFCBANK",
+        "headline": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag",
+        "snippet": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag (HDFC Bank Ltd.)",
+        "source": "Moneycontrol.com",
+        "timestamp": "Fri, 11 Sep 2026 08:58:24 GMT",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:54:24.983Z"
+    },
+    {
+      "id": "prop_TCS_1789199664986",
+      "ticker": "TCS",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Bullish technical breakout: Agent A1 detected Bullish flag breakout above ₹3,920 on elevated weekly volume at $3958, with supportive market backdrop: \"TCS Share Price\".",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: ma_crossover (Bullish flag breakout above ₹3,920 on elevated weekly volume)",
+        "news: neutral sentiment (\"TCS Share Price\")"
+      ],
+      "source_signal_ids": [
+        "chart_TCS_1789199655996",
+        "news_TCS_1789199664970_246"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TCS_1789199655996",
+        "ticker": "TCS",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:54:15.996Z",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Bullish flag breakout above ₹3,920 on elevated weekly volume",
+        "price": 3958,
+        "rsi": 61.5,
+        "volume": "4.8M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_TCS_1789199664970_246",
+        "ticker": "TCS",
+        "headline": "TCS Share Price",
+        "snippet": "TCS Share Price (Tata Consultancy Services Ltd.)",
+        "source": "upstox.com",
+        "timestamp": "Wed, 09 Sep 2026 23:59:13 GMT",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:54:24.986Z"
+    },
+    {
+      "id": "prop_INFY_1789199664989",
+      "ticker": "INFY",
+      "action": "buy",
+      "suggested_quantity": 8,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870 at $1892.3, reinforced by Agent A2 detecting positive news catalyst: \"Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: volume_spike (Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870)",
+        "news: positive sentiment (\"Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story\")"
+      ],
+      "source_signal_ids": [
+        "chart_INFY_1789199655996",
+        "news_INFY_1789199664970_807"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_INFY_1789199655996",
+        "ticker": "INFY",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:54:15.996Z",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870",
+        "price": 1892.3,
+        "rsi": 58.9,
+        "volume": "6.1M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_INFY_1789199664970_807",
+        "ticker": "INFY",
+        "headline": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story",
+        "snippet": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story (Infosys Ltd.)",
+        "source": "Kalkine India",
+        "timestamp": "Wed, 09 Sep 2026 08:46:00 GMT",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:54:24.989Z"
+    },
+    {
+      "id": "prop_ICICIBANK_1789199664992",
+      "ticker": "ICICIBANK",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Bullish technical breakout: Agent A1 detected Channel breakout above ₹1,180 with RSI momentum confirmation at $1198.45, with supportive market backdrop: \"ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart\".",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: consolidation_breakout (Channel breakout above ₹1,180 with RSI momentum confirmation)",
+        "news: neutral sentiment (\"ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart\")"
+      ],
+      "source_signal_ids": [
+        "chart_ICICIBANK_1789199655996",
+        "news_ICICIBANK_1789199664970_518"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_ICICIBANK_1789199655996",
+        "ticker": "ICICIBANK",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:54:15.996Z",
+        "pattern_type": "consolidation_breakout",
+        "pattern_details": "Channel breakout above ₹1,180 with RSI momentum confirmation",
+        "price": 1198.45,
+        "rsi": 66.3,
+        "volume": "9.3M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_ICICIBANK_1789199664970_518",
+        "ticker": "ICICIBANK",
+        "headline": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart",
+        "snippet": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart (ICICI Bank Ltd.)",
+        "source": "upstox.com",
+        "timestamp": "Fri, 11 Sep 2026 07:22:09 GMT",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:54:24.992Z"
     }
   ],
   "tickerHistory": {

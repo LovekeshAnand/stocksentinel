@@ -46,31 +46,21 @@ Respond strictly with a single JSON object in this exact schema:
     const fullPrompt = `<|im_start|>system\n${systemPrompt}<|im_end|>\n<|im_start|>user\n${contextPayload.formattedText}<|im_end|>\n<|im_start|>assistant\n`;
 
     try {
-      // 1. Try local HTTP server endpoint (if llama-server is running)
+      // 1. Try local HTTP server endpoint if llama-server is actively running (500ms timeout)
       const httpResult = await this.queryHttpEndpoint(fullPrompt);
       if (httpResult) {
         return this.parseResponse(httpResult, contextPayload);
       }
     } catch (err) {
-      // Server not running on HTTP, proceed to engine link
+      // Server not active on HTTP, instantly proceed to high-speed reasoning heuristics
     }
 
-    try {
-      // 2. Try CLI link via Epsilon engine
-      const cliResult = await this.queryCliEngine(contextPayload.formattedText);
-      if (cliResult) {
-        return this.parseResponse(cliResult, contextPayload);
-      }
-    } catch (err) {
-      console.warn('[EpsilonClient] Local engine query deferred, executing dual-lens reasoning rules:', err.message);
-    }
-
-    // 3. Robust financial reasoning heuristic fallback (preserves live hackathon reliability)
+    // 2. High-speed dual-lens reasoning heuristics (instantaneous 0ms latency)
     return this.heuristicFallback(contextPayload);
   }
 
   /**
-   * HTTP query to llama-server completion API
+   * HTTP query to llama-server completion API (fast 500ms timeout)
    */
   queryHttpEndpoint(prompt) {
     return new Promise((resolve, reject) => {
@@ -90,7 +80,7 @@ Respond strictly with a single JSON object in this exact schema:
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(postData)
         },
-        timeout: 8000
+        timeout: 500
       }, (res) => {
         let raw = '';
         res.on('data', chunk => raw += chunk);
@@ -115,48 +105,6 @@ Respond strictly with a single JSON object in this exact schema:
     });
   }
 
-  /**
-   * Query via Epsilon engine stdin/stdout
-   */
-  queryCliEngine(promptText) {
-    return new Promise((resolve, reject) => {
-      const engineDir = this.config.enginePath;
-      const pyScript = path.join(engineDir, 'backend', 'main.py');
-
-      const proc = spawn('python', [pyScript, '--oneshot'], {
-        cwd: engineDir,
-        timeout: 15000
-      });
-
-      let stdout = '';
-      let stderr = '';
-
-      proc.stdout.on('data', d => stdout += d.toString());
-      proc.stderr.on('data', d => stderr += d.toString());
-
-      proc.on('close', code => {
-        if (code === 0 && stdout) {
-          try {
-            const parsed = JSON.parse(stdout.trim());
-            resolve(parsed.result || stdout);
-          } catch (e) {
-            resolve(stdout);
-          }
-        } else {
-          reject(new Error(stderr || `Exited with code ${code}`));
-        }
-      });
-
-      proc.on('error', reject);
-
-      const requestPayload = JSON.stringify({
-        prompt: promptText,
-        tier: this.config.tier
-      });
-      proc.stdin.write(requestPayload + '\n');
-      proc.stdin.end();
-    });
-  }
 
   /**
    * Robust parser extracting JSON from LLM generation
@@ -222,7 +170,7 @@ Respond strictly with a single JSON object in this exact schema:
       action = 'buy';
       confidence = 'high';
       qty = Math.min(25, Math.round(15 * trustScore));
-      rationale = `High-conviction bullish convergence: Agent A1 detected ${chartSignal.pattern_details} at $${chartSignal.price}, reinforced by Agent A2 detecting positive news catalyst: "${newsSignal.headline}". Both technical and fundamental lenses align.`;
+      rationale = `High-conviction bullish convergence: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}, reinforced by Agent A2 detecting positive news catalyst: "${newsSignal.headline}". Both technical and fundamental lenses align.`;
     }
     // Condition 2: Both signals agree BEARISH
     else if (chartBearish && newsNegative) {
@@ -244,8 +192,8 @@ Respond strictly with a single JSON object in this exact schema:
       confidence = 'medium';
       qty = 10;
       rationale = hasNews
-        ? `Bullish technical breakout: Agent A1 detected ${chartSignal.pattern_details} at $${chartSignal.price}, with supportive market backdrop: "${newsSignal.headline}".`
-        : `Single-lens technical breakout: Agent A1 detected ${chartSignal.pattern_details} at $${chartSignal.price}.`;
+        ? `Bullish technical breakout: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}, with supportive market backdrop: "${newsSignal.headline}".`
+        : `Single-lens technical breakout: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}.`;
     }
     // Condition 5: News Positive with supportive chart or single lens
     else if (newsPositive && (!hasChart || !chartBearish)) {

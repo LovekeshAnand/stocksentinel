@@ -41,6 +41,14 @@ class InsightsBot {
     this.startPolling();
     this.schedulePeriodicInsights();
     console.log(`[InsightsBot] Market Insights Bot active. Periodic push every ${this.intervalMin} min.`);
+
+    // Push initial market insights immediately on startup (zero delay)
+    if (this.chatId) {
+      setTimeout(() => {
+        console.log('[InsightsBot] ⚡ Pushing immediate startup market insights to Telegram...');
+        this.sendMessage(this.chatId, this.buildInsightsMessage());
+      }, 1200);
+    }
   }
 
   // ── Telegram API wrapper ──────────────────────────────────────────────────
