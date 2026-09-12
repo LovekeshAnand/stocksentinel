@@ -95,22 +95,30 @@ class SentinelPipeline extends EventEmitter {
 
       console.log(`[Pipeline] Cross-signal tickers: ${Array.from(tickerMap.keys()).join(', ')}`);
 
-      // ── Strategist: Reason on each correlated ticker ────────────────────────
+      // ── Strategist: Reason on actively scrutinized ticker ─────────────────
       for (const [ticker, signals] of tickerMap.entries()) {
         const { chartSignal, newsSignal } = signals;
 
-        const primarySignal = newsSignal || chartSignal;
-        if (dedup.isDuplicate(primarySignal)) {
-          console.log(`[Pipeline] Duplicate suppressed for ${ticker}`);
-          continue;
-        }
-
+        // Record signals to memory
         if (chartSignal) memoryStore.addSignal(chartSignal);
         if (newsSignal)  memoryStore.addSignal(newsSignal);
 
+        // Strict Single-Stock Quality Gate:
+        // Only generate trade proposals for the ticker actively scanned on TradingView in this cycle
+        if (!chartSignal) {
+          console.log(`[Pipeline] Background news logged for ${ticker} (awaiting chart scan in next rotation)`);
+          continue;
+        }
+
+        const primarySignal = newsSignal || chartSignal;
+        if (dedup.isDuplicate(primarySignal)) {
+          console.log(`[Pipeline] Duplicate proposal suppressed for ${ticker}`);
+          continue;
+        }
+
         const contextPayload = contextBuilder.buildContext(ticker, { chartSignal, newsSignal });
 
-        console.log(`[Pipeline] [Strategist] Reasoning on ${ticker} via Qwen 2.5 7B...`);
+        console.log(`[Pipeline] [Strategist] Dual-Lens reasoning on ${ticker} via Qwen 2.5 7B...`);
         const proposal = await epsilonClient.generateProposal(contextPayload);
         proposal.chartSignal = chartSignal;
         proposal.newsSignal  = newsSignal;

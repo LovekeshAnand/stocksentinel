@@ -209,12 +209,19 @@ Respond strictly with a single JSON object in this exact schema:
         ? `Bullish technical breakout: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}, with supportive market backdrop: "${newsSignal.headline}".`
         : `Single-lens technical breakout: Agent A1 detected ${chartSignal.pattern_details} at ₹${chartSignal.price}.`;
     }
-    // Condition 5: News Positive with supportive chart or single lens
-    else if (newsPositive && (!hasChart || !chartBearish)) {
+    // Condition 5: News Positive with supportive chart
+    else if (newsPositive && chartBullish) {
       action = 'buy';
       confidence = 'medium';
       qty = 10;
-      rationale = `Breaking fundamental catalyst: Agent A2 detected "${newsSignal.headline}". Favorable risk/reward momentum.`;
+      rationale = `Breaking fundamental catalyst with technical support: Agent A2 detected "${newsSignal.headline}", aligning with Agent A1 technical setup.`;
+    }
+    // Condition 5B: News Positive but NO chart confirmation -> WATCH_ONLY (do not alert Telegram)
+    else if (newsPositive && !hasChart) {
+      action = 'watch_only';
+      confidence = 'low';
+      qty = 0;
+      rationale = `Breaking fundamental catalyst detected: "${newsSignal.headline}". Awaiting technical chart setup from Agent A1 before proposing capital entry.`;
     }
     // Condition 6: Neutral / Ambiguous
     else {
