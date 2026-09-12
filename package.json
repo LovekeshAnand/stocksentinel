@@ -4,10 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "node index.js",
+    "test:news": "python agents/agent_a_watcher/scrapling_fetch.py",
+    "test": "node index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "node-telegram-bot-api": "^2.1.0",
+    "puppeteer-core": "^25.10.0",
+    "uuid": "^14.0.2",
+    "ws": "^8.21.3"
+  }
 }

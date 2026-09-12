@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StockSentinel — Self-Learning, Human-Gated Trading Cockpit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07090e;
+      --card-bg: #0e131f;
+      --border: #1e293b;
+      --accent-cyan: #38bdf8;
+      --accent-green: #10b981;
+      --accent-red: #f43f5e;
+      --accent-amber: #f59e0b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+    }
+
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-logo {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    }
+    .brand-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-sub { font-size: 13px; color: var(--accent-cyan); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+    .gate-badge {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 8px 16px; border-radius: 30px;
+      font-size: 13px; font-weight: 600; color: var(--accent-green);
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* Grid Layout */
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+
+    /* Agent Status Bar */
+    .agent-pipeline {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+      margin-bottom: 28px;
+    }
+    .agent-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .agent-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #38bdf8, transparent);
+    }
+    .agent-name { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+    .agent-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .agent-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+    /* Section Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+
+    /* Proposals */
+    .proposal-card {
+      background: #131a29;
+      border: 1px solid #2d3b55;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: all 0.2s ease;
+    }
+    .proposal-card:hover { border-color: var(--accent-cyan); }
+    .proposal-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .proposal-ticker {
+      font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+    }
+    .badge {
+      padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;
+      text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
+    }
+    .badge-buy { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+    .badge-sell { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid #f43f5e; }
+    .badge-hold { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b; }
+
+    .headline-box {
+      font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 10px; line-height: 1.4;
+    }
+    .rationale-box {
+      background: rgba(0,0,0,0.3);
+      border-left: 3px solid var(--accent-cyan);
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 13px; color: var(--text-muted);
+      margin-bottom: 16px; line-height: 1.5;
+    }
+    .meta-row {
+      display: flex; gap: 20px; font-size: 12px; color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace; margin-bottom: 16px;
+    }
+    .actions-row { display: flex; gap: 10px; }
+    .btn {
+      padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
+      cursor: pointer; border: none; transition: all 0.2s ease;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-approve {
+      background: var(--accent-green); color: #052e16;
+    }
+    .btn-approve:hover { filter: brightness(1.15); box-shadow: 0 0 14px rgba(16,185,129,0.5); }
+    .btn-reject {
+      background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid #f43f5e;
+    }
+    .btn-reject:hover { background: var(--accent-red); color: #fff; }
+    .btn-demo {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #0c1829;
+    }
+
+    /* Trust Score List */
+    .trust-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .trust-ticker { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+    .trust-bar-bg { width: 100px; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin: 0 10px; }
+    .trust-bar-fill { height: 100%; background: var(--accent-cyan); border-radius: 3px; }
+
+    /* Live Telemetry Log */
+    .log-box {
+      background: #06090f; border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      height: 220px; overflow-y: auto; color: #a5b4fc;
+    }
+    .log-entry { margin-bottom: 8px; line-height: 1.4; }
+    .log-time { color: #64748b; margin-right: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">🛡️</div>
+        <div>
+          <div class="brand-title">StockSentinel</div>
+          <div class="brand-sub">Self-Learning Agent Browser • Human-Gated Execution</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:16px; align-items:center;">
+        <button class="btn btn-demo" onclick="triggerDemo()">⚡ Trigger Live Demo Signal</button>
+        <div class="gate-badge">
+          <div class="pulse-dot"></div>
+          <span>HUMAN APPROVAL GATE: ACTIVE (TELEGRAM READY)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- 4 Agents Status Pipeline -->
+    <div class="agent-pipeline">
+      <div class="agent-card">
+        <div class="agent-name">Agent A — The Watcher</div>
+        <div class="agent-title">Scrapling + webcmd</div>
+        <div class="agent-desc">Fast DOM retrieval & learned pattern extraction on news wire.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Reasoning Core</div>
+        <div class="agent-title">Qwen 2.5 7B (Epsilon)</div>
+        <div class="agent-desc">Local 7B LLM formulating explainable proposals & rationales.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Security Centerpiece</div>
+        <div class="agent-title">Telegram Approval Gate</div>
+        <div class="agent-desc">Enforces human command before any order reaches execution.</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-name">Agent B — The Executor</div>
+        <div class="agent-title">TradingView Paper Trading</div>
+        <div class="agent-desc">Automated order pre-fill, strictly halts before confirm click.</div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid">
+      <!-- Left Column: Pending Human Approvals -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🔔 Pending Human Approvals</span>
+              <span id="pendingCount" style="font-size:12px; background:var(--accent-cyan); color:#082f49; padding:2px 8px; border-radius:12px; font-weight:800;">0</span>
+            </div>
+            <span style="font-size:12px; color:var(--text-muted);">Syncs live with Telegram phone alerts</span>
+          </div>
+
+          <div id="proposalsList">
+            <div style="text-align:center; padding:40px; color:var(--text-muted); font-size:14px;">
+              No pending approvals. Waiting for incoming market catalysts...
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📡 Real-Time Telemetry Log</div>
+          </div>
+          <div class="log-box" id="logBox">
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> StockSentinel live cockpit initialized.</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Scrapling fast-fetch engine connected.</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Local Qwen 2.5 7B reasoning layer online.</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Human Gate active: No autonomous trades permitted.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Memory Layer & Trust Scores -->
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🧠 Memory & Trust Graph</div>
+          </div>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
+            Tracks approval vs rejection patterns per ticker to adapt Strategist confidence over time.
+          </p>
+          <div id="trustList">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📱 Telegram Quick Guide</div>
+          </div>
+          <div style="font-size:13px; color:var(--text-muted); line-height:1.6;">
+            1. Open Telegram and search for your bot.<br>
+            2. Send <b>/start</b> to connect your chat.<br>
+            3. Tap <b>/demo</b> or the blue button above.<br>
+            4. Tapping <b>Approve</b> on Telegram triggers Agent B on TradingView in real time!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const proposalsList = document.getElementById('proposalsList');
+    const pendingCount = document.getElementById('pendingCount');
+    const logBox = document.getElementById('logBox');
+    const trustList = document.getElementById('trustList');
+
+    function log(msg) {
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      const time = new Date().toLocaleTimeString();
+      entry.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
+      logBox.appendChild(entry);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    // Connect WebSocket for live updates
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${protocol}//${window.location.host}`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'INIT_STATE') {
+        renderProposals(data.pending || []);
+        renderTrust(data.history || {});
+      } else if (data.type === 'PROPOSAL_CREATED') {
+        log(`🚨 <b>New Trade Proposal:</b> ${data.payload.ticker} ${data.payload.action.toUpperCase()} (${data.payload.suggested_quantity} units)`);
+        fetchPending();
+      } else if (data.type === 'PROPOSAL_APPROVED') {
+        log(`✅ <b>APPROVED BY HUMAN:</b> ${data.payload.ticker} ${data.payload.action.toUpperCase()}. Agent B pre-filling order!`);
+        fetchPending();
+        fetchStats();
+      } else if (data.type === 'PROPOSAL_REJECTED') {
+        log(`❌ <b>REJECTED BY HUMAN:</b> ${data.payload.ticker}. Memory trust score penalised.`);
+        fetchPending();
+        fetchStats();
+      }
+    };
+
+    async function fetchPending() {
+      const res = await fetch('/api/proposals/pending');
+      const list = await res.json();
+      renderProposals(list);
+    }
+
+    async function fetchStats() {
+      const res = await fetch('/api/memory/stats');
+      const stats = await res.json();
+      renderTrust(stats.tickerHistory || {});
+    }
+
+    function renderProposals(proposals) {
+      pendingCount.innerText = proposals.length;
+      if (proposals.length === 0) {
+        proposalsList.innerHTML = `
+          <div style="text-align:center; padding:40px; color:var(--text-muted); font-size:14px;">
+            No pending approvals. Waiting for incoming market catalysts...
+          </div>
+        `;
+        return;
+      }
+
+      proposalsList.innerHTML = proposals.map(p => {
+        const badgeClass = p.action === 'buy' ? 'badge-buy' : (p.action === 'sell' ? 'badge-sell' : 'badge-hold');
+        return `
+          <div class="proposal-card" id="card-${p.id}">
+            <div class="proposal-top">
+              <div class="proposal-ticker">${p.ticker}</div>
+              <div class="badge ${badgeClass}">${p.action}</div>
+            </div>
+            <div class="headline-box">"${p.headline || 'Market catalyst detected'}"</div>
+            <div class="rationale-box">
+              <b>Qwen 2.5 7B Rationale:</b> ${p.rationale}
+            </div>
+            <div class="meta-row">
+              <span>Qty: <b>${p.suggested_quantity}</b> units</span>
+              <span>Confidence: <b>${(p.confidence || 'medium').toUpperCase()}</b></span>
+              <span>Engine: <b>${p.engine || 'Local Qwen 2.5 7B'}</b></span>
+            </div>
+            <div class="actions-row">
+              <button class="btn btn-approve" onclick="approveTrade('${p.id}')">
+                ✅ Approve & Pre-fill Order
+              </button>
+              <button class="btn btn-reject" onclick="rejectTrade('${p.id}')">
+                ❌ Reject
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTrust(history) {
+      const tickers = ['TSLA', 'NVDA', 'AAPL', 'MSFT', 'GOOGL'];
+      trustList.innerHTML = tickers.map(sym => {
+        const h = history[sym] || { trustScore: 0.70, approvedCount: 0, rejectedCount: 0 };
+        const scorePct = Math.round((h.trustScore || 0.70) * 100);
+        return `
+          <div class="trust-item">
+            <div class="trust-ticker">${sym}</div>
+            <div style="display:flex; align-items:center;">
+              <div class="trust-bar-bg">
+                <div class="trust-bar-fill" style="width: ${scorePct}%;"></div>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;">${scorePct}%</span>
+            </div>
+            <div style="font-size:11px; color:var(--text-muted);">
+              ✅${h.approvedCount} / ❌${h.rejectedCount}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function approveTrade(id) {
+      await fetch(`/api/proposals/${id}/approve`, { method: 'POST' });
+    }
+
+    async function rejectTrade(id) {
+      await fetch(`/api/proposals/${id}/reject`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ reason: 'Rejected from Cockpit' }) });
+    }
+
+    async function triggerDemo() {
+      await fetch('/api/demo/trigger', { method: 'POST' });
+    }
+
+    fetchPending();
+    fetchStats();
+  </script>
+</body>
+</html>

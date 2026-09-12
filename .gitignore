@@ -4,3 +4,9 @@ node_modules/
 .DS_Store
 dist/
 build/
+engine/
+enginer/
+venv/
+*.gguf
+*.db
+
