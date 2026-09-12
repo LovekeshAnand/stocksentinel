@@ -68,8 +68,11 @@ class ChartWatcherAgent {
 
     const currentUrl = page.url();
     if (!currentUrl.includes(symbol)) {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
-      await new Promise(r => setTimeout(r, 600));
+      await Promise.race([
+        page.goto(url, { waitUntil: 'domcontentloaded', timeout: 5000 }),
+        new Promise(r => setTimeout(r, 3500))
+      ]).catch(() => {});
+      await new Promise(r => setTimeout(r, 400));
     }
 
     // 1. Show HUD: scanning

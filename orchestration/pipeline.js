@@ -74,12 +74,13 @@ class SentinelPipeline extends EventEmitter {
     console.log(`${'━'.repeat(64)}`);
 
     try {
-      // ── Agent A1 + Agent A2: Parallel Perception (Chart Analysis + News Search) ──
-      console.log(`[Pipeline] [A1+A2] Launching Chart Watcher & Active News Search in parallel...`);
-      const [chartResult, newsResult] = await Promise.all([
-        chartWatcher.pollChartSignals(forceExplore),
-        newsWatcher.pollSignals(forceExplore)
-      ]);
+      // ── Agent A1 + Agent A2: Active Perception (Chart Analysis then News Search) ──
+      console.log(`[Pipeline] [A1] Scanning live chart patterns on TradingView India...`);
+      const chartResult = await chartWatcher.pollChartSignals(forceExplore);
+
+      console.log(`[Pipeline] [A2] Searching breaking financial news across watchlist tickers...`);
+      const newsResult = await newsWatcher.pollSignals(forceExplore);
+
       console.log(`[Pipeline] [A1] ${chartResult.count} chart pattern(s) | [A2] ${newsResult.count} news catalyst(s) confirmed.`);
 
       // ── Correlate signals by ticker ─────────────────────────────────────────

@@ -19,6 +19,9 @@ class WebcmdAdapter {
     this.recipesDir = settings.storage.learnedCommandsDir;
     this.ensureDir();
     this.browser = null;
+    this.tabs = {};
+    this.launchPromise = null;
+    this.tabPromises = {};
   }
 
   ensureDir() {
@@ -57,83 +60,104 @@ class WebcmdAdapter {
    */
   focusWindowOnWindows() {
     try {
-      // Use AppActivate to bring Chrome to the foreground
-      const ps = `Add-Type -AssemblyName Microsoft.VisualBasic; [Microsoft.VisualBasic.Interaction]::AppActivate('Chrome')`;
+      const pid = this.browser?.process()?.pid;
+      const pidScript = pid ? `$p = Get-Process -Id ${pid} -ErrorAction SilentlyContinue; if ($p) { $w.AppActivate($p.Id) }` : '';
+      const ps = `
+        $w = New-Object -ComObject WScript.Shell;
+        ${pidScript}
+        $w.AppActivate('TradingView');
+        $w.AppActivate('Google Chrome');
+        $w.AppActivate('Chrome');
+      `.replace(/\r?\n/g, ' ');
       exec(`powershell -NonInteractive -WindowStyle Hidden -Command "${ps}"`, () => {});
     } catch (e) { /* best-effort */ }
   }
 
   /**
-   * Launch browser instance — always visible, always in foreground.
-   *
-   * Root cause of "no browser visible": if Chrome is ALREADY running anywhere
-   * on the system (even minimized), Puppeteer's new instance connects to that
-   * existing process. The existing Chrome window stays hidden/behind.
-   *
-   * Fix: --user-data-dir with an ISOLATED temp profile forces a completely
-   * independent Chrome process that always spawns its own new OS window.
+   * Launch browser instance with Mutex to prevent duplicate launches when agents run in parallel
    */
   async getBrowser(headless = false) {
-    if (!this.browser || !this.browser.connected) {
-      const executablePath = this.getExecutablePath();
-
-      // Isolated temp profile — Chrome MUST open as its own new process & window
-      const userDataDir = path.join(os.tmpdir(), 'stocksentinel-chrome-profile');
-      if (!fs.existsSync(userDataDir)) {
-        fs.mkdirSync(userDataDir, { recursive: true });
-      }
-
-      console.log(`[webcmd] Launching isolated Chrome instance (headless=${headless})...`);
-      console.log(`[webcmd] Profile dir: ${userDataDir}`);
-
-      this.browser = await puppeteer.launch({
-        executablePath,
-        headless: headless ? 'new' : false,
-        slowMo: headless ? 0 : 60,  // 60ms per action — visibly smooth
-        userDataDir,                  // KEY: isolated profile = new OS window guaranteed
-        defaultViewport: null,        // Let Chrome fill screen naturally
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-blink-features=AutomationControlled',
-          '--disable-infobars',
-          '--new-window',             // Force brand-new OS window, not a tab
-          '--start-maximized',
-          '--window-position=0,0',
-          '--window-size=1440,900'
-        ]
-      });
-      this.tabs = {};
-
-      // After 1s, bring Chrome window to foreground (it may open behind taskbar)
-      setTimeout(() => this.focusWindowOnWindows(), 1000);
-
-      console.log('[webcmd] Browser launched. Window should now be visible on your desktop.');
+    if (this.browser && this.browser.connected) {
+      return this.browser;
     }
-    return this.browser;
+    if (this.launchPromise) {
+      return this.launchPromise;
+    }
+
+    this.launchPromise = (async () => {
+      try {
+        const executablePath = this.getExecutablePath();
+        const userDataDir = path.join(os.tmpdir(), 'stocksentinel-chrome-profile');
+        if (!fs.existsSync(userDataDir)) {
+          fs.mkdirSync(userDataDir, { recursive: true });
+        }
+
+        console.log(`[webcmd] Launching isolated Chrome instance (headless=${headless})...`);
+        console.log(`[webcmd] Profile dir: ${userDataDir}`);
+
+        this.browser = await puppeteer.launch({
+          executablePath,
+          headless: headless ? 'new' : false,
+          slowMo: headless ? 0 : 50,
+          userDataDir,
+          defaultViewport: null,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-blink-features=AutomationControlled',
+            '--disable-infobars',
+            '--new-window',
+            '--start-maximized',
+            '--window-position=0,0',
+            '--window-size=1440,900'
+          ]
+        });
+        this.tabs = {};
+
+        setTimeout(() => this.focusWindowOnWindows(), 800);
+        console.log('[webcmd] Browser launched. Window should now be visible on your desktop.');
+        return this.browser;
+      } finally {
+        this.launchPromise = null;
+      }
+    })();
+
+    return this.launchPromise;
   }
 
   /**
-   * Get or create a named browser tab (chart, news, trade)
+   * Get or create a named browser tab (chart, news_search, trade) with safe concurrency lock
    */
   async getTab(name) {
-    const browser = await this.getBrowser(false);
-    if (this.tabs && this.tabs[name] && !this.tabs[name].isClosed()) {
+    if (this.tabs[name] && !this.tabs[name].isClosed()) {
       return this.tabs[name];
     }
-    if (!this.tabs) this.tabs = {};
-
-    const existingPages = await browser.pages();
-    // Reuse blank first page if available
-    let page = null;
-    if (existingPages.length === 1 && existingPages[0].url() === 'about:blank' && !Object.values(this.tabs).includes(existingPages[0])) {
-      page = existingPages[0];
-    } else {
-      page = await browser.newPage();
+    if (this.tabPromises[name]) {
+      return this.tabPromises[name];
     }
-    await page.setViewport({ width: 1400, height: 900 });
-    this.tabs[name] = page;
-    return page;
+
+    this.tabPromises[name] = (async () => {
+      try {
+        const browser = await this.getBrowser(false);
+        const existingPages = await browser.pages();
+        const assignedPages = Object.values(this.tabs);
+
+        // Find an unassigned blank tab or open new page
+        let page = existingPages.find(p => !assignedPages.includes(p) && (p.url() === 'about:blank' || p.url() === 'chrome://newtab/'));
+        if (!page) {
+          page = await browser.newPage();
+        }
+
+        // Register immediately to prevent other concurrent calls from grabbing it
+        this.tabs[name] = page;
+        await page.setViewport({ width: 1400, height: 900 });
+        return page;
+      } finally {
+        delete this.tabPromises[name];
+      }
+    })();
+
+    return this.tabPromises[name];
   }
 
   /**
@@ -141,7 +165,8 @@ class WebcmdAdapter {
    */
   async focusTab(name) {
     const page = await this.getTab(name);
-    await page.bringToFront();
+    await page.bringToFront().catch(() => {});
+    this.focusWindowOnWindows();
     return page;
   }
 

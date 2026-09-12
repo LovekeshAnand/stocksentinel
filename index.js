@@ -47,11 +47,18 @@ async function bootstrap() {
     console.log(`[System] Reasoning Layer: Local Epsilon Engine (${settings.epsilon.tier.toUpperCase()} / Qwen 2.5 7B)`);
 
     // 4. Pre-launch Visible Browser immediately on desktop
-    console.log('[System] Launching desktop browser automation window...');
+    console.log('[System] Launching visible desktop browser automation window...');
     const webcmd = require('./agents/webcmd_adapter');
-    await webcmd.getBrowser(false);
+    const chartTab = await webcmd.focusTab('chart');
+    try {
+      await chartTab.goto('https://in.tradingview.com/chart/?symbol=NSE%3ATATAMOTORS', { waitUntil: 'domcontentloaded', timeout: 25000 });
+      await webcmd.injectHUD(chartTab, 'STOCKSENTINEL :: READY', 'Monitoring Indian Equities (NSE) — TradingView Live Automation', '#10b981');
+      webcmd.focusWindowOnWindows();
+    } catch (e) {
+      console.warn('[System] Initial chart navigation notice:', e.message);
+    }
 
-    console.log('[System] Browser window active. Starting multi-agent pipeline immediately...');
+    console.log('[System] Browser window active on TradingView India. Starting multi-agent pipeline immediately...');
 
     // 5. Start Multi-Agent Orchestration Pipeline
     await pipeline.start();

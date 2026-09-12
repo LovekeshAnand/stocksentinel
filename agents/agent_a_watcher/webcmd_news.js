@@ -97,8 +97,11 @@ class NewsSearchWatcherAgent {
       );
 
       // Navigate to live search results
-      await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 20000 });
-      await new Promise(r => setTimeout(r, 1200));
+      await Promise.race([
+        page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 5000 }),
+        new Promise(r => setTimeout(r, 3500))
+      ]).catch(() => {});
+      await new Promise(r => setTimeout(r, 500));
 
       // Visibly scroll through search results
       await this.blazingScroll(page);

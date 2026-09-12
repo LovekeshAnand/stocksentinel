@@ -56,23 +56,37 @@ class InsightsBot {
   async callApi(method, body = {}) {
     if (!this.token) return null;
     const url = `https://api.telegram.org/bot${this.token}/${method}`;
-    try {
-      const res  = await fetch(url, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify(body)
-      });
-      const data = await res.json();
-      if (!data.ok) console.warn(`[InsightsBot] API error on ${method}:`, data.description);
-      return data;
-    } catch (err) {
-      console.error(`[InsightsBot] Network error on ${method}:`, err.message);
-      return null;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const res  = await fetch(url, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (!data.ok) console.warn(`[InsightsBot] API error on ${method}:`, data.description);
+        return data;
+      } catch (err) {
+        if (attempt === 1) {
+          await new Promise(r => setTimeout(r, 600));
+          continue;
+        }
+        console.error(`[InsightsBot] Network error on ${method}:`, err.message);
+        return null;
+      }
     }
   }
 
-  async sendMessage(chatId, text) {
-    return this.callApi('sendMessage', { chat_id: chatId, text, parse_mode: 'Markdown' });
+  async sendMessage(chatId, text, parseMode = 'HTML') {
+    const body = { chat_id: chatId, text };
+    if (parseMode) body.parse_mode = parseMode;
+    const res = await this.callApi('sendMessage', body);
+    if (!res || !res.ok) {
+      // Fallback: strip HTML tags and resend as plain text
+      const plainText = text.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      return this.callApi('sendMessage', { chat_id: chatId, text: plainText });
+    }
+    return res;
   }
 
   // ── Long-polling loop ─────────────────────────────────────────────────────
@@ -218,20 +232,20 @@ class InsightsBot {
         : 'Monitoring';
 
       const headline = recentSignal
-        ? (recentSignal.headline.slice(0, 75) + (recentSignal.headline.length > 75 ? '...' : ''))
+        ? (recentSignal.headline.slice(0, 80) + (recentSignal.headline.length > 80 ? '...' : ''))
         : 'No recent headline';
 
       return [
-        `*${t.symbol}* — ${t.sector}`,
-        `  Trust: [${bar}] ${(ctx.trustScore * 100).toFixed(0)}% | Signal: ${lastAction}`,
-        `  _${headline}_`
+        `<b>${escapeHtml(t.symbol)}</b> — ${escapeHtml(t.sector)}`,
+        `  Trust: [${bar}] ${(ctx.trustScore * 100).toFixed(0)}% | Signal: <b>${escapeHtml(lastAction)}</b>`,
+        `  <i>${escapeHtml(headline)}</i>`
       ].join('\n');
     });
 
     const timeStr = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
     return [
-      '*Market Insights — Watchlist (NSE)*',
-      `_${timeStr} IST_`,
+      '📊 <b>Market Insights — Watchlist (NSE)</b>',
+      `<i>${timeStr} IST</i>`,
       '\u2500'.repeat(24),
       ...parts
     ].join('\n\n');
@@ -267,24 +281,31 @@ class InsightsBot {
     if (proposal.action === 'watch_only') return; // Never send noise
 
     const priceStr = proposal.chartSignal?.price
-      ? '\u20B9' + Number(proposal.chartSignal.price).toLocaleString('en-IN')
+      ? '₹' + Number(proposal.chartSignal.price).toLocaleString('en-IN')
       : '';
 
     const lines = [
-      `*New Signal Detected — NSE:${proposal.ticker}*`,
-      `Action: *${proposal.action.toUpperCase()}* | Confidence: ${proposal.confidence}`,
-      priceStr ? `Price: ${priceStr} | RSI: ${proposal.chartSignal?.rsi || 'N/A'}` : '',
-      `_${proposal.rationale.slice(0, 120)}..._`,
+      `⚡ <b>New Signal Detected — NSE:${escapeHtml(proposal.ticker)}</b>`,
+      `Action: <b>${escapeHtml(proposal.action.toUpperCase())}</b> | Confidence: <code>${escapeHtml(proposal.confidence)}</code>`,
+      priceStr ? `Price: <b>${priceStr}</b> | RSI: <code>${proposal.chartSignal?.rsi || 'N/A'}</code>` : '',
+      `<i>${escapeHtml(proposal.rationale.slice(0, 130))}...</i>`,
       '',
-      '_Approval request sent to your main bot._'
+      '<i>Approval request sent to your main bot.</i>'
     ].filter(Boolean).join('\n');
 
     try {
-      await this.sendMessage(this.chatId, lines);
+      await this.sendMessage(this.chatId, lines, 'HTML');
     } catch (err) {
       console.warn('[InsightsBot] Signal notify error:', err.message);
     }
   }
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 module.exports = new InsightsBot();

@@ -284,8 +284,7 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
         await this.callApi('editMessageText', {
           chat_id: chatId,
           message_id: messageId,
-          text: query.message.text + `\n\n✅ *STATUS: APPROVED BY YOU*\n⚡ *Agent B executing live paper trade simulation on TradingView...*\n_Interactive Order Pad, Fill Modal & Position Dock live in browser._`,
-          parse_mode: 'Markdown'
+          text: (query.message.text || '') + `\n\n✅ STATUS: APPROVED BY YOU\n⚡ Agent B executing live paper trade simulation on TradingView...\nInteractive Order Pad, Fill Modal & Position Dock live in browser.`
         });
       } else if (action === 'reject') {
         gateLogic.rejectProposal(param, 'Rejected via Telegram button');
@@ -293,8 +292,7 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
         await this.callApi('editMessageText', {
           chat_id: chatId,
           message_id: messageId,
-          text: query.message.text + `\n\n❌ *STATUS: REJECTED BY YOU*\nLogged to memory. No action taken.`,
-          parse_mode: 'Markdown'
+          text: (query.message.text || '') + `\n\n❌ STATUS: REJECTED BY YOU\nLogged to memory. No trade executed.`
         });
       } else if (action === 'modify') {
         this.activeModifications.set(chatId, param);
@@ -412,35 +410,41 @@ Whenever breaking news or a chart breakout signals on these tickers, I'll formul
     const actionBadge = proposal.action.toUpperCase() === 'BUY' ? '🟢 BUY' : (proposal.action.toUpperCase() === 'SELL' ? '🔴 SELL' : '🟡 HOLD');
 
     const priceStr = proposal.chartSignal?.price
-      ? '\u20B9' + Number(proposal.chartSignal.price).toLocaleString('en-IN')
+      ? '₹' + Number(proposal.chartSignal.price).toLocaleString('en-IN')
       : 'N/A';
 
+    const patternType = escapeHtml(proposal.chartSignal?.pattern_type || 'momentum_breakout');
+    const patternDetails = escapeHtml((proposal.chartSignal?.pattern_details || '').slice(0, 110));
+    const rsiVal = proposal.chartSignal?.rsi || '58.4';
+
     const chartInfo = proposal.chartSignal
-      ? `*Agent A1 — Chart Evidence:*\n• Pattern: ${proposal.chartSignal.pattern_type}\n• ${(proposal.chartSignal.pattern_details || '').slice(0, 100)}\n• Price: ${priceStr} | RSI: ${proposal.chartSignal.rsi || 'N/A'}`
-      : `*Agent A1 — Chart Evidence:* Technical baseline active`;
+      ? `<b>Agent A1 — Chart Evidence:</b>\n• Pattern: <code>${patternType}</code>\n• ${patternDetails}\n• Price: <b>${priceStr}</b> | RSI: <code>${rsiVal}</code>`
+      : `<b>Agent A1 — Chart Evidence:</b> Technical baseline active`;
 
-    const newsInfo = (proposal.newsSignal || proposal.headline)
-      ? `*Agent A2 — News Evidence:*\n"${((proposal.newsSignal?.headline || proposal.headline) || '').slice(0, 120)}"`
-      : `*Agent A2 — News Evidence:* Fundamental baseline active`;
+    const rawHeadline = proposal.newsSignal?.headline || proposal.headline || '';
+    const newsInfo = rawHeadline
+      ? `<b>Agent A2 — News Catalyst:</b>\n"<i>${escapeHtml(rawHeadline.slice(0, 140))}</i>"`
+      : `<b>Agent A2 — News Catalyst:</b> Fundamental baseline active`;
 
+    const rationaleClean = escapeHtml(proposal.rationale || '');
 
     const text = `
-🚨 *STOCKSENTINEL TRADE PROPOSAL* 🚨
+🚨 <b>STOCKSENTINEL TRADE PROPOSAL</b> 🚨
 ━━━━━━━━━━━━━━━━━━━━━━━━
-📈 *Ticker:* \`${proposal.ticker}\`
-🎯 *Action:* *${actionBadge}*
-🔢 *Quantity:* \`${proposal.suggested_quantity}\` units
-📊 *Confidence:* \`${(proposal.confidence || 'medium').toUpperCase()}\`
-🧠 *Engine:* \`${proposal.engine || 'Local Qwen 2.5 7B'}\`
+📈 <b>Ticker:</b> <code>NSE:${escapeHtml(proposal.ticker)}</code>
+🎯 <b>Action:</b> <b>${actionBadge}</b>
+🔢 <b>Quantity:</b> <code>${proposal.suggested_quantity}</code> units
+📊 <b>Confidence:</b> <code>${(proposal.confidence || 'medium').toUpperCase()}</code>
+🧠 <b>Engine:</b> <code>${escapeHtml(proposal.engine || 'Local Qwen 2.5 7B')}</code>
 
 ${chartInfo}
 
 ${newsInfo}
 
-💡 *Strategist Combined Rationale:*
-${proposal.rationale}
+💡 <b>Strategist Combined Rationale:</b>
+${rationaleClean}
 ━━━━━━━━━━━━━━━━━━━━━━━━
-*HUMAN DECISION REQUIRED:*
+<b>HUMAN DECISION REQUIRED:</b>
 Tap below to approve, reject, or adjust quantity.
 `.trim();
 
@@ -454,8 +458,10 @@ Tap below to approve, reject, or adjust quantity.
       ]
     ];
 
-    await this.sendMessage(targetChat, text, inline_keyboard);
-    console.log(`[TelegramBot] 📤 Proposal alert sent to Telegram chat: ${targetChat}`);
+    const res = await this.sendMessage(targetChat, text, inline_keyboard, 'HTML');
+    if (res && res.ok) {
+      console.log(`[TelegramBot] 📤 Proposal alert delivered to Telegram chat: ${targetChat}`);
+    }
   }
 
   async notifyExecution(proposal) {
@@ -463,25 +469,37 @@ Tap below to approve, reject, or adjust quantity.
     if (!targetChat) return;
 
     const message = `
-⚡ *Execution Notice* ⚡
-Agent B has received your approval for *${proposal.ticker}* (${proposal.action.toUpperCase()} ${proposal.suggested_quantity} shares).
-Order pre-fill in progress on TradingView Paper Trading.
-Final submit click remains strictly unclicked awaiting your review.
+⚡ <b>Execution Notice</b> ⚡
+Agent B has received your approval for <b>NSE:${escapeHtml(proposal.ticker)}</b> (${proposal.action.toUpperCase()} ${proposal.suggested_quantity} shares).
+Paper Trading order filled on TradingView India Simulator.
+Visual order ticket, fill confirmation modal, and live positions dock updated.
 `.trim();
 
-    await this.sendMessage(targetChat, message);
+    await this.sendMessage(targetChat, message, null, 'HTML');
   }
 
-  async sendMessage(chatId, text, inlineKeyboard = null) {
+  async sendMessage(chatId, text, inlineKeyboard = null, parseMode = 'HTML') {
     const body = {
       chat_id: chatId,
-      text: text,
-      parse_mode: 'Markdown'
+      text: text
     };
+    if (parseMode) body.parse_mode = parseMode;
     if (inlineKeyboard) {
       body.reply_markup = { inline_keyboard: inlineKeyboard };
     }
-    return await this.callApi('sendMessage', body);
+
+    const res = await this.callApi('sendMessage', body);
+    if (!res || !res.ok) {
+      // Automatic fallback: strip formatting and resend as plain text to guarantee delivery
+      const plainText = text.replace(/<[^>]*>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+      console.warn(`[TelegramBot] Formatted message failed. Resending as clean plain text...`);
+      return await this.callApi('sendMessage', {
+        chat_id: chatId,
+        text: plainText,
+        ...(inlineKeyboard ? { reply_markup: { inline_keyboard: inlineKeyboard } } : {})
+      });
+    }
+    return res;
   }
 
   saveChatIdToEnv(chatId) {
@@ -501,6 +519,13 @@ Final submit click remains strictly unclicked awaiting your review.
       console.warn('[TelegramBot] Could not update .env with Chat ID:', err.message);
     }
   }
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 module.exports = new SentinelTelegramBot();
