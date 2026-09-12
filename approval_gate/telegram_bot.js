@@ -1,10 +1,11 @@
 /**
  * StockSentinel Telegram Approval Gate Bot
- * Sends real-time trade proposals to Telegram with interactive inline buttons
- * Enforces human-in-the-loop control directly from your phone!
+ * Native long-polling Telegram client (zero-dependency, robust across all environments)
+ * Provides interactive push alerts, inline buttons, and auto-detects user Chat ID!
  */
 
-const TelegramBot = require('node-telegram-bot-api');
+const fs = require('fs');
+const path = require('path');
 const settings = require('../config/settings');
 const gateLogic = require('./gate_logic');
 const memoryStore = require('../memory/store');
@@ -13,11 +14,12 @@ class SentinelTelegramBot {
   constructor() {
     this.token = settings.telegram.token;
     this.chatId = settings.telegram.chatId;
-    this.bot = null;
+    this.polling = false;
+    this.offset = 0;
     this.activeModifications = new Map(); // chatId -> proposalId waiting for new quantity
 
     if (this.token && this.token !== 'your_bot_token_here') {
-      this.init();
+      this.startPolling();
     } else {
       console.log('[TelegramBot] ⚠️ No valid TELEGRAM_BOT_TOKEN set in .env. Bot is in standby mode.');
     }
@@ -27,86 +29,142 @@ class SentinelTelegramBot {
     gateLogic.on('proposal_approved', (proposal) => this.notifyExecution(proposal));
   }
 
-  init() {
+  async callApi(method, body = {}) {
+    if (!this.token) return null;
+    const url = `https://api.telegram.org/bot${this.token}/${method}`;
     try {
-      this.bot = new TelegramBot(this.token, { polling: true });
-      console.log('[TelegramBot] 🤖 Telegram bot initialized and polling for commands.');
-      this.registerHandlers();
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        console.warn(`[TelegramBot] API Error on ${method}:`, data.description);
+      }
+      return data;
     } catch (err) {
-      console.error('[TelegramBot] Failed to start polling:', err.message);
+      console.error(`[TelegramBot] Network Error on ${method}:`, err.message);
+      return null;
     }
   }
 
-  registerHandlers() {
-    // /start command
-    this.bot.onText(/\/start/, (msg) => {
-      this.chatId = msg.chat.id;
+  async startPolling() {
+    if (this.polling) return;
+    this.polling = true;
+    console.log('[TelegramBot] 🤖 Native Telegram poller active. Listening for messages from your phone...');
+
+    while (this.polling) {
+      try {
+        const data = await this.callApi('getUpdates', {
+          offset: this.offset,
+          timeout: 25
+        });
+
+        if (data && data.ok && Array.isArray(data.result)) {
+          for (const update of data.result) {
+            this.offset = update.update_id + 1;
+            await this.handleUpdate(update);
+          }
+        }
+      } catch (err) {
+        console.warn('[TelegramBot] Polling loop notice:', err.message);
+        await new Promise(r => setTimeout(r, 3000));
+      }
+    }
+  }
+
+  stopPolling() {
+    this.polling = false;
+  }
+
+  async handleUpdate(update) {
+    if (update.message) {
+      await this.handleIncomingMessage(update.message);
+    } else if (update.callback_query) {
+      await this.handleCallbackQuery(update.callback_query);
+    }
+  }
+
+  async handleIncomingMessage(msg) {
+    const chatId = msg.chat.id;
+    const text = (msg.text || '').trim();
+
+    // Auto-capture Chat ID
+    if (!this.chatId || this.chatId !== String(chatId)) {
+      this.chatId = String(chatId);
+      settings.telegram.chatId = this.chatId;
+      console.log(`\n======================================================`);
+      console.log(`[TelegramBot] 🎉 YOUR TELEGRAM CHAT ID CAPTURED: ${chatId}`);
+      console.log(`======================================================\n`);
+      this.saveChatIdToEnv(chatId);
+    }
+
+    if (!text) return;
+
+    if (text.startsWith('/start')) {
       const welcome = `
-🛡️ *StockSentinel Approval Gate* 🛡️
+🛡️ *StockSentinel Approval Gate Connected!*
 
-Welcome! I am your human-in-the-loop trading watchdog.
-I watch financial news, reason on market catalysts via local Qwen 2.5 7B, and prepare paper trades.
+Your Chat ID is: \`${chatId}\`
+I am now actively linked to your phone for all trade approvals!
 
-*CRITICAL RULE*: I will *NEVER* submit a trade without your explicit confirmation click!
-
-Commands:
+*Commands:*
 • /status - View agent status & pending approvals
 • /demo - Trigger a test market signal right now
 • /watchlist - View active watchlisted tickers
-• /help - Display instructions
-`.trim();
-      this.bot.sendMessage(msg.chat.id, welcome, { parse_mode: 'Markdown' });
-      console.log(`[TelegramBot] User connected. Chat ID registered: ${msg.chat.id}`);
-    });
+• /trust - View memory trust score graph per ticker
+• /help - Display full operational manual
 
-    // /status command
-    this.bot.onText(/\/status/, (msg) => {
+*CRITICAL RULE:*
+I will *NEVER* submit an order without your explicit confirmation tap!
+`.trim();
+      return this.sendMessage(chatId, welcome);
+    }
+
+    if (text.startsWith('/status')) {
       const pending = gateLogic.getPendingList();
       const statusText = `
 📊 *System Cockpit Status*
 • Active Watchlist: TSLA, NVDA, AAPL, MSFT, GOOGL
-• Reasoning Engine: Epsilon Local Qwen 2.5 7B
+• Reasoning Engine: Local Epsilon Qwen 2.5 7B
 • Pending Human Approvals: *${pending.length}*
 ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.suggested_quantity} units)`).join('\n')}
 `.trim();
-      this.bot.sendMessage(msg.chat.id, statusText, { parse_mode: 'Markdown' });
-    });
+      return this.sendMessage(chatId, statusText);
+    }
 
-    // /demo command to trigger a test proposal immediately
-    this.bot.onText(/\/demo/, (msg) => {
-      this.chatId = msg.chat.id;
+    if (text.startsWith('/demo')) {
       const mockProposal = {
         ticker: 'TSLA',
         action: 'buy',
         suggested_quantity: 15,
         confidence: 'high',
         rationale: 'Tesla announced European regulatory green-light for Cybercab fleet trials ahead of schedule, sparking heavy pre-market momentum.',
-        headline: 'Tesla expands European robotaxi pilot with formal regulatory clearance'
+        headline: 'Tesla expands European robotaxi pilot with formal regulatory clearance',
+        engine: 'Local Qwen 2.5 7B'
       };
       gateLogic.submitProposal(mockProposal);
-      this.bot.sendMessage(msg.chat.id, '⚡ *Demo proposal generated!* Review below:', { parse_mode: 'Markdown' });
-    });
+      return this.sendMessage(chatId, '⚡ *Demo proposal generated!* Review below:');
+    }
 
-    // /watchlist command
-    this.bot.onText(/\/watchlist/, (msg) => {
+    if (text.startsWith('/watchlist')) {
       const watchlist = require('../config/watchlist');
       const list = watchlist.tickers.map(t => `• *${t.symbol}* (${t.name})\n  Sector: ${t.sector} | Default Qty: ${t.defaultQuantity}`).join('\n\n');
-      this.bot.sendMessage(msg.chat.id, `📋 *Active Sentinel Watchlist*\n\n${list}`, { parse_mode: 'Markdown' });
-    });
+      return this.sendMessage(chatId, `📋 *Active Sentinel Watchlist*\n\n${list}`);
+    }
 
-    // /trust command
-    this.bot.onText(/\/trust/, (msg) => {
+    if (text.startsWith('/trust')) {
       const watchlist = require('../config/watchlist');
       const stats = watchlist.tickers.map(t => {
         const ctx = memoryStore.getTickerContext(t.symbol);
         const bar = '█'.repeat(Math.round(ctx.trustScore * 10)) + '░'.repeat(10 - Math.round(ctx.trustScore * 10));
         return `• *${t.symbol}*: [${bar}] ${(ctx.trustScore * 100).toFixed(0)}%\n  Approved: ${ctx.approvedCount} | Rejected: ${ctx.rejectedCount} | Last: ${ctx.lastDecision || 'None'}`;
       }).join('\n\n');
-      this.bot.sendMessage(msg.chat.id, `🧠 *Memory Layer — User Trust Ratings*\n\n${stats}\n\n_Trust scores dynamically tune Strategist proposal confidence._`, { parse_mode: 'Markdown' });
-    });
+      return this.sendMessage(chatId, `🧠 *Memory Layer — User Trust Ratings*\n\n${stats}\n\n_Trust scores dynamically tune Strategist proposal confidence._`);
+    }
 
-    // /help command
-    this.bot.onText(/\/help/, (msg) => {
+    if (text.startsWith('/help')) {
       const help = `
 🤖 *StockSentinel Commands & Controls*
 
@@ -118,107 +176,164 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
 • /help - View this guide
 
 💡 *Interactive Natural Language*:
-You can also ask me natural questions anytime!
-Try asking:
-- "What do you think of TSLA?"
-- "Why do you need human approval?"
-- "What is your strategy?"
+You can ask me questions anytime (e.g., "What do you think of TSLA?", "What is your strategy?").
 `.trim();
-      this.bot.sendMessage(msg.chat.id, help, { parse_mode: 'Markdown' });
-    });
+      return this.sendMessage(chatId, help);
+    }
 
-    // Handle all non-command text queries (Unknown Query Handler)
-    this.bot.on('message', async (msg) => {
-      if (!msg.text || msg.text.startsWith('/')) return;
-
-      const chatId = msg.chat.id;
-      this.chatId = chatId; // capture active user
-
-      // Check if user was in middle of modifying a trade quantity
-      const proposalId = this.activeModifications.get(chatId);
-      if (proposalId) {
-        const newQty = parseInt(msg.text.trim(), 10);
-        if (!isNaN(newQty) && newQty > 0) {
-          this.activeModifications.delete(chatId);
-          const result = gateLogic.modifyAndApprove(proposalId, { quantity: newQty });
-          this.bot.sendMessage(chatId, `✏️ *Quantity updated to ${newQty}!* Trade approved and sent to Agent B for paper trading pre-fill.`, { parse_mode: 'Markdown' });
-        } else {
-          this.bot.sendMessage(chatId, '❌ Please enter a valid positive number for quantity.');
-        }
-        return;
+    // Check if user is answering a quantity modification request
+    const modProposalId = this.activeModifications.get(chatId);
+    if (modProposalId) {
+      const newQty = parseInt(text, 10);
+      if (!isNaN(newQty) && newQty > 0) {
+        this.activeModifications.delete(chatId);
+        gateLogic.modifyAndApprove(modProposalId, { quantity: newQty });
+        return this.sendMessage(chatId, `✏️ *Quantity updated to ${newQty}!* Trade approved and sent to Agent B for paper trading pre-fill.`);
+      } else {
+        return this.sendMessage(chatId, '❌ Please enter a valid positive number for quantity.');
       }
+    }
 
-      // Handle Arbitrary / Unknown User Queries with Financial Intelligence
-      const query = msg.text.trim();
-      console.log(`[TelegramBot] 💬 Received natural language query: "${query}"`);
-      await this.handleUnknownQuery(chatId, query);
-    });
-
-    // Handle Inline Keyboard Button Taps
-    this.bot.on('callback_query', async (query) => {
-      const data = query.data || '';
-      const [action, proposalId] = data.split(':');
-      const chatId = query.message.chat.id;
-      const messageId = query.message.message_id;
-
-      try {
-        if (action === 'approve') {
-          const result = gateLogic.approveProposal(proposalId, 'Approved via Telegram button');
-          await this.bot.answerCallbackQuery(query.id, { text: 'Trade Approved!' });
-          await this.bot.editMessageText(
-            query.message.text + `\n\n✅ *STATUS: APPROVED BY YOU*\n⚡ *Agent B pre-filling order on paper trading platform...*`,
-            {
-              chat_id: chatId,
-              message_id: messageId,
-              parse_mode: 'Markdown'
-            }
-          );
-        } else if (action === 'reject') {
-          const result = gateLogic.rejectProposal(proposalId, 'Rejected via Telegram button');
-          await this.bot.answerCallbackQuery(query.id, { text: 'Trade Rejected' });
-          await this.bot.editMessageText(
-            query.message.text + `\n\n❌ *STATUS: REJECTED BY YOU*\nLogged to memory. No action taken.`,
-            {
-              chat_id: chatId,
-              message_id: messageId,
-              parse_mode: 'Markdown'
-            }
-          );
-        } else if (action === 'modify') {
-          this.activeModifications.set(chatId, proposalId);
-          await this.bot.answerCallbackQuery(query.id, { text: 'Type new quantity' });
-          this.bot.sendMessage(chatId, `✏️ Please type the *new quantity* you wish to execute for proposal *${proposalId}*:`, { parse_mode: 'Markdown' });
-        } else if (action === 'demo') {
-          const sym = proposalId || 'TSLA';
-          await this.bot.answerCallbackQuery(query.id, { text: `Simulating ${sym}...` });
-          gateLogic.submitProposal({
-            ticker: sym,
-            action: 'buy',
-            suggested_quantity: 15,
-            confidence: 'high',
-            headline: `${sym} records strong upside catalyst with record market volume`,
-            rationale: `Strong momentum breakout detected on ${sym}. Favorable risk/reward profile for strategic long entry.`,
-            engine: 'Local Qwen 2.5 7B'
-          });
-        } else if (data === 'cmd_status') {
-          await this.bot.answerCallbackQuery(query.id, { text: 'Loading status...' });
-          const pending = gateLogic.getPendingList();
-          this.bot.sendMessage(chatId, `📊 *Cockpit Status*\nPending Approvals: *${pending.length}*\nWatching: *TSLA, NVDA, AAPL, MSFT, GOOGL*`, { parse_mode: 'Markdown' });
-        }
-      } catch (err) {
-        await this.bot.answerCallbackQuery(query.id, { text: `Error: ${err.message}` });
-      }
-    });
+    // Natural Language / Unknown Query Handler
+    console.log(`[TelegramBot] 💬 Handling natural query from user: "${text}"`);
+    await this.handleUnknownQuery(chatId, text);
   }
 
-  /**
-   * Broadcast structured proposal to Telegram
-   */
+  async handleCallbackQuery(query) {
+    const data = query.data || '';
+    const [action, param] = data.split(':');
+    const chatId = query.message.chat.id;
+    const messageId = query.message.message_id;
+
+    try {
+      if (action === 'approve') {
+        gateLogic.approveProposal(param, 'Approved via Telegram button');
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Trade Approved!' });
+        await this.callApi('editMessageText', {
+          chat_id: chatId,
+          message_id: messageId,
+          text: query.message.text + `\n\n✅ *STATUS: APPROVED BY YOU*\n⚡ *Agent B pre-filling order on TradingView...*`,
+          parse_mode: 'Markdown'
+        });
+      } else if (action === 'reject') {
+        gateLogic.rejectProposal(param, 'Rejected via Telegram button');
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Trade Rejected' });
+        await this.callApi('editMessageText', {
+          chat_id: chatId,
+          message_id: messageId,
+          text: query.message.text + `\n\n❌ *STATUS: REJECTED BY YOU*\nLogged to memory. No action taken.`,
+          parse_mode: 'Markdown'
+        });
+      } else if (action === 'modify') {
+        this.activeModifications.set(chatId, param);
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Type new quantity' });
+        await this.sendMessage(chatId, `✏️ Please type the *new quantity* you wish to execute for proposal *${param}*:`);
+      } else if (action === 'demo') {
+        const sym = param || 'TSLA';
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Simulating ${sym}...` });
+        gateLogic.submitProposal({
+          ticker: sym,
+          action: 'buy',
+          suggested_quantity: 15,
+          confidence: 'high',
+          headline: `${sym} records strong upside catalyst with record market volume`,
+          rationale: `Strong momentum breakout detected on ${sym}. Favorable risk/reward profile for strategic long entry.`,
+          engine: 'Local Qwen 2.5 7B'
+        });
+      } else if (data === 'cmd_status') {
+        await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: 'Loading status...' });
+        const pending = gateLogic.getPendingList();
+        await this.sendMessage(chatId, `📊 *Cockpit Status*\nPending Approvals: *${pending.length}*\nWatching: *TSLA, NVDA, AAPL, MSFT, GOOGL*`);
+      }
+    } catch (err) {
+      await this.callApi('answerCallbackQuery', { callback_query_id: query.id, text: `Notice: ${err.message}` });
+    }
+  }
+
+  async handleUnknownQuery(chatId, query) {
+    const lower = query.toLowerCase();
+    const watchlist = require('../config/watchlist');
+
+    // 1. Ticker match
+    const matchedTicker = watchlist.tickers.find(t => 
+      lower.includes(t.symbol.toLowerCase()) || 
+      lower.includes(t.name.toLowerCase()) ||
+      t.keywords.some(kw => lower.includes(kw.toLowerCase()))
+    );
+
+    if (matchedTicker) {
+      const sym = matchedTicker.symbol;
+      const ctx = memoryStore.getTickerContext(sym);
+      const recentSignal = memoryStore.data.signals.filter(s => s.ticker === sym).slice(-1)[0];
+      const recentProposal = memoryStore.data.proposals.filter(p => p.ticker === sym).slice(-1)[0];
+      const scorePct = Math.round(ctx.trustScore * 100);
+      const bar = '█'.repeat(Math.round(ctx.trustScore * 10)) + '░'.repeat(10 - Math.round(ctx.trustScore * 10));
+
+      const reply = `
+📊 *Ticker Intelligence: ${sym}* (${matchedTicker.name})
+Sector: \`${matchedTicker.sector}\`
+━━━━━━━━━━━━━━━━━━━━━━━━
+🧠 *Memory Trust Rating:* [${bar}] *${scorePct}%*
+• Approved: \`${ctx.approvedCount}\` | Rejected: \`${ctx.rejectedCount}\`
+• Last Decision: \`${ctx.lastDecision || 'None yet'}\`
+
+📰 *Latest Catalyst:*
+"${recentSignal ? recentSignal.headline : 'No recent headlines detected for ' + sym}"
+
+🎯 *Latest Strategist Proposal:*
+${recentProposal ? `*${recentProposal.action.toUpperCase()}* (${recentProposal.suggested_quantity} units) — _${recentProposal.rationale}_` : 'No active proposal. Waiting for next market catalyst.'}
+`.trim();
+
+      return this.sendMessage(chatId, reply, [
+        [{ text: `⚡ Test ${sym} Signal`, callback_data: `demo:${sym}` }]
+      ]);
+    }
+
+    // 2. Identity or rules inquiry
+    if (lower.includes('who are you') || lower.includes('how it works') || lower.includes('strategy') || lower.includes('what is this') || lower.includes('rules')) {
+      const explain = `
+🛡️ *About StockSentinel*
+
+StockSentinel is an advanced *human-gated trading agent* built for the SLAB Hackathon:
+
+1. 👁️ *The Watcher (Agent A)*: Scrapes financial news in milliseconds via *Scrapling* and maps DOM structures using *webcmd*.
+2. 🧠 *The Strategist*: Uses a local *Qwen 2.5 7B LLM (Epsilon)* to evaluate news catalysts against your historical trust profile.
+3. 📱 *Human Approval Gate*: Sends interactive alerts here. *NO ORDER CAN PROCEED WITHOUT YOUR EXPLICIT TAP!*
+4. ⚡ *The Executor (Agent B)*: Navigates to TradingView Paper Trading, pre-fills the ticket, and *strictly halts before confirm*.
+
+💡 *Core Philosophy*: _Watch tirelessly. Reason clearly. Prepare precisely. Act only on command._
+`.trim();
+      return this.sendMessage(chatId, explain);
+    }
+
+    // 3. Fallback
+    const fallbackText = `
+💬 *StockSentinel Assistant*
+
+I received: _"${query}"_
+
+I am actively monitoring the markets for: *TSLA, NVDA, AAPL, MSFT, GOOGL*.
+Whenever breaking news breaks on these tickers, I'll formulate a trade proposal and ask for your approval here!
+
+📌 *Quick Actions:*
+• /status — Check pipeline status
+• /demo — Simulate a trade proposal
+• /watchlist — View tracked stocks
+• /trust — View memory trust scores
+`.trim();
+
+    return this.sendMessage(chatId, fallbackText, [
+      [
+        { text: '⚡ Trigger Demo Signal', callback_data: 'demo:TSLA' },
+        { text: '📊 Cockpit Status', callback_data: 'cmd_status' }
+      ]
+    ]);
+  }
+
   async sendProposalAlert(proposal) {
-    if (!this.bot) return;
     const targetChat = this.chatId || settings.telegram.chatId;
     if (!targetChat) {
-      console.warn('[TelegramBot] No chatId registered yet. Send /start to the bot on Telegram.');
+      console.log(`[TelegramBot] ℹ️  Waiting for phone connection. Open Telegram, search @stocksentinxl_bot and send /start to capture your Chat ID.`);
       return;
     }
 
@@ -253,129 +368,52 @@ Tap below to approve, reject, or adjust quantity.
       ]
     ];
 
-    try {
-      await this.bot.sendMessage(targetChat, text, {
-        parse_mode: 'Markdown',
-        reply_markup: { inline_keyboard }
-      });
-      console.log(`[TelegramBot] 📤 Proposal alert sent to Telegram (${targetChat})`);
-    } catch (err) {
-      console.error('[TelegramBot] Failed to send Telegram alert:', err.message);
-    }
+    await this.sendMessage(targetChat, text, inline_keyboard);
+    console.log(`[TelegramBot] 📤 Proposal alert sent to Telegram chat: ${targetChat}`);
   }
 
-  /**
-   * Intelligently handle arbitrary or unknown natural language user queries
-   */
-  async handleUnknownQuery(chatId, query) {
-    if (!this.bot) return;
-
-    const lower = query.toLowerCase();
-    const watchlist = require('../config/watchlist');
-
-    // 1. Check if user is asking about a specific ticker
-    const matchedTicker = watchlist.tickers.find(t => 
-      lower.includes(t.symbol.toLowerCase()) || 
-      lower.includes(t.name.toLowerCase()) ||
-      t.keywords.some(kw => lower.includes(kw.toLowerCase()))
-    );
-
-    if (matchedTicker) {
-      const sym = matchedTicker.symbol;
-      const ctx = memoryStore.getTickerContext(sym);
-      const recentSignal = memoryStore.data.signals.filter(s => s.ticker === sym).slice(-1)[0];
-      const recentProposal = memoryStore.data.proposals.filter(p => p.ticker === sym).slice(-1)[0];
-
-      const scorePct = Math.round(ctx.trustScore * 100);
-      const bar = '█'.repeat(Math.round(ctx.trustScore * 10)) + '░'.repeat(10 - Math.round(ctx.trustScore * 10));
-
-      const reply = `
-📊 *Ticker Intelligence: ${sym}* (${matchedTicker.name})
-Sector: \`${matchedTicker.sector}\`
-━━━━━━━━━━━━━━━━━━━━━━━━
-🧠 *Memory Trust Rating:* [${bar}] *${scorePct}%*
-• Approved: \`${ctx.approvedCount}\` | Rejected: \`${ctx.rejectedCount}\`
-• Last Decision: \`${ctx.lastDecision || 'None yet'}\`
-
-📰 *Latest Catalyst:*
-"${recentSignal ? recentSignal.headline : 'No recent headlines detected for ' + sym}"
-
-🎯 *Latest Strategist Proposal:*
-${recentProposal ? `*${recentProposal.action.toUpperCase()}* (${recentProposal.suggested_quantity} units) — _${recentProposal.rationale}_` : 'No active proposal. Waiting for next market catalyst.'}
-`.trim();
-
-      return this.bot.sendMessage(chatId, reply, {
-        parse_mode: 'Markdown',
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: `⚡ Test ${sym} Signal`, callback_data: `demo:${sym}` }]
-          ]
-        }
-      });
-    }
-
-    // 2. Check if user is asking about system identity, philosophy, or strategy
-    if (lower.includes('who are you') || lower.includes('how it works') || lower.includes('strategy') || lower.includes('philosophy') || lower.includes('what is this') || lower.includes('rules')) {
-      const explain = `
-🛡️ *About StockSentinel*
-
-StockSentinel is an advanced *human-gated trading agent* built for the SLAB Hackathon:
-
-1. 👁️ *The Watcher (Agent A)*: Scrapes financial news in milliseconds via *Scrapling* and maps DOM structures using *webcmd*.
-2. 🧠 *The Strategist*: Uses a local *Qwen 2.5 7B LLM (Epsilon)* to evaluate news catalysts against your historical trust profile.
-3. 📱 *Human Approval Gate*: Sends interactive alerts here. *NO ORDER CAN PROCEED WITHOUT YOUR EXPLICIT TAP!*
-4. ⚡ *The Executor (Agent B)*: Navigates to TradingView Paper Trading, pre-fills the ticket, and *strictly halts before confirm*.
-
-💡 *Core Philosophy*: _Watch tirelessly. Reason clearly. Prepare precisely. Act only on command._
-`.trim();
-      return this.bot.sendMessage(chatId, explain, { parse_mode: 'Markdown' });
-    }
-
-    // 3. Fallback intelligent response for general market/financial questions
-    const fallbackText = `
-💬 *StockSentinel Assistant*
-
-I received: _"${query}"_
-
-I am actively monitoring the markets for: *TSLA, NVDA, AAPL, MSFT, GOOGL*.
-Whenever breaking news breaks on these tickers, I'll formulate a trade proposal and ask for your approval here!
-
-📌 *Quick Actions:*
-• /status — Check pipeline status
-• /demo — Simulate a trade proposal
-• /watchlist — View tracked stocks
-• /trust — View memory trust scores
-`.trim();
-
-    this.bot.sendMessage(chatId, fallbackText, {
-      parse_mode: 'Markdown',
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: '⚡ Trigger Demo Signal', callback_data: 'demo:TSLA' },
-            { text: '📊 Cockpit Status', callback_data: 'cmd_status' }
-          ]
-        ]
-      }
-    });
-  }
-
-  /**
-   * Notify execution progress
-   */
   async notifyExecution(proposal) {
-    if (!this.bot) return;
     const targetChat = this.chatId || settings.telegram.chatId;
     if (!targetChat) return;
 
     const message = `
 ⚡ *Execution Notice* ⚡
 Agent B has received your approval for *${proposal.ticker}* (${proposal.action.toUpperCase()} ${proposal.suggested_quantity} shares).
-Order pre-fill in progress on the paper trading platform.
+Order pre-fill in progress on TradingView Paper Trading.
 Final submit click remains strictly unclicked awaiting your review.
 `.trim();
 
-    this.bot.sendMessage(targetChat, message, { parse_mode: 'Markdown' }).catch(() => {});
+    await this.sendMessage(targetChat, message);
+  }
+
+  async sendMessage(chatId, text, inlineKeyboard = null) {
+    const body = {
+      chat_id: chatId,
+      text: text,
+      parse_mode: 'Markdown'
+    };
+    if (inlineKeyboard) {
+      body.reply_markup = { inline_keyboard: inlineKeyboard };
+    }
+    return await this.callApi('sendMessage', body);
+  }
+
+  saveChatIdToEnv(chatId) {
+    try {
+      const envPath = path.resolve(__dirname, '..', '.env');
+      if (fs.existsSync(envPath)) {
+        let content = fs.readFileSync(envPath, 'utf-8');
+        if (content.includes('TELEGRAM_CHAT_ID=')) {
+          content = content.replace(/TELEGRAM_CHAT_ID=.*/, `TELEGRAM_CHAT_ID=${chatId}`);
+        } else {
+          content += `\nTELEGRAM_CHAT_ID=${chatId}\n`;
+        }
+        fs.writeFileSync(envPath, content, 'utf-8');
+        console.log(`[TelegramBot] 💾 Saved TELEGRAM_CHAT_ID=${chatId} to .env`);
+      }
+    } catch (err) {
+      console.warn('[TelegramBot] Could not update .env with Chat ID:', err.message);
+    }
   }
 }
 
