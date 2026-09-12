@@ -11,10 +11,17 @@ module.exports = {
   // Web Server Port
   port: parseInt(process.env.PORT || '3000', 10),
 
-  // Telegram Config
+  // Approval Gate Bot (trade proposals)
   telegram: {
-    token: process.env.TELEGRAM_BOT_TOKEN || '',
-    chatId: process.env.TELEGRAM_CHAT_ID || ''
+    token:  process.env.TELEGRAM_BOT_TOKEN || '',
+    chatId: process.env.TELEGRAM_CHAT_ID   || ''
+  },
+
+  // Market Insights Bot (periodic watchlist summaries — second bot)
+  insightsBot: {
+    token:       process.env.INSIGHTS_BOT_TOKEN        || '',
+    chatId:      process.env.INSIGHTS_BOT_CHAT_ID      || '',
+    intervalMin: parseInt(process.env.INSIGHTS_INTERVAL_MIN || '30', 10)
   },
 
   // Local Epsilon Engine Configuration (Qwen 2.5 7B)
