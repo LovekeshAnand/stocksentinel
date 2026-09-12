@@ -1,7 +1,7 @@
 {
   "agent": "agent_a2_news_watcher",
   "command": "search_indian_financial_news",
-  "url": "https://www.bing.com/news/search?q=Tata%20Motors%20Ltd.%20share%20news%20NSE&qft=sortbydate%3d%221%22",
-  "resultsCount": 10,
-  "lastLearned": "2026-09-12T07:27:52.300Z"
+  "url": "https://www.bing.com/news/search?q=Tata%20Consultancy%20Services%20Ltd.%20share%20news%20NSE&qft=sortbydate%3d%221%22",
+  "resultsCount": 22,
+  "lastLearned": "2026-09-12T07:36:31.366Z"
 }

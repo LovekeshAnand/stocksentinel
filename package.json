@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node index.js",
+    "simulate": "node simulate_trade.js",
     "test:news": "python agents/agent_a_watcher/scrapling_fetch.py",
     "test": "node index.js"
   },

@@ -1,0 +1,12 @@
+{
+  "platform": "TradingView India",
+  "url": "https://in.tradingview.com/chart/?symbol=NSE%3AHDFCBANK",
+  "symbolSearchSelector": "button[id=\"header-toolbar-symbol-search\"], div[data-name=\"legend-source-title\"]",
+  "buyButtonSelector": "button[data-name=\"buy\"], [data-role=\"buy-button\"]",
+  "sellButtonSelector": "button[data-name=\"sell\"], [data-role=\"sell-button\"]",
+  "quantityInputSelector": "input[data-property=\"quantity\"], input[type=\"number\"]",
+  "confirmButtonSelector": "button[data-name=\"submit\"], button[type=\"submit\"]",
+  "learnedAt": "2026-09-12T07:35:03.438Z",
+  "updatedAt": "2026-09-12T07:35:05.622Z",
+  "version": 1
+}

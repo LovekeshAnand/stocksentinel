@@ -538,6 +538,115 @@
       "timestamp": "2026-09-12T07:22:59.652Z",
       "raw_sentiment_hint": "positive",
       "receivedAt": "2026-09-12T07:22:59.654Z"
+    },
+    {
+      "id": "chart_RELIANCE_1789198410977",
+      "ticker": "RELIANCE",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:33:30.977Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+      "price": 2942,
+      "rsi": 67.8,
+      "volume": "8.6M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:33:57.416Z"
+    },
+    {
+      "id": "news_RELIANCE_1789198437415_603",
+      "ticker": "RELIANCE",
+      "headline": "Reliance Industries Ltd drops for fifth straight session",
+      "snippet": "Reliance Industries Ltd drops for fifth straight session (Reliance Industries Ltd.)",
+      "source": "Business Standard",
+      "timestamp": "Fri, 11 Sep 2026 10:01:01 GMT",
+      "raw_sentiment_hint": "negative",
+      "receivedAt": "2026-09-12T07:33:57.417Z"
+    },
+    {
+      "id": "chart_TATAMOTORS_1789198423086",
+      "ticker": "TATAMOTORS",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:33:43.086Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+      "price": 988.5,
+      "rsi": 72.4,
+      "volume": "14.2M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:34:12.456Z"
+    },
+    {
+      "id": "news_TATAMOTORS_1789198437415_196",
+      "ticker": "TATAMOTORS",
+      "headline": "Ducon Infratechnologies approves allotment of 24.99 crore shares",
+      "snippet": "Ducon Infratechnologies approves allotment of 24.99 crore shares",
+      "source": "Live Financial Search",
+      "timestamp": "2026-09-12T07:33:57.278Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:34:12.457Z"
+    },
+    {
+      "id": "news_HDFCBANK_1789198437415_631",
+      "ticker": "HDFCBANK",
+      "headline": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag",
+      "snippet": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag (HDFC Bank Ltd.)",
+      "source": "Moneycontrol.com",
+      "timestamp": "Fri, 11 Sep 2026 08:58:24 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:34:27.478Z"
+    },
+    {
+      "id": "news_TCS_1789198437415_683",
+      "ticker": "TCS",
+      "headline": "TCS Share Price",
+      "snippet": "TCS Share Price (Tata Consultancy Services Ltd.)",
+      "source": "Upstox",
+      "timestamp": "Wed, 09 Sep 2026 23:59:13 GMT",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:34:42.513Z"
+    },
+    {
+      "id": "news_INFY_1789198437415_155",
+      "ticker": "INFY",
+      "headline": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story",
+      "snippet": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story (Infosys Ltd.)",
+      "source": "Kalkine India",
+      "timestamp": "Wed, 09 Sep 2026 08:46:00 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:34:57.534Z"
+    },
+    {
+      "id": "news_ICICIBANK_1789198437415_118",
+      "ticker": "ICICIBANK",
+      "headline": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart",
+      "snippet": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart (ICICI Bank Ltd.)",
+      "source": "Upstox",
+      "timestamp": "Fri, 11 Sep 2026 07:22:09 GMT",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T07:35:12.564Z"
+    },
+    {
+      "id": "news_TATAMOTORS_1789198579745_333",
+      "ticker": "TATAMOTORS",
+      "headline": "Tata Motors PV shares rise after automaker's plan to raise prices by up to ₹25,000/unit from September",
+      "snippet": "Tata Motors PV shares rise after automaker's plan to raise prices by up to ₹25,000/unit from September (Tata Motors Ltd.)",
+      "source": "Upstox",
+      "timestamp": "Thu, 20 Aug 2026 07:00:00 GMT",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:36:19.746Z"
+    },
+    {
+      "id": "chart_INFY_1789198559433",
+      "ticker": "INFY",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:35:59.433Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870",
+      "price": 1892.3,
+      "rsi": 58.9,
+      "volume": "6.1M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:36:31.368Z"
     }
   ],
   "proposals": [
@@ -1413,9 +1522,214 @@
       },
       "status": "PENDING",
       "createdAt": "2026-09-12T07:06:15.792Z"
+    },
+    {
+      "id": "prop_RELIANCE_1789198452453",
+      "ticker": "RELIANCE",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Signal conflict detected: Agent A1 indicates technical breakout (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI), but Agent A2 reports conflicting sentiment: \"Reliance Industries Ltd drops for fifth straight session\". Recommending hold until evidence reconciles.",
+      "confidence": "low",
+      "signals_considered": [
+        "chart: ma_crossover (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI)",
+        "news: negative sentiment (\"Reliance Industries Ltd drops for fifth straight session\")"
+      ],
+      "source_signal_ids": [
+        "chart_RELIANCE_1789198410977",
+        "news_RELIANCE_1789198437415_603"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_RELIANCE_1789198410977",
+        "ticker": "RELIANCE",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:33:30.977Z",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+        "price": 2942,
+        "rsi": 67.8,
+        "volume": "8.6M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_RELIANCE_1789198437415_603",
+        "ticker": "RELIANCE",
+        "headline": "Reliance Industries Ltd drops for fifth straight session",
+        "snippet": "Reliance Industries Ltd drops for fifth straight session (Reliance Industries Ltd.)",
+        "source": "Business Standard",
+        "timestamp": "Fri, 11 Sep 2026 10:01:01 GMT",
+        "raw_sentiment_hint": "negative"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:34:12.453Z"
+    },
+    {
+      "id": "prop_TATAMOTORS_1789198467474",
+      "ticker": "TATAMOTORS",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Bullish technical breakout: Agent A1 detected Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA at $988.5, with supportive market backdrop: \"Ducon Infratechnologies approves allotment of 24.99 crore shares\".",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: volume_spike (Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA)",
+        "news: neutral sentiment (\"Ducon Infratechnologies approves allotment of 24.99 crore shares\")"
+      ],
+      "source_signal_ids": [
+        "chart_TATAMOTORS_1789198423086",
+        "news_TATAMOTORS_1789198437415_196"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TATAMOTORS_1789198423086",
+        "ticker": "TATAMOTORS",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:33:43.086Z",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+        "price": 988.5,
+        "rsi": 72.4,
+        "volume": "14.2M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_TATAMOTORS_1789198437415_196",
+        "ticker": "TATAMOTORS",
+        "headline": "Ducon Infratechnologies approves allotment of 24.99 crore shares",
+        "snippet": "Ducon Infratechnologies approves allotment of 24.99 crore shares",
+        "source": "Live Financial Search",
+        "timestamp": "2026-09-12T07:33:57.278Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:34:27.475Z"
+    },
+    {
+      "id": "prop_HDFCBANK_1789198482512",
+      "ticker": "HDFCBANK",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Breaking fundamental catalyst: Agent A2 detected \"Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag\". Favorable risk/reward momentum.",
+      "confidence": "medium",
+      "signals_considered": [
+        "news: positive sentiment (\"Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag\")"
+      ],
+      "source_signal_ids": [
+        "news_HDFCBANK_1789198437415_631"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_HDFCBANK_1789198437415_631",
+        "ticker": "HDFCBANK",
+        "headline": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag",
+        "snippet": "Bank Nifty rebounds over 900 points from day’s low, ends in green as HDFC Bank jumps 2%; PSU banks lag (HDFC Bank Ltd.)",
+        "source": "Moneycontrol.com",
+        "timestamp": "Fri, 11 Sep 2026 08:58:24 GMT",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "APPROVED",
+      "createdAt": "2026-09-12T07:34:42.512Z",
+      "approvedAt": "2026-09-12T07:35:01.650Z",
+      "notes": "Approved via Telegram button",
+      "updatedAt": "2026-09-12T07:35:01.650Z"
+    },
+    {
+      "id": "prop_TCS_1789198497533",
+      "ticker": "TCS",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for TCS lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "news: neutral sentiment (\"TCS Share Price\")"
+      ],
+      "source_signal_ids": [
+        "news_TCS_1789198437415_683"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_TCS_1789198437415_683",
+        "ticker": "TCS",
+        "headline": "TCS Share Price",
+        "snippet": "TCS Share Price (Tata Consultancy Services Ltd.)",
+        "source": "Upstox",
+        "timestamp": "Wed, 09 Sep 2026 23:59:13 GMT",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:34:57.533Z"
+    },
+    {
+      "id": "prop_INFY_1789198512561",
+      "ticker": "INFY",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Breaking fundamental catalyst: Agent A2 detected \"Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story\". Favorable risk/reward momentum.",
+      "confidence": "medium",
+      "signals_considered": [
+        "news: positive sentiment (\"Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story\")"
+      ],
+      "source_signal_ids": [
+        "news_INFY_1789198437415_155"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_INFY_1789198437415_155",
+        "ticker": "INFY",
+        "headline": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story",
+        "snippet": "Infosys Ltd (NSE: INFY) Business Overview and AI-Led Growth Story (Infosys Ltd.)",
+        "source": "Kalkine India",
+        "timestamp": "Wed, 09 Sep 2026 08:46:00 GMT",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "REJECTED",
+      "createdAt": "2026-09-12T07:35:12.562Z",
+      "rejectedAt": "2026-09-12T07:35:19.349Z",
+      "rejectionReason": "Rejected via Telegram button",
+      "updatedAt": "2026-09-12T07:35:19.349Z"
+    },
+    {
+      "id": "prop_ICICIBANK_1789198527588",
+      "ticker": "ICICIBANK",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for ICICIBANK lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "news: neutral sentiment (\"ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart\")"
+      ],
+      "source_signal_ids": [
+        "news_ICICIBANK_1789198437415_118"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_ICICIBANK_1789198437415_118",
+        "ticker": "ICICIBANK",
+        "headline": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart",
+        "snippet": "ICICI Bank Share Price - Live NSE: ICICIBANK Stock Price & Chart (ICICI Bank Ltd.)",
+        "source": "Upstox",
+        "timestamp": "Fri, 11 Sep 2026 07:22:09 GMT",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:35:27.588Z"
     }
   ],
-  "tickerHistory": {},
+  "tickerHistory": {
+    "HDFCBANK": {
+      "approvedCount": 1,
+      "rejectedCount": 0,
+      "trustScore": 0.75,
+      "lastDecision": "APPROVED",
+      "lastDecisionAt": "2026-09-12T07:35:01.650Z"
+    },
+    "INFY": {
+      "approvedCount": 0,
+      "rejectedCount": 1,
+      "trustScore": 0.5499999999999999,
+      "lastDecision": "REJECTED",
+      "lastDecisionAt": "2026-09-12T07:35:19.349Z"
+    }
+  },
   "executionLog": [
     {
       "proposalId": "prop_test",
@@ -1438,6 +1752,46 @@
       "humanSubmitted": true,
       "executedAt": "2026-09-12T06:20:06.136Z",
       "phase": "explored"
+    },
+    {
+      "proposalId": "prop_HDFCBANK_1789198482512",
+      "ticker": "HDFCBANK",
+      "action": "buy",
+      "quantity": 10,
+      "platform": "TradingView India Paper Trading",
+      "prefilledSuccessfully": true,
+      "humanSubmitted": true,
+      "executedAt": "2026-09-12T07:35:05.623Z",
+      "phase": "explored"
+    },
+    {
+      "proposalId": "sim_manual_1789198869726",
+      "tradeId": "TX-NSE-869728",
+      "ticker": "TATAMOTORS",
+      "action": "BUY",
+      "quantity": 25,
+      "price": 988.5,
+      "platform": "TradingView India Paper Simulator",
+      "status": "FILLED",
+      "executedAt": "2026-09-12T07:41:15.508Z"
     }
-  ]
+  ],
+  "portfolio": {
+    "initialCapital": 1000000,
+    "cash": 975267.5,
+    "positions": [
+      {
+        "id": "pos_TATAMOTORS_1789198869726",
+        "ticker": "TATAMOTORS",
+        "action": "BUY",
+        "quantity": 25,
+        "entryPrice": 988.5,
+        "currentPrice": 988.5,
+        "pnl": 0,
+        "openedAt": "2026-09-12T07:41:09.726Z"
+      }
+    ],
+    "totalTrades": 1,
+    "realizedPnl": 0
+  }
 }
