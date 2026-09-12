@@ -103,24 +103,25 @@ class SentinelTelegramBot {
     if (!text) return;
 
     if (text.startsWith('/start')) {
-      const welcome = `
-🛡️ *StockSentinel Approval Gate Connected!*
-
-Your Chat ID is: \`${chatId}\`
-I am now actively linked to your phone for all trade approvals!
-
-*Commands:*
-• /status - View agent status & pending approvals
-• /demo - Trigger a test market signal right now
-• /watchlist - View active watchlisted tickers
-• /trust - View memory trust score graph per ticker
-• /help - Display full operational manual
-
-*CRITICAL RULE:*
-I will *NEVER* submit an order without your explicit confirmation tap!
-`.trim();
-      return this.sendMessage(chatId, welcome);
+      const lines = [
+        '*StockSentinel Approval Gate — Connected*',
+        '',
+        'Your Chat ID: `' + chatId + '`',
+        'You will only receive *HIGH or MEDIUM confidence BUY/SELL proposals* — no noise.',
+        '',
+        '*Commands:*',
+        '• /status — Pending approvals and agent status',
+        '• /insights — Live market insights for your watchlist',
+        '• /watchlist — View monitored NSE tickers',
+        '• /trust — Memory trust score per ticker',
+        '• /demo — Simulate a live trade proposal',
+        '• /help — Full command guide',
+        '',
+        '*Rule:* I will NEVER execute an order without your explicit tap.'
+      ].join('\n');
+      return this.sendMessage(chatId, lines);
     }
+
 
     if (text.startsWith('/status')) {
       const pending = gateLogic.getPendingList();
@@ -155,38 +156,57 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
       return this.sendMessage(chatId, '⚡ *Indian market demo proposal generated!* Review below:');
     }
 
+    if (text.startsWith('/insights')) {
+      const watchlist = require('../config/watchlist');
+      const parts = watchlist.tickers.map(t => {
+        const ctx = memoryStore.getTickerContext(t.symbol);
+        const recentProposal = memoryStore.data.proposals.filter(p => p.ticker === t.symbol).slice(-1)[0];
+        const recentSignal   = memoryStore.data.signals.filter(s => s.ticker === t.symbol && s.headline).slice(-1)[0];
+        const filled = Math.round(ctx.trustScore * 10);
+        const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(10 - filled);
+        const lastAction  = recentProposal ? `${recentProposal.action.toUpperCase()} (${recentProposal.confidence})` : 'Monitoring';
+        const headline    = recentSignal ? recentSignal.headline.slice(0, 72) + (recentSignal.headline.length > 72 ? '...' : '') : 'No recent headline';
+        return `*${t.symbol}* — ${t.sector}\n  Trust: [${bar}] ${(ctx.trustScore * 100).toFixed(0)}% | Signal: ${lastAction}\n  _${headline}_`;
+      });
+      const timeStr = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+      const insightMsg = `*Market Insights — Watchlist (NSE)*\n_Updated: ${timeStr} IST_\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n${parts.join('\n\n')}`;
+      return this.sendMessage(chatId, insightMsg);
+    }
+
     if (text.startsWith('/watchlist')) {
       const watchlist = require('../config/watchlist');
-      const list = watchlist.tickers.map(t => `• *${t.symbol}* (${t.name})\n  Sector: ${t.sector} | Default Qty: ${t.defaultQuantity}`).join('\n\n');
-      return this.sendMessage(chatId, `📋 *Active Sentinel Watchlist*\n\n${list}`);
+      const list = watchlist.tickers.map(t => `• *${t.symbol}* — ${t.name}\n  Sector: ${t.sector} | Default Qty: ${t.defaultQuantity}`).join('\n\n');
+      return this.sendMessage(chatId, `*Active Watchlist (NSE)*\n\n${list}`);
     }
 
     if (text.startsWith('/trust')) {
       const watchlist = require('../config/watchlist');
       const stats = watchlist.tickers.map(t => {
         const ctx = memoryStore.getTickerContext(t.symbol);
-        const bar = '█'.repeat(Math.round(ctx.trustScore * 10)) + '░'.repeat(10 - Math.round(ctx.trustScore * 10));
+        const filled = Math.round(ctx.trustScore * 10);
+        const bar = '\u2588'.repeat(filled) + '\u2591'.repeat(10 - filled);
         return `• *${t.symbol}*: [${bar}] ${(ctx.trustScore * 100).toFixed(0)}%\n  Approved: ${ctx.approvedCount} | Rejected: ${ctx.rejectedCount} | Last: ${ctx.lastDecision || 'None'}`;
       }).join('\n\n');
-      return this.sendMessage(chatId, `🧠 *Memory Layer — User Trust Ratings*\n\n${stats}\n\n_Trust scores dynamically tune Strategist proposal confidence._`);
+      return this.sendMessage(chatId, `*Memory — Trust Ratings*\n\n${stats}\n\n_Scores tune Strategist proposal confidence._`);
     }
 
     if (text.startsWith('/help')) {
-      const help = `
-🤖 *StockSentinel Commands & Controls*
-
-• /start - Connect chat and wake the agent
-• /status - View pending approvals & active engine
-• /demo - Trigger a live simulated trade proposal
-• /watchlist - View actively monitored tickers
-• /trust - View memory trust score graph per ticker
-• /help - View this guide
-
-💡 *Interactive Natural Language*:
-You can ask me questions anytime (e.g., "What do you think of TSLA?", "What is your strategy?").
-`.trim();
-      return this.sendMessage(chatId, help);
+      const helpLines = [
+        '*StockSentinel — Commands*',
+        '',
+        '• /start — Connect and wake the agent',
+        '• /status — Pending approvals and engine status',
+        '• /insights — Live market insights for your watchlist',
+        '• /watchlist — View monitored NSE tickers',
+        '• /trust — Memory trust score per ticker',
+        '• /demo — Simulate a trade proposal end-to-end',
+        '• /help — This guide',
+        '',
+        'Type any ticker (e.g. RELIANCE) for its latest signal.'
+      ].join('\n');
+      return this.sendMessage(chatId, helpLines);
     }
+
 
     // Check if user is answering a quantity modification request
     const modProposalId = this.activeModifications.get(chatId);
@@ -346,13 +366,18 @@ Whenever breaking news or a chart breakout signals on these tickers, I'll formul
 
     const actionBadge = proposal.action.toUpperCase() === 'BUY' ? '🟢 BUY' : (proposal.action.toUpperCase() === 'SELL' ? '🔴 SELL' : '🟡 HOLD');
 
-    const chartInfo = proposal.chartSignal 
-      ? `📊 *Agent A1 (Chart Evidence):*\n• ${proposal.chartSignal.pattern_type}: ${proposal.chartSignal.pattern_details}\n• Price: $${proposal.chartSignal.price || 'N/A'} | RSI: ${proposal.chartSignal.rsi || 'N/A'}`
-      : `📊 *Agent A1 (Chart Evidence):* Technical baseline active`;
+    const priceStr = proposal.chartSignal?.price
+      ? '\u20B9' + Number(proposal.chartSignal.price).toLocaleString('en-IN')
+      : 'N/A';
 
-    const newsInfo = proposal.newsSignal || proposal.headline
-      ? `📰 *Agent A2 (News Evidence):*\n"${proposal.newsSignal?.headline || proposal.headline}"`
-      : `📰 *Agent A2 (News Evidence):* Fundamental baseline active`;
+    const chartInfo = proposal.chartSignal
+      ? `*Agent A1 — Chart Evidence:*\n• Pattern: ${proposal.chartSignal.pattern_type}\n• ${(proposal.chartSignal.pattern_details || '').slice(0, 100)}\n• Price: ${priceStr} | RSI: ${proposal.chartSignal.rsi || 'N/A'}`
+      : `*Agent A1 — Chart Evidence:* Technical baseline active`;
+
+    const newsInfo = (proposal.newsSignal || proposal.headline)
+      ? `*Agent A2 — News Evidence:*\n"${((proposal.newsSignal?.headline || proposal.headline) || '').slice(0, 120)}"`
+      : `*Agent A2 — News Evidence:* Fundamental baseline active`;
+
 
     const text = `
 🚨 *STOCKSENTINEL TRADE PROPOSAL* 🚨

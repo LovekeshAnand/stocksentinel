@@ -29,8 +29,18 @@ class ApprovalGateLogic extends EventEmitter {
     this.pendingProposals.set(proposalId, record);
     memoryStore.addProposal(record);
 
-    console.log(`[ApprovalGate] 🛡️ New proposal queued: ${record.ticker} ${record.action.toUpperCase()} (${record.suggested_quantity} units)`);
-    this.emit('proposal_created', record);
+    // Quality gate: only send actionable HIGH/MEDIUM confidence BUY or SELL to Telegram.
+    // LOW confidence and WATCH_ONLY proposals are logged but never pushed to the user's phone.
+    const isActionable = ['buy', 'sell'].includes(record.action?.toLowerCase());
+    const isHighQuality = ['high', 'medium'].includes(record.confidence?.toLowerCase());
+
+    if (isActionable && isHighQuality) {
+      console.log(`[ApprovalGate] Proposal queued for Telegram: ${record.ticker} ${record.action.toUpperCase()} (${record.confidence.toUpperCase()})`);
+      this.emit('proposal_created', record);
+    } else {
+      console.log(`[ApprovalGate] Proposal suppressed (${record.action}/${record.confidence}) — not sending to Telegram: ${record.ticker}`);
+    }
+
     return record;
   }
 

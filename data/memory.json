@@ -417,6 +417,104 @@
       "technical_bias": "BULLISH",
       "timestamp": "2026-09-12T06:55:18.756Z",
       "receivedAt": "2026-09-12T06:56:01.684Z"
+    },
+    {
+      "id": "chart_RELIANCE_1789196601728",
+      "ticker": "RELIANCE",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:03:21.728Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+      "price": 2942,
+      "rsi": 67.8,
+      "volume": "8.6M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:04:10.915Z"
+    },
+    {
+      "id": "news_RELIANCE_1789196650915",
+      "ticker": "RELIANCE",
+      "headline": "Reliance Jio Deploys Nationwide 5G with AI Cloud Partnership Announcement",
+      "snippet": "Chairman confirms accelerated commercial expansion into cloud data centers.",
+      "source": "Moneycontrol Markets",
+      "timestamp": "2026-09-12T07:04:10.915Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:04:10.916Z"
+    },
+    {
+      "id": "chart_TATAMOTORS_1789196616303",
+      "ticker": "TATAMOTORS",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:03:36.303Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+      "price": 988.5,
+      "rsi": 72.4,
+      "volume": "14.2M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:04:25.955Z"
+    },
+    {
+      "id": "news_TATAMOTORS_1789196650915",
+      "ticker": "TATAMOTORS",
+      "headline": "Tata Motors Reports 32% YoY Surge in EV Deliveries with Record JLR Order Inflow",
+      "snippet": "Domestic EV dominance and expanded margins drive bullish outlook.",
+      "source": "Moneycontrol Markets",
+      "timestamp": "2026-09-12T07:04:10.915Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T07:04:25.955Z"
+    },
+    {
+      "id": "chart_HDFCBANK_1789196711142",
+      "ticker": "HDFCBANK",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:05:11.142Z",
+      "pattern_type": "consolidation_breakout",
+      "pattern_details": "Clean break above ₹1,635 resistance zone with expanding volume",
+      "price": 1648.75,
+      "rsi": 64.2,
+      "volume": "11.5M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:05:42.380Z"
+    },
+    {
+      "id": "chart_INFY_1789196722061",
+      "ticker": "INFY",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:05:22.061Z",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870",
+      "price": 1892.3,
+      "rsi": 58.9,
+      "volume": "6.1M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:05:45.752Z"
+    },
+    {
+      "id": "chart_TCS_1789196723646",
+      "ticker": "TCS",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:05:23.646Z",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Bullish flag breakout above ₹3,920 on elevated weekly volume",
+      "price": 3958,
+      "rsi": 61.5,
+      "volume": "4.8M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:05:57.406Z"
+    },
+    {
+      "id": "chart_ICICIBANK_1789196733888",
+      "ticker": "ICICIBANK",
+      "currency": "INR",
+      "timestamp": "2026-09-12T07:05:33.888Z",
+      "pattern_type": "consolidation_breakout",
+      "pattern_details": "Channel breakout above ₹1,180 with RSI momentum confirmation",
+      "price": 1198.45,
+      "rsi": 66.3,
+      "volume": "9.3M",
+      "technical_bias": "BULLISH",
+      "receivedAt": "2026-09-12T07:06:00.773Z"
     }
   ],
   "proposals": [
@@ -1096,6 +1194,202 @@
       },
       "status": "PENDING",
       "createdAt": "2026-09-12T06:56:16.706Z"
+    },
+    {
+      "id": "prop_RELIANCE_1789196665951",
+      "ticker": "RELIANCE",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI at $2942, reinforced by Agent A2 detecting positive news catalyst: \"Reliance Jio Deploys Nationwide 5G with AI Cloud Partnership Announcement\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: ma_crossover (Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI)",
+        "news: positive sentiment (\"Reliance Jio Deploys Nationwide 5G with AI Cloud Partnership Announcement\")"
+      ],
+      "source_signal_ids": [
+        "chart_RELIANCE_1789196601728",
+        "news_RELIANCE_1789196650915"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_RELIANCE_1789196601728",
+        "ticker": "RELIANCE",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:03:21.728Z",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Golden cross: 20-EMA crossed 50-SMA at ₹2,910 with rising RSI",
+        "price": 2942,
+        "rsi": 67.8,
+        "volume": "8.6M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_RELIANCE_1789196650915",
+        "ticker": "RELIANCE",
+        "headline": "Reliance Jio Deploys Nationwide 5G with AI Cloud Partnership Announcement",
+        "snippet": "Chairman confirms accelerated commercial expansion into cloud data centers.",
+        "source": "Moneycontrol Markets",
+        "timestamp": "2026-09-12T07:04:10.915Z",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:04:25.951Z"
+    },
+    {
+      "id": "prop_TATAMOTORS_1789196680987",
+      "ticker": "TATAMOTORS",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA at $988.5, reinforced by Agent A2 detecting positive news catalyst: \"Tata Motors Reports 32% YoY Surge in EV Deliveries with Record JLR Order Inflow\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: volume_spike (Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA)",
+        "news: positive sentiment (\"Tata Motors Reports 32% YoY Surge in EV Deliveries with Record JLR Order Inflow\")"
+      ],
+      "source_signal_ids": [
+        "chart_TATAMOTORS_1789196616303",
+        "news_TATAMOTORS_1789196650915"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TATAMOTORS_1789196616303",
+        "ticker": "TATAMOTORS",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:03:36.303Z",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+        "price": 988.5,
+        "rsi": 72.4,
+        "volume": "14.2M",
+        "technical_bias": "BULLISH"
+      },
+      "newsSignal": {
+        "id": "news_TATAMOTORS_1789196650915",
+        "ticker": "TATAMOTORS",
+        "headline": "Tata Motors Reports 32% YoY Surge in EV Deliveries with Record JLR Order Inflow",
+        "snippet": "Domestic EV dominance and expanded margins drive bullish outlook.",
+        "source": "Moneycontrol Markets",
+        "timestamp": "2026-09-12T07:04:10.915Z",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:04:40.987Z"
+    },
+    {
+      "id": "prop_HDFCBANK_1789196757404",
+      "ticker": "HDFCBANK",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Single-lens technical breakout: Agent A1 detected Clean break above ₹1,635 resistance zone with expanding volume at $1648.75.",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: consolidation_breakout (Clean break above ₹1,635 resistance zone with expanding volume)"
+      ],
+      "source_signal_ids": [
+        "chart_HDFCBANK_1789196711142"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_HDFCBANK_1789196711142",
+        "ticker": "HDFCBANK",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:05:11.142Z",
+        "pattern_type": "consolidation_breakout",
+        "pattern_details": "Clean break above ₹1,635 resistance zone with expanding volume",
+        "price": 1648.75,
+        "rsi": 64.2,
+        "volume": "11.5M",
+        "technical_bias": "BULLISH"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:05:57.404Z"
+    },
+    {
+      "id": "prop_INFY_1789196760772",
+      "ticker": "INFY",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Single-lens technical breakout: Agent A1 detected Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870 at $1892.3.",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: volume_spike (Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870)"
+      ],
+      "source_signal_ids": [
+        "chart_INFY_1789196722061"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_INFY_1789196722061",
+        "ticker": "INFY",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:05:22.061Z",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Accumulation complete: volume surge + bounce from 200-day SMA at ₹1,870",
+        "price": 1892.3,
+        "rsi": 58.9,
+        "volume": "6.1M",
+        "technical_bias": "BULLISH"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:06:00.772Z"
+    },
+    {
+      "id": "prop_TCS_1789196772425",
+      "ticker": "TCS",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Single-lens technical breakout: Agent A1 detected Bullish flag breakout above ₹3,920 on elevated weekly volume at $3958.",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: ma_crossover (Bullish flag breakout above ₹3,920 on elevated weekly volume)"
+      ],
+      "source_signal_ids": [
+        "chart_TCS_1789196723646"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TCS_1789196723646",
+        "ticker": "TCS",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:05:23.646Z",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Bullish flag breakout above ₹3,920 on elevated weekly volume",
+        "price": 3958,
+        "rsi": 61.5,
+        "volume": "4.8M",
+        "technical_bias": "BULLISH"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:06:12.425Z"
+    },
+    {
+      "id": "prop_ICICIBANK_1789196775792",
+      "ticker": "ICICIBANK",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Single-lens technical breakout: Agent A1 detected Channel breakout above ₹1,180 with RSI momentum confirmation at $1198.45.",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: consolidation_breakout (Channel breakout above ₹1,180 with RSI momentum confirmation)"
+      ],
+      "source_signal_ids": [
+        "chart_ICICIBANK_1789196733888"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_ICICIBANK_1789196733888",
+        "ticker": "ICICIBANK",
+        "currency": "INR",
+        "timestamp": "2026-09-12T07:05:33.888Z",
+        "pattern_type": "consolidation_breakout",
+        "pattern_details": "Channel breakout above ₹1,180 with RSI momentum confirmation",
+        "price": 1198.45,
+        "rsi": 66.3,
+        "volume": "9.3M",
+        "technical_bias": "BULLISH"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T07:06:15.792Z"
     }
   ],
   "tickerHistory": {},
