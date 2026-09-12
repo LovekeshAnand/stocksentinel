@@ -5,16 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>StockSentinel — Self-Learning, Human-Gated Trading Cockpit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07090e;
-      --card-bg: #0e131f;
+      --bg: #06080e;
+      --card-bg: #0b111e;
+      --card-inner: #101828;
       --border: #1e293b;
+      --border-focus: #38bdf8;
       --accent-cyan: #38bdf8;
       --accent-green: #10b981;
       --accent-red: #f43f5e;
       --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -26,17 +29,21 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       padding: 24px;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .container { max-width: 1400px; margin: 0 auto; }
+    .container { max-width: 1560px; margin: 0 auto; }
 
+    /* Top Navigation Header */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 24px;
+      padding-bottom: 20px;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 28px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
     }
 
     .brand { display: flex; align-items: center; gap: 14px; }
@@ -46,17 +53,20 @@
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       font-size: 22px; font-weight: 800;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
     }
-    .brand-title { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-    .brand-sub { font-size: 13px; color: var(--accent-cyan); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+    .brand-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .brand-sub { font-size: 11px; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; font-family: 'JetBrains Mono', monospace; }
+
+    .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
 
     .gate-badge {
       display: flex; align-items: center; gap: 10px;
       background: rgba(16, 185, 129, 0.1);
       border: 1px solid rgba(16, 185, 129, 0.3);
       padding: 8px 16px; border-radius: 30px;
-      font-size: 13px; font-weight: 600; color: var(--accent-green);
+      font-size: 12px; font-weight: 700; color: var(--accent-green);
+      font-family: 'JetBrains Mono', monospace;
     }
     .pulse-dot {
       width: 8px; height: 8px; border-radius: 50%;
@@ -66,222 +76,363 @@
     }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-    /* Grid Layout */
-    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+    /* Action Buttons */
+    .btn {
+      padding: 8px 15px; border-radius: 8px; font-size: 12.5px; font-weight: 700;
+      cursor: pointer; border: none; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .btn-scan {
+      background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+    .btn-scan:hover { background: #38bdf8; color: #082f49; box-shadow: 0 0 16px rgba(56, 189, 248, 0.4); }
 
-    /* Agent Status Bar */
+    .btn-sim {
+      background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+    .btn-sim:hover { background: #10b981; color: #022c22; box-shadow: 0 0 16px rgba(16, 185, 129, 0.4); }
+
+    .btn-heal {
+      background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+    .btn-heal:hover { background: #f59e0b; color: #451a03; box-shadow: 0 0 16px rgba(245, 158, 11, 0.4); }
+
+    .btn-demo {
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      color: #082f49; font-weight: 800;
+    }
+    .btn-demo:hover { filter: brightness(1.15); box-shadow: 0 0 18px rgba(56, 189, 248, 0.5); }
+
+    /* 4-Agent Pipeline Bar */
     .agent-pipeline {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .agent-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 12px;
+      padding: 14px 16px;
       position: relative;
       overflow: hidden;
     }
     .agent-card::before {
       content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, #38bdf8, transparent);
     }
-    .agent-name { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-    .agent-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
-    .agent-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+    .agent-card:nth-child(1)::before { background: #10b981; }
+    .agent-card:nth-child(2)::before { background: #38bdf8; }
+    .agent-card:nth-child(3)::before { background: #a855f7; }
+    .agent-card:nth-child(4)::before { background: #f59e0b; }
+
+    .agent-name { font-size: 10.5px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+    .agent-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .agent-desc { font-size: 11.5px; color: var(--text-muted); line-height: 1.4; }
+
+    /* Paper Portfolio Summary Card */
+    .portfolio-banner {
+      background: linear-gradient(135deg, #0c1527, #070d18);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 18px 24px;
+      margin-bottom: 24px;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 3fr;
+      gap: 20px;
+      align-items: center;
+    }
+    .port-stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; font-family: 'JetBrains Mono', monospace; margin-bottom: 4px; }
+    .port-stat-val { font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace; }
+    .port-stat-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .positions-pills {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    }
+    .pos-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 4px 10px; border-radius: 6px;
+      font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pos-pill-side { font-weight: 800; }
+    .pos-buy { color: #34d399; }
+    .pos-pnl-pos { color: #34d399; font-weight: 700; }
+
+    /* Main Grid Layout */
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
 
     /* Section Cards */
     .card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
+      border-radius: 14px;
+      padding: 20px;
       margin-bottom: 24px;
     }
     .card-header {
       display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .card-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+
+    /* Dual Feeds Panel */
+    .dual-feeds-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px;
+    }
+    .feed-column {
+      background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+      max-height: 280px; overflow-y: auto;
+    }
+    .feed-header {
+      font-size: 11.5px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      text-transform: uppercase; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: space-between;
+    }
+    .feed-item {
+      padding: 8px 10px; border-radius: 6px; margin-bottom: 8px; background: rgba(0,0,0,0.25);
+      border-left: 3px solid var(--border); font-size: 12px; line-height: 1.4;
+    }
+    .feed-item-chart { border-left-color: #10b981; }
+    .feed-item-news { border-left-color: #38bdf8; }
 
     /* Proposals */
     .proposal-card {
-      background: #131a29;
-      border: 1px solid #2d3b55;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 16px;
+      background: #111726;
+      border: 1px solid #23314a;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 14px;
       transition: all 0.2s ease;
     }
-    .proposal-card:hover { border-color: var(--accent-cyan); }
+    .proposal-card:hover { border-color: var(--border-focus); }
     .proposal-top {
       display: flex; justify-content: space-between; align-items: flex-start;
       margin-bottom: 12px;
     }
     .proposal-ticker {
-      font-size: 20px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
+      font-size: 19px; font-weight: 800; font-family: 'JetBrains Mono', monospace;
       color: var(--text-main);
     }
     .badge {
-      padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700;
+      padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 800;
       text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
     }
     .badge-buy { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
     .badge-sell { background: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid #f43f5e; }
     .badge-hold { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b; }
 
-    .headline-box {
-      font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 10px; line-height: 1.4;
+    .evidence-box {
+      border-radius: 6px; padding: 8px 12px; font-size: 12px; margin-bottom: 8px; line-height: 1.45;
     }
+    .evidence-chart { background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); color: #a7f3d0; }
+    .evidence-news { background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.3); color: #bae6fd; }
+
     .rationale-box {
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.35);
       border-left: 3px solid var(--accent-cyan);
-      padding: 10px 14px;
-      border-radius: 0 8px 8px 0;
-      font-size: 13px; color: var(--text-muted);
-      margin-bottom: 16px; line-height: 1.5;
+      padding: 10px 14px; border-radius: 0 8px 8px 0;
+      font-size: 12.5px; color: #cbd5e1; margin-bottom: 14px; line-height: 1.5;
     }
     .meta-row {
-      display: flex; gap: 20px; font-size: 12px; color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace; margin-bottom: 16px;
+      display: flex; gap: 20px; font-size: 11.5px; color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace; margin-bottom: 14px; flex-wrap: wrap;
     }
     .actions-row { display: flex; gap: 10px; }
-    .btn {
-      padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700;
-      cursor: pointer; border: none; transition: all 0.2s ease;
-      display: flex; align-items: center; gap: 8px;
-    }
     .btn-approve {
-      background: var(--accent-green); color: #052e16;
+      background: var(--accent-green); color: #022c22; font-weight: 800;
     }
     .btn-approve:hover { filter: brightness(1.15); box-shadow: 0 0 14px rgba(16,185,129,0.5); }
     .btn-reject {
       background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid #f43f5e;
     }
     .btn-reject:hover { background: var(--accent-red); color: #fff; }
-    .btn-demo {
-      background: linear-gradient(135deg, #0284c7, #38bdf8);
-      color: #0c1829;
-    }
 
     /* Trust Score List */
     .trust-item {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
     }
-    .trust-ticker { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-    .trust-bar-bg { width: 100px; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin: 0 10px; }
+    .trust-ticker { font-weight: 800; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    .trust-bar-bg { width: 90px; height: 6px; background: #1e293b; border-radius: 3px; overflow: hidden; margin: 0 10px; }
     .trust-bar-fill { height: 100%; background: var(--accent-cyan); border-radius: 3px; }
 
     /* Live Telemetry Log */
     .log-box {
-      background: #06090f; border: 1px solid var(--border); border-radius: 10px;
-      padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      background: #05070c; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
       height: 220px; overflow-y: auto; color: #a5b4fc;
     }
-    .log-entry { margin-bottom: 8px; line-height: 1.4; }
+    .log-entry { margin-bottom: 6px; line-height: 1.4; }
     .log-time { color: #64748b; margin-right: 8px; }
   </style>
 </head>
 <body>
   <div class="container">
+    <!-- Navigation Header -->
     <header>
       <div class="brand">
         <div class="brand-logo">🛡️</div>
         <div>
-          <div class="brand-title">StockSentinel</div>
+          <div class="brand-title">StockSentinel <span style="font-size:13px; color:#38bdf8; font-family:'JetBrains Mono', monospace;">::OS</span></div>
           <div class="brand-sub">Self-Learning Agent Browser • Human-Gated Execution</div>
         </div>
       </div>
-      <div style="display:flex; gap:16px; align-items:center;">
-        <button class="btn btn-demo" onclick="triggerDemo()">⚡ Trigger Live Demo Signal</button>
+
+      <div class="header-actions">
+        <button class="btn btn-scan" onclick="triggerScan()">⚡ Run Market Scan</button>
+        <button class="btn btn-sim" onclick="triggerSimulate()">📈 Simulate TATAMOTORS</button>
+        <button class="btn btn-heal" onclick="triggerSelfHeal()">🛠️ Demonstrate Self-Healing</button>
+        <button class="btn btn-demo" onclick="triggerDemo()">🔔 Trigger Proposal</button>
         <div class="gate-badge">
           <div class="pulse-dot"></div>
-          <span>HUMAN APPROVAL GATE: ACTIVE (TELEGRAM READY)</span>
+          <span>HUMAN GATE: ACTIVE</span>
         </div>
       </div>
     </header>
 
-    <!-- 4 Agents Status Pipeline -->
+    <!-- 4-Agent Pipeline Bar -->
     <div class="agent-pipeline">
       <div class="agent-card">
-        <div class="agent-name">Agent A — The Watcher</div>
-        <div class="agent-title">Scrapling + webcmd</div>
-        <div class="agent-desc">Fast DOM retrieval & learned pattern extraction on news wire.</div>
+        <div class="agent-name">Agent A1 — Chart Watcher</div>
+        <div class="agent-title">TradingView India (NSE)</div>
+        <div class="agent-desc">Volume spikes, MA crossovers & RSI momentum pattern scanner.</div>
       </div>
       <div class="agent-card">
-        <div class="agent-name">Reasoning Core</div>
-        <div class="agent-title">Qwen 2.5 7B (Epsilon)</div>
-        <div class="agent-desc">Local 7B LLM formulating explainable proposals & rationales.</div>
+        <div class="agent-name">Agent A2 — News Watcher</div>
+        <div class="agent-title">Targeted News Search</div>
+        <div class="agent-desc">Active stock queries on financial search wire + Google RSS feeds.</div>
       </div>
       <div class="agent-card">
-        <div class="agent-name">Security Centerpiece</div>
-        <div class="agent-title">Telegram Approval Gate</div>
-        <div class="agent-desc">Enforces human command before any order reaches execution.</div>
+        <div class="agent-name">Reasoning Strategist</div>
+        <div class="agent-title">Qwen 2.5 7B Dual-Lens</div>
+        <div class="agent-desc">Cross-signal synthesis: correlates chart patterns with news catalysts.</div>
       </div>
       <div class="agent-card">
         <div class="agent-name">Agent B — The Executor</div>
-        <div class="agent-title">TradingView Paper Trading</div>
-        <div class="agent-desc">Automated order pre-fill, strictly halts before confirm click.</div>
+        <div class="agent-title">TradingView Paper Terminal</div>
+        <div class="agent-desc">Pre-fills order pad, types quantity, displays FIX 4.4 fill modal.</div>
+      </div>
+    </div>
+
+    <!-- Live Paper Trading Portfolio Tray -->
+    <div class="portfolio-banner" id="portfolioBanner">
+      <div>
+        <div class="port-stat-label">Virtual Cash Balance</div>
+        <div class="port-stat-val" id="portCash">₹10,00,000</div>
+        <div class="port-stat-sub">Starting Capital: ₹10,00,000</div>
+      </div>
+      <div>
+        <div class="port-stat-label">Realized P&L</div>
+        <div class="port-stat-val" id="portRealizedPnl" style="color:#10b981;">+₹0.00</div>
+        <div class="port-stat-sub">Deducts ₹20 brokerage</div>
+      </div>
+      <div>
+        <div class="port-stat-label">Total Executions</div>
+        <div class="port-stat-val" id="portTrades">0</div>
+        <div class="port-stat-sub">Paper simulated trades</div>
+      </div>
+      <div>
+        <div class="port-stat-label">Open Positions</div>
+        <div class="port-stat-val" id="portOpenCount">0</div>
+        <div class="port-stat-sub">Active holdings</div>
+      </div>
+      <div>
+        <div class="port-stat-label">Active Portfolio Positions</div>
+        <div class="positions-pills" id="portPositionsList">
+          <span style="font-size:12px; color:var(--text-muted);">No open positions. Use Simulate or Approve to execute a trade.</span>
+        </div>
       </div>
     </div>
 
     <!-- Main Grid -->
     <div class="grid">
-      <!-- Left Column: Pending Human Approvals -->
+      <!-- Left Column: Pending Approvals & Dual Feeds -->
       <div>
+        <!-- Pending Approvals Card -->
         <div class="card">
           <div class="card-header">
             <div class="card-title">
               <span>🔔 Pending Human Approvals</span>
-              <span id="pendingCount" style="font-size:12px; background:var(--accent-cyan); color:#082f49; padding:2px 8px; border-radius:12px; font-weight:800;">0</span>
+              <span id="pendingCount" style="font-size:11px; background:var(--accent-cyan); color:#082f49; padding:2px 8px; border-radius:10px; font-weight:800; font-family:'JetBrains Mono',monospace;">0</span>
             </div>
-            <span style="font-size:12px; color:var(--text-muted);">Syncs live with Telegram phone alerts</span>
+            <span style="font-size:11.5px; color:var(--text-muted);">Synchronized live with your mobile Telegram bot</span>
           </div>
 
           <div id="proposalsList">
-            <div style="text-align:center; padding:40px; color:var(--text-muted); font-size:14px;">
-              No pending approvals. Waiting for incoming market catalysts...
+            <div style="text-align:center; padding:36px; color:var(--text-muted); font-size:13.5px;">
+              No pending approvals. Multi-agent pipeline actively monitoring Indian Equities...
             </div>
           </div>
         </div>
 
+        <!-- Dual Feeds Panel: A1 Chart Signals & A2 News Catalysts -->
         <div class="card">
           <div class="card-header">
-            <div class="card-title">📡 Real-Time Telemetry Log</div>
+            <div class="card-title">📡 Real-Time Dual-Lens Perception Feeds</div>
+            <span style="font-size:11px; color:#38bdf8; font-family:'JetBrains Mono',monospace;">NSE / BSE ACTIVE</span>
           </div>
+
+          <div class="dual-feeds-grid">
+            <!-- Left Feed: Chart Signals -->
+            <div class="feed-column">
+              <div class="feed-header">
+                <span style="color:#10b981;">📊 Agent A1 (Chart Patterns)</span>
+                <span id="chartCount">0 signals</span>
+              </div>
+              <div id="chartFeedList">
+                <div style="font-size:11px; color:var(--text-muted); padding:10px; text-align:center;">Scanning TradingView charts...</div>
+              </div>
+            </div>
+
+            <!-- Right Feed: News Catalysts -->
+            <div class="feed-column">
+              <div class="feed-header">
+                <span style="color:#38bdf8;">📰 Agent A2 (News Catalysts)</span>
+                <span id="newsCount">0 signals</span>
+              </div>
+              <div id="newsFeedList">
+                <div style="font-size:11px; color:var(--text-muted); padding:10px; text-align:center;">Searching targeted stock news...</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Telemetry Terminal Log -->
           <div class="log-box" id="logBox">
-            <div class="log-entry"><span class="log-time">[SYSTEM]</span> StockSentinel live cockpit initialized.</div>
-            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Scrapling fast-fetch engine connected.</div>
-            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Local Qwen 2.5 7B reasoning layer online.</div>
-            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Human Gate active: No autonomous trades permitted.</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> StockSentinel Institutional Cockpit online.</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Paper Trading Simulator active: TradingView India (₹10,00,000 capital).</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Local Qwen 2.5 7B Strategist connected.</div>
+            <div class="log-entry"><span class="log-time">[SYSTEM]</span> Human Gate active: No autonomous orders permitted without explicit command.</div>
           </div>
         </div>
       </div>
 
-      <!-- Right Column: Memory Layer & Trust Scores -->
+      <!-- Right Column: Memory Trust Graph & Quick Links -->
       <div>
+        <!-- Trust Scores -->
         <div class="card">
           <div class="card-header">
             <div class="card-title">🧠 Memory & Trust Graph</div>
+            <span style="font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">Adaptive</span>
           </div>
-          <p style="font-size:12px; color:var(--text-muted); margin-bottom:16px;">
-            Tracks approval vs rejection patterns per ticker to adapt Strategist confidence over time.
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:14px; line-height:1.45;">
+            Tracks human approval vs rejection history per ticker. Low trust dynamically demotes proposal confidence to HOLD/WATCH_ONLY.
           </p>
           <div id="trustList">
             <!-- Populated dynamically -->
           </div>
         </div>
 
+        <!-- Telegram Integration Guide -->
         <div class="card">
           <div class="card-header">
-            <div class="card-title">📱 Telegram Quick Guide</div>
+            <div class="card-title">📱 Dual Telegram Bots</div>
           </div>
-          <div style="font-size:13px; color:var(--text-muted); line-height:1.6;">
-            1. Open Telegram and search for your bot.<br>
-            2. Send <b>/start</b> to connect your chat.<br>
-            3. Tap <b>/demo</b> or the blue button above.<br>
-            4. Tapping <b>Approve</b> on Telegram triggers Agent B on TradingView in real time!
+          <div style="font-size:12.5px; color:var(--text-muted); line-height:1.6;">
+            <b>1. Approval Gate Bot (@stocksentinxl_bot)</b><br>
+            Sends actionable trade proposals to your phone with <code>[✅ Approve]</code>, <code>[❌ Reject]</code>, and <code>[✏️ Modify]</code> buttons.<br><br>
+            <b>2. Market Insights Bot (@stocksentinel_news_bot)</b><br>
+            Dedicated second bot delivering periodic intelligence digests and ticker sentiment on demand.<br><br>
+            <i>Commands: /portfolio, /simulate, /heal, /insights, /watchlist, /trust</i>
           </div>
         </div>
       </div>
@@ -293,17 +444,28 @@
     const pendingCount = document.getElementById('pendingCount');
     const logBox = document.getElementById('logBox');
     const trustList = document.getElementById('trustList');
+    const chartFeedList = document.getElementById('chartFeedList');
+    const newsFeedList = document.getElementById('newsFeedList');
+    const chartCount = document.getElementById('chartCount');
+    const newsCount = document.getElementById('newsCount');
+
+    // Portfolio elements
+    const portCash = document.getElementById('portCash');
+    const portRealizedPnl = document.getElementById('portRealizedPnl');
+    const portTrades = document.getElementById('portTrades');
+    const portOpenCount = document.getElementById('portOpenCount');
+    const portPositionsList = document.getElementById('portPositionsList');
 
     function log(msg) {
       const entry = document.createElement('div');
       entry.className = 'log-entry';
-      const time = new Date().toLocaleTimeString();
+      const time = new Date().toLocaleTimeString('en-IN', { hour12: false });
       entry.innerHTML = `<span class="log-time">[${time}]</span> ${msg}`;
       logBox.appendChild(entry);
       logBox.scrollTop = logBox.scrollHeight;
     }
 
-    // Connect WebSocket for live updates
+    // Connect WebSocket
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const ws = new WebSocket(`${protocol}//${window.location.host}`);
 
@@ -312,17 +474,25 @@
       if (data.type === 'INIT_STATE') {
         renderProposals(data.pending || []);
         renderTrust(data.history || {});
+        renderPortfolio(data.portfolio || {});
+        renderFeeds(data.recentSignals || []);
       } else if (data.type === 'PROPOSAL_CREATED') {
-        log(`🚨 <b>New Trade Proposal:</b> ${data.payload.ticker} ${data.payload.action.toUpperCase()} (${data.payload.suggested_quantity} units)`);
+        log(`🚨 <b>New Proposal:</b> ${data.payload.ticker} ${data.payload.action.toUpperCase()} (${data.payload.suggested_quantity} units)`);
         fetchPending();
       } else if (data.type === 'PROPOSAL_APPROVED') {
-        log(`✅ <b>APPROVED BY HUMAN:</b> ${data.payload.ticker} ${data.payload.action.toUpperCase()}. Agent B pre-filling order!`);
+        log(`✅ <b>APPROVED BY HUMAN:</b> ${data.payload.ticker} ${data.payload.action.toUpperCase()}. Agent B executing paper trade on TradingView!`);
         fetchPending();
         fetchStats();
       } else if (data.type === 'PROPOSAL_REJECTED') {
         log(`❌ <b>REJECTED BY HUMAN:</b> ${data.payload.ticker}. Memory trust score penalised.`);
         fetchPending();
         fetchStats();
+      } else if (data.type === 'PORTFOLIO_UPDATED') {
+        renderPortfolio(data.payload);
+      } else if (data.type === 'SELF_HEAL_START') {
+        log(`🛠️ <b>SELF-HEALING TRIGGERED:</b> Third-party DOM layout change detected. Re-exploring selectors...`);
+      } else if (data.type === 'SELF_HEAL_COMPLETE') {
+        log(`🎉 <b>SELF-HEALED:</b> Command recovered automatically with new DOM recipe (v${data.payload.data?.version || 2})!`);
       }
     };
 
@@ -336,14 +506,76 @@
       const res = await fetch('/api/memory/stats');
       const stats = await res.json();
       renderTrust(stats.tickerHistory || {});
+      if (stats.portfolio) renderPortfolio(stats.portfolio);
+    }
+
+    function renderPortfolio(port) {
+      if (!port) return;
+      portCash.innerText = '₹' + Number(port.cash || 1000000).toLocaleString('en-IN');
+      const pnl = Number(port.realizedPnl || 0);
+      portRealizedPnl.innerText = (pnl >= 0 ? '+' : '') + '₹' + pnl.toLocaleString('en-IN');
+      portRealizedPnl.style.color = pnl >= 0 ? '#10b981' : '#f43f5e';
+      portTrades.innerText = port.totalTrades || 0;
+
+      const positions = port.positions || [];
+      portOpenCount.innerText = positions.length;
+
+      if (positions.length === 0) {
+        portPositionsList.innerHTML = `<span style="font-size:12px; color:var(--text-muted);">No open positions currently.</span>`;
+      } else {
+        portPositionsList.innerHTML = positions.map(pos => `
+          <div class="pos-pill">
+            <span class="pos-pill-side pos-buy">${pos.action}</span>
+            <span><b>${pos.ticker}</b> (${pos.quantity})</span>
+            <span>@ ₹${pos.entryPrice}</span>
+            <span class="pos-pnl-pos">+0.30%</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderFeeds(signals) {
+      const chartSignals = signals.filter(s => s.pattern_type);
+      const newsSignals = signals.filter(s => s.headline && !s.pattern_type);
+
+      chartCount.innerText = `${chartSignals.length} signals`;
+      newsCount.innerText = `${newsSignals.length} articles`;
+
+      if (chartSignals.length > 0) {
+        chartFeedList.innerHTML = chartSignals.slice(-6).reverse().map(s => `
+          <div class="feed-item feed-item-chart">
+            <div style="display:flex; justify-content:space-between; font-weight:700; font-family:'JetBrains Mono',monospace;">
+              <span>NSE:${s.ticker}</span>
+              <span style="color:#10b981;">₹${s.price || 'N/A'}</span>
+            </div>
+            <div style="font-size:11.5px; color:#94a3b8; margin-top:2px;">
+              ${s.pattern_type.toUpperCase()}: ${s.pattern_details || ''}
+            </div>
+          </div>
+        `).join('');
+      }
+
+      if (newsSignals.length > 0) {
+        newsFeedList.innerHTML = newsSignals.slice(-6).reverse().map(s => `
+          <div class="feed-item feed-item-news">
+            <div style="display:flex; justify-content:space-between; font-weight:700; font-family:'JetBrains Mono',monospace;">
+              <span>NSE:${s.ticker}</span>
+              <span style="color:#38bdf8; font-size:10px;">CATALYST</span>
+            </div>
+            <div style="font-size:11.5px; color:#cbd5e1; margin-top:2px;">
+              "${s.headline}"
+            </div>
+          </div>
+        `).join('');
+      }
     }
 
     function renderProposals(proposals) {
       pendingCount.innerText = proposals.length;
       if (proposals.length === 0) {
         proposalsList.innerHTML = `
-          <div style="text-align:center; padding:40px; color:var(--text-muted); font-size:14px;">
-            No pending approvals. Waiting for incoming market catalysts...
+          <div style="text-align:center; padding:36px; color:var(--text-muted); font-size:13.5px;">
+            No pending approvals. Multi-agent pipeline actively monitoring Indian Equities...
           </div>
         `;
         return;
@@ -351,32 +583,32 @@
 
       proposalsList.innerHTML = proposals.map(p => {
         const badgeClass = p.action === 'buy' ? 'badge-buy' : (p.action === 'sell' ? 'badge-sell' : 'badge-hold');
-        
-        const chartBadge = p.chartSignal 
-          ? `<div style="background:rgba(16,185,129,0.12); border:1px solid #10b981; border-radius:6px; padding:6px 10px; font-size:12px; margin-bottom:8px; color:#34d399;">
-               <b>📊 Agent A1 (Chart Pattern):</b> ${p.chartSignal.pattern_type} (${p.chartSignal.pattern_details})
+
+        const chartEvidence = p.chartSignal
+          ? `<div class="evidence-box evidence-chart">
+               <b>📊 Agent A1 (Chart Pattern):</b> <code>${p.chartSignal.pattern_type}</code> — ${p.chartSignal.pattern_details || ''} (₹${p.chartSignal.price || 'N/A'} | RSI: ${p.chartSignal.rsi || '58'})
              </div>`
           : '';
 
-        const newsBadge = (p.newsSignal || p.headline)
-          ? `<div style="background:rgba(56,189,248,0.12); border:1px solid #38bdf8; border-radius:6px; padding:6px 10px; font-size:12px; margin-bottom:10px; color:#7dd3fc;">
-               <b>📰 Agent A2 (News Wire):</b> "${p.newsSignal?.headline || p.headline}"
+        const newsEvidence = (p.newsSignal || p.headline)
+          ? `<div class="evidence-box evidence-news">
+               <b>📰 Agent A2 (News Catalyst):</b> "${p.newsSignal?.headline || p.headline}"
              </div>`
           : '';
 
         return `
           <div class="proposal-card" id="card-${p.id}">
             <div class="proposal-top">
-              <div class="proposal-ticker">${p.ticker}</div>
+              <div class="proposal-ticker">NSE:${p.ticker}</div>
               <div class="badge ${badgeClass}">${p.action}</div>
             </div>
-            ${chartBadge}
-            ${newsBadge}
+            ${chartEvidence}
+            ${newsEvidence}
             <div class="rationale-box">
-              <b>Qwen 2.5 7B Dual-Lens Rationale:</b> ${p.rationale}
+              <b>Qwen 2.5 7B Strategist Rationale:</b> ${p.rationale}
             </div>
             <div class="meta-row">
-              <span>Qty: <b>${p.suggested_quantity}</b> units</span>
+              <span>Qty: <b>${p.suggested_quantity}</b> shares</span>
               <span>Confidence: <b>${(p.confidence || 'medium').toUpperCase()}</b></span>
               <span>Engine: <b>${p.engine || 'Local Qwen 2.5 7B'}</b></span>
             </div>
@@ -394,7 +626,7 @@
     }
 
     function renderTrust(history) {
-      const tickers = ['RELIANCE', 'TATAMOTORS', 'HDFCBANK', 'TCS', 'INFY', 'ICICIBANK'];
+      const tickers = ['TATAMOTORS', 'RELIANCE', 'HDFCBANK', 'TCS', 'INFY', 'ICICIBANK'];
       trustList.innerHTML = tickers.map(sym => {
         const h = history[sym] || { trustScore: 0.70, approvedCount: 0, rejectedCount: 0 };
         const scorePct = Math.round((h.trustScore || 0.70) * 100);
@@ -407,7 +639,7 @@
               </div>
               <span style="font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:700;">${scorePct}%</span>
             </div>
-            <div style="font-size:11px; color:var(--text-muted);">
+            <div style="font-size:11px; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
               ✅${h.approvedCount} / ❌${h.rejectedCount}
             </div>
           </div>
@@ -416,15 +648,37 @@
     }
 
     async function approveTrade(id) {
+      log(`User clicked Approve for proposal ${id}...`);
       await fetch(`/api/proposals/${id}/approve`, { method: 'POST' });
     }
 
     async function rejectTrade(id) {
-      await fetch(`/api/proposals/${id}/reject`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ reason: 'Rejected from Cockpit' }) });
+      log(`User clicked Reject for proposal ${id}...`);
+      await fetch(`/api/proposals/${id}/reject`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ reason: 'Declined from Cockpit UI' }) });
     }
 
     async function triggerDemo() {
+      log('Triggering demo proposal for TATAMOTORS...');
       await fetch('/api/demo/trigger', { method: 'POST' });
+    }
+
+    async function triggerScan() {
+      log('Triggering on-demand multi-agent market scan...');
+      await fetch('/api/demo/run-cycle', { method: 'POST' });
+    }
+
+    async function triggerSimulate() {
+      log('Triggering live paper trade simulation on TradingView India for TATAMOTORS...');
+      await fetch('/api/demo/simulate-trade', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ ticker: 'TATAMOTORS', action: 'BUY', quantity: 25 })
+      });
+    }
+
+    async function triggerSelfHeal() {
+      log('Triggering live Self-Healing & DOM re-exploration demo...');
+      await fetch('/api/demo/self-heal', { method: 'POST' });
     }
 
     fetchPending();

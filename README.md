@@ -355,14 +355,33 @@ stocksentinel/
 
 ## 7. Execution & Operation
 
-### 7.1 Starting the System
+### 7.1 Running the Live System
 Launch the complete StockSentinel pipeline:
 ```bash
 npm start
 ```
-Within 2 seconds, Chrome will launch maximized on your desktop, initiating the multi-agent perception loop.
+Within 2 seconds, Chrome will launch maximized on your desktop on TradingView India with the live telemetry HUD, initiating the multi-agent perception loop.
 
-### 7.2 Running the Paper Trading Simulation
+### 7.2 Running the 4-Act Hackathon Presentation Runner
+Run the official competition presentation script implementing Section 21 of `stocksentinel.md`:
+```bash
+npm run demo
+```
+This automated runner executes all 4 acts sequentially:
+1. **Act 1**: Problem & Cognitive Friction narration.
+2. **Act 2**: Learn Once (DOM explore) → Fast Replay (Reuse mode in 12ms).
+3. **Act 3**: Dual-Lens signal correlation → Qwen 2.5 7B Proposal → Telegram approval → Agent B Paper Trading on TradingView India.
+4. **Act 4**: Live Self-Healing (deliberately corrupts recipe → webcmd re-explores live → auto-recovers).
+
+### 7.3 Demonstrating Live Self-Healing & DOM Recovery
+You can demonstrate webcmd's self-healing superpower standalone at any time:
+```bash
+npm run demo:heal
+# or: node simulate_heal.js
+```
+This command stages a layout redesign fault, intercepts the error, launches automated live re-exploration, discovers new DOM selectors, registers a new recipe version, and restores execution without human intervention.
+
+### 7.4 Running the Paper Trading Simulation
 You can trigger the interactive paper trading simulation at any time:
 ```bash
 # Run default simulation (TATAMOTORS BUY 25)
@@ -373,16 +392,32 @@ node simulate_trade.js RELIANCE BUY 15
 node simulate_trade.js HDFCBANK BUY 20
 ```
 
-### 7.3 Accessing the Live Web Cockpit
+### 7.5 Accessing the Live Institutional Web Cockpit
 Open your browser to:
 ```
 http://localhost:3000
 ```
 The visual cockpit provides:
-- Live status across all four operational tiers.
-- Real-time display of pending human approvals synchronized via WebSockets.
-- Streaming telemetry event log showing ingestion and reasoning milestones.
-- Dynamic Memory & Trust Graph visualization.
+- **Live Paper Trading Portfolio Tray**: Displays Virtual Cash (₹10,00,000 baseline), Realized P&L in ₹, Total Trades, and active open position pills.
+- **Dual-Lens Perception Feeds**: Agent A1 live technical chart patterns & Agent A2 live news catalysts streaming side-by-side.
+- **Interactive Action Deck**: One-click buttons to `Run Market Scan`, `Simulate TATAMOTORS`, `Demonstrate Self-Healing`, and `Trigger Proposal`.
+- **In-Cockpit Approvals**: Review and Approve/Reject proposals directly in the browser as well as via Telegram.
+- **Dynamic Memory & Trust Graph**: Visualizes approval vs rejection history per ticker.
+- **Streaming Telemetry Terminal**: Live execution milestones with timestamps.
+
+### 7.6 Telegram Mobile Commands Suite
+| Command | Bot | Description |
+|---|---|---|
+| `/start` | Both | Connects chat and auto-registers Chat ID |
+| `/portfolio` | Main Bot | Shows virtual cash balance, realized P&L, and open positions |
+| `/simulate [ticker]` | Main Bot | Runs live browser paper trade execution on TradingView |
+| `/heal` | Main Bot | Demonstrates live DOM self-healing & auto-recovery |
+| `/scan` | Main Bot | Triggers an on-demand multi-agent market scan |
+| `/insights` | Both | Pushes latest market insights for watchlist tickers |
+| `/watchlist` | Both | Displays active NSE watchlist with default quantities |
+| `/trust` | Main Bot | Shows per-ticker memory trust scores and rejection history |
+| `/demo` | Main Bot | Triggers a simulated trade proposal end-to-end |
+| `/help` | Both | Command guide and syntax |
 
 ---
 

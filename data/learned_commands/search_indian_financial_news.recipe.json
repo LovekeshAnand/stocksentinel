@@ -1,0 +1,12 @@
+{
+  "command": "search_indian_financial_news",
+  "version": 6,
+  "targetPlatform": "Bing News Financial Search",
+  "selectors": {
+    "card": ".news-card",
+    "title": "a[class*=\"title\"], .title, h2, a",
+    "snippet": "p, .snippet, .t_s"
+  },
+  "recoveredAt": "2026-09-12T08:51:26.640Z",
+  "updatedAt": "2026-09-12T08:51:26.641Z"
+}

@@ -11,11 +11,13 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const os = require('os');
+const { EventEmitter } = require('events');
 const puppeteer = require('puppeteer-core');
 const settings = require('../config/settings');
 
-class WebcmdAdapter {
+class WebcmdAdapter extends EventEmitter {
   constructor() {
+    super();
     this.recipesDir = settings.storage.learnedCommandsDir;
     this.ensureDir();
     this.browser = null;
@@ -340,19 +342,26 @@ class WebcmdAdapter {
 
     if (!recipe || options.forceExplore) {
       console.log(`[webcmd] 🔍 [EXPLORE PHASE] First run for "${commandName}". Learning page structure...`);
+      this.emit('explore_start', { commandName });
       const learned = await exploreFn(this);
       this.saveRecipe(commandName, learned);
+      this.emit('explore_complete', { commandName, version: learned.version });
       return { phase: 'explored', data: learned.lastData || learned };
     }
 
     try {
       console.log(`[webcmd] ⚡ [REUSE PHASE] Fast replay of learned command "${commandName}" (v${recipe.version})`);
+      this.emit('reuse_start', { commandName, version: recipe.version });
       const result = await reuseFn(this, recipe);
       return { phase: 'reused', data: result };
     } catch (err) {
       console.warn(`[webcmd] 🚨 [SELF-HEALING TRIGGERED] Saved command "${commandName}" failed (${err.message}). Re-exploring...`);
+      this.emit('self_heal_start', { commandName, error: err.message });
+      
       const relearned = await exploreFn(this);
       this.saveRecipe(commandName, relearned);
+      console.log(`[webcmd] ✅ [SELF-HEALING COMPLETE] Command "${commandName}" recovered automatically (v${relearned.version})`);
+      this.emit('self_heal_complete', { commandName, version: relearned.version });
       return { phase: 'healed', data: relearned.lastData || relearned };
     }
   }

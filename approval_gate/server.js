@@ -35,13 +35,28 @@ class DashboardServer {
       res.json(gateLogic.getPendingList());
     });
 
+    // API: Virtual Paper Trading Portfolio (Cash, Positions, Realized P&L)
+    this.app.get('/api/portfolio', (req, res) => {
+      res.json(memoryStore.getPortfolio());
+    });
+
+    // API: Recent signals from Agent A1 (Chart) & Agent A2 (News)
+    this.app.get('/api/signals/recent', (req, res) => {
+      const signals = memoryStore.data.signals || [];
+      res.json({
+        chartSignals: signals.filter(s => s.pattern_type).slice(-10),
+        newsSignals: signals.filter(s => s.headline && !s.pattern_type).slice(-10)
+      });
+    });
+
     // API: Memory stats & trust scores
     this.app.get('/api/memory/stats', (req, res) => {
       res.json({
-        signalsCount: memoryStore.data.signals.length,
-        proposalsCount: memoryStore.data.proposals.length,
-        executionsCount: memoryStore.data.executionLog.length,
-        tickerHistory: memoryStore.data.tickerHistory
+        signalsCount: (memoryStore.data.signals || []).length,
+        proposalsCount: (memoryStore.data.proposals || []).length,
+        executionsCount: (memoryStore.data.executionLog || []).length,
+        tickerHistory: memoryStore.data.tickerHistory || {},
+        portfolio: memoryStore.getPortfolio()
       });
     });
 
@@ -49,6 +64,7 @@ class DashboardServer {
     this.app.post('/api/proposals/:id/approve', (req, res) => {
       try {
         const result = gateLogic.approveProposal(req.params.id, 'Approved via Web Dashboard');
+        this.broadcast('PORTFOLIO_UPDATED', memoryStore.getPortfolio());
         res.json(result);
       } catch (err) {
         res.status(400).json({ error: err.message });
@@ -65,31 +81,78 @@ class DashboardServer {
       }
     });
 
-    // API: Trigger demo test proposal
+    // API: Trigger demo test proposal (NSE Indian Equities)
     this.app.post('/api/demo/trigger', (req, res) => {
+      const sym = (req.body.ticker || 'TATAMOTORS').toUpperCase();
       const demoProposal = {
-        ticker: req.body.ticker || 'TSLA',
+        ticker: sym,
         action: req.body.action || 'buy',
         suggested_quantity: req.body.quantity || 15,
         confidence: 'high',
-        headline: req.body.headline || 'Tesla accelerates Cybercab commercial deployment following European regulatory waiver',
-        rationale: 'Positive multi-market catalyst with significant volume confirmation. Strategic long entry recommended.',
+        headline: req.body.headline || `${sym} expands commercial vehicle and EV operations with record margins`,
+        rationale: `Dual-lens convergence: Bullish volume expansion + clean technical breakout confirmed by positive news catalyst for NSE:${sym}.`,
         engine: 'Local Qwen 2.5 7B'
       };
       const queued = gateLogic.submitProposal(demoProposal);
       res.json({ ok: true, proposal: queued });
+    });
+
+    // API: Trigger on-demand pipeline scan
+    this.app.post('/api/demo/run-cycle', async (req, res) => {
+      try {
+        const pipeline = require('../orchestration/pipeline');
+        res.json({ ok: true, message: 'Scan cycle triggered' });
+        await pipeline.runCycle();
+        this.broadcast('SCAN_COMPLETE', { timestamp: new Date().toISOString() });
+      } catch (err) {
+        console.error('[DashboardServer] Scan error:', err.message);
+      }
+    });
+
+    // API: Trigger Self-Healing demonstration
+    this.app.post('/api/demo/self-heal', async (req, res) => {
+      try {
+        res.json({ ok: true, message: 'Self-healing demo started' });
+        this.broadcast('SELF_HEAL_START', { timestamp: new Date().toISOString() });
+        const { runSelfHealingDemo } = require('../simulate_heal');
+        const healResult = await runSelfHealingDemo();
+        this.broadcast('SELF_HEAL_COMPLETE', healResult);
+      } catch (err) {
+        this.broadcast('SELF_HEAL_ERROR', { error: err.message });
+      }
+    });
+
+    // API: Trigger Paper Trade simulation on TradingView
+    this.app.post('/api/demo/simulate-trade', async (req, res) => {
+      const sym = (req.body.ticker || 'TATAMOTORS').toUpperCase();
+      const action = (req.body.action || 'BUY').toUpperCase();
+      const qty = parseInt(req.body.quantity || '25', 10);
+      try {
+        res.json({ ok: true, message: `Simulating ${action} ${qty} ${sym}` });
+        const executor = require('../agents/agent_b_executor/webcmd_trade');
+        const tradeRes = await executor.executeApprovedTrade({
+          id: `web_sim_${Date.now()}`,
+          ticker: sym,
+          action,
+          suggested_quantity: qty,
+          price: executor.getBenchmarkPrice(sym)
+        });
+        this.broadcast('PORTFOLIO_UPDATED', memoryStore.getPortfolio());
+      } catch (err) {
+        console.error('[DashboardServer] Trade simulation error:', err.message);
+      }
     });
   }
 
   initWebSocket() {
     this.wss.on('connection', (ws) => {
       console.log('[DashboardServer] 🔌 Client connected to live cockpit stream.');
-      // Send initial state
       ws.send(JSON.stringify({
         type: 'INIT_STATE',
         pending: gateLogic.getPendingList(),
-        history: memoryStore.data.tickerHistory,
-        recentSignals: memoryStore.data.signals.slice(-10)
+        history: memoryStore.data.tickerHistory || {},
+        portfolio: memoryStore.getPortfolio(),
+        recentSignals: (memoryStore.data.signals || []).slice(-15)
       }));
     });
   }
@@ -105,7 +168,10 @@ class DashboardServer {
 
   bindGateEvents() {
     gateLogic.on('proposal_created', (p) => this.broadcast('PROPOSAL_CREATED', p));
-    gateLogic.on('proposal_approved', (p) => this.broadcast('PROPOSAL_APPROVED', p));
+    gateLogic.on('proposal_approved', (p) => {
+      this.broadcast('PROPOSAL_APPROVED', p);
+      this.broadcast('PORTFOLIO_UPDATED', memoryStore.getPortfolio());
+    });
     gateLogic.on('proposal_rejected', (p) => this.broadcast('PROPOSAL_REJECTED', p));
   }
 

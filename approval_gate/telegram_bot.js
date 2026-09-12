@@ -233,21 +233,45 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
       return;
     }
 
+    if (text.startsWith('/heal')) {
+      this.sendMessage(chatId, `🛠️ <b>Initiating Live Self-Healing Test...</b>\nDeliberately corrupting DOM selector recipe to simulate website redesign. webcmd will re-explore live and recover.`, null, 'HTML');
+      const { runSelfHealingDemo } = require('../simulate_heal');
+      runSelfHealingDemo().then(res => {
+        this.sendMessage(chatId, `🎉 <b>SELF-HEALING SUCCESSFUL</b>\n\nPhase: <code>${res.phase.toUpperCase()}</code>\nRecipe: <code>search_indian_financial_news</code>\nNew Version: <b>v${res.data?.version || 2}</b>\nStatus: <b>100% Recovered without downtime</b>`, null, 'HTML');
+      }).catch(err => {
+        this.sendMessage(chatId, `❌ Self-healing notice: ${err.message}`);
+      });
+      return;
+    }
+
+    if (text.startsWith('/scan')) {
+      this.sendMessage(chatId, `⚡ <b>Triggering On-Demand Multi-Agent Scan...</b>\nAgent A1 (TradingView charts) & Agent A2 (News search wire) running across NSE watchlist.`, null, 'HTML');
+      const pipeline = require('../orchestration/pipeline');
+      pipeline.runCycle().then(() => {
+        this.sendMessage(chatId, `✅ <b>Scan Cycle Complete</b>\nMarket analysis finished. Check pending approvals above or send /portfolio.`);
+      }).catch(err => {
+        this.sendMessage(chatId, `❌ Scan notice: ${err.message}`);
+      });
+      return;
+    }
+
     if (text.startsWith('/help')) {
       const helpLines = [
         '*StockSentinel — Commands*',
         '',
         '• /start — Connect and wake the agent',
-        '• /status — Pending approvals and engine status',
         '• /portfolio — View simulated paper balance & positions',
         '• /simulate [ticker] — Run live browser paper trade execution',
+        '• /heal — Demonstrate live DOM self-healing & recovery',
+        '• /scan — Trigger on-demand multi-agent market scan',
         '• /insights — Live market insights for your watchlist',
         '• /watchlist — View monitored NSE tickers',
         '• /trust — Memory trust score per ticker',
         '• /demo — Simulate a trade proposal end-to-end',
+        '• /status — Pending approvals and engine status',
         '• /help — This guide',
         '',
-        'Type any ticker (e.g. RELIANCE) for its latest signal.'
+        'Type any ticker (e.g. TATAMOTORS) for its latest signal.'
       ].join('\n');
       return this.sendMessage(chatId, helpLines);
     }
