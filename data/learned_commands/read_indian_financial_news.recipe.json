@@ -1,0 +1,126 @@
+{
+  "sourceUrl": "https://www.moneycontrol.com/news/business/markets/",
+  "cardSelector": "li.clearfix, article, section, div.news_card",
+  "titleSelector": "h2 a, h3 a, a",
+  "snippetSelector": "p",
+  "learnedAt": "2026-09-12T06:55:29.913Z",
+  "lastData": [
+    {
+      "headline": "Sensex, Nifty extend losing streak to fifth week; touch three-month low",
+      "snippet": "FII selling continued for the fourth consecutive week, albeit at a slower pace, with foreign investors offloading equities worth Rs 1,795.19 crore during the week. Meanwhile, DIIs remained supportive, buying equities worth Rs 6,419.46 crore.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "Moneycontrol Pro Weekender | A tale of two markets",
+      "snippet": "When the IPOs will turn into secondary market listings, investors will assess the same along with their already-listed peers. On that side, the chaos is only growing",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "From fear to recovery: Reading volatility signals, explains Shubham Agarwal",
+      "snippet": "When India VIX reaches a temporary peak and then begins to fall, the Nifty may be forming or approaching a temporary bottom. This relationship is not a guaranteed trading signal, but it can help traders interpret price action.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "S&P 500 ends higher as strong inflation data cements rate-hike bets",
+      "snippet": "The Nasdaq gained 0.96% to 26,333.04 points, while the Dow Jones Industrial Average rose 0.98% to 52,573.29 points.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "Daily Voice: Market correction offers opportunity in four quality sectors, says Alpha Capital’s Mukesh Jindal",
+      "snippet": "As long as crude stays expensive, the risk to inflation is skewed up, and the RBI has very little room to cut, said Mukesh Jindal of Alpha Capital.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "FIIs sell Rs 931 crore on September 11, DIIs buy Rs 1,968 crore",
+      "snippet": "With Friday’s flows, FIIs’ net buying for the month of September stands at Rs 579 crore, while DIIs have bought a net Rs 24,987 crore so far this month.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "Granules India promoter offloads shares worth Rs 1,509 crore; Morgan Stanley picks stake in Lotus Developers",
+      "snippet": "Perhaps following the block deals, Granules India shares hit a new closing high of Rs 909.30 on the National Stock Exchange, gaining 1.12 percent amid high trading volumes.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "NSEL settlement scheme: Sebi settles proceedings against 91 commodity brokers",
+      "snippet": "The settlement amounts vary among the applicants, with most remitting around Rs 6 lakh. Some entities have paid significantly higher amounts, including Emkay Commotrade at Rs 30.84 lakh and Pace Commodity Brokers at Rs 36.05 lakh.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "Most free cash flow returned to shareholders, says NSE on Rs 70,000 crore cash pile",
+      "snippet": "The National Stock Exchange's management highlighted cash generation, revenue diversification and dividend payouts over the years.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "Sunil Singhania's Abakkus acquires 1.48% stake in BlackBuck; Jamna Auto promoters sell 5% shares",
+      "snippet": "BlackBuck shares appeared to react to the block deals, surging 7.21 percent to Rs 628.15 amid heavy trading volumes.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "We are regulators first, business second, says NSE's Ashishkumar Chauhan",
+      "snippet": "NSE's Ashish Chauhan affirmed that the exchange will prioritize regulatory responsibilities while speaking at at the exchange's IPO press conference.",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "Runwal Enterprises trims IPO size by half, revises use of proceeds",
+      "snippet": "Runwal Enterprises IPO | The company will utilise Rs 100 crore of the net fresh issue proceeds to repay debt against its outstanding borrowings of Rs 431.4 crore on a standalone basis as of July 2026",
+      "timestamp": "2026-09-12T06:55:31.558Z"
+    },
+    {
+      "headline": "NSE looks beyond options: Commodities, currencies and EGRs emerge as new growth opportunities",
+      "snippet": "NSE is diversifying its revenue, of which most comes from transaction fees, by introducing new financial products such as electricity futures, EGRs, and commodities.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "MSE's Electronic Bond Platform enables tokenised corporate bond issuance under SEBI Demat 2.0 pilot",
+      "snippet": "The issuance was undertaken by IIFL Finance, with Trust Investment Advisors acting as the arranger.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "India fund outflows ease as Taiwan, South Korea see sharper redemptions: Elara",
+      "snippet": "India-focused funds saw outflows of around $100 million in the latest week, compared with redemptions of $170 million, $270 million and $366 million in the preceding three weeks.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "RBI to conduct OMO bond sales worth Rs 1 lakh crore in three tranches on Sept 17, 21 and 28",
+      "snippet": "RBI will sell bonds maturing in fiscal 2029 to fiscal 2032 worth Rs 1 lakh crore in its first net sale of bonds in two years, after it sold notes in the secondary market in September 2024",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "SBICAP Securities partners with Appreciate for global market access via GIFT City",
+      "snippet": "The arrangement was inaugurated by State Bank of India Chairman Challa Sreenivasulu Setty at the Global Fintech Fest in Mumbai",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "'Quick commerce won’t last 20 years with humans': TVS' Gopal Srinivasan on current hot market themes",
+      "snippet": "TVS Capital Funds Chairman Gopal Srinivasan says long-term private capital is shifting away from high-burn consumer models and generic AI plays towards tech-led manufacturing, deep tech and financial services.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "ESDS Software shares extend post-listing rally, hit 10% upper circuit; Maithan Alloys acquires 0.65% stake",
+      "snippet": "Maithan Alloys, a ferroalloy manufacturer and exporter, also owns a 0.17 percent stake in NSE.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "NSDL launches Demat 2.0 for tokenised securities and CBDC settlement",
+      "snippet": "The initiative forms part of a joint SEBI-RBI pilot for tokenised corporate bonds, unveiled at the Global Fintech Fest 2026 by RBI Governor Sanjay Malhotra and SEBI Chairman Tuhin Kanta Pandey.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "Technical View: Nifty 50 may target 23,000 without follow-up buying next week as VIX soars; Bank Nifty needs to defend 56,000",
+      "snippet": "The 23,500–23,600 zone is expected to act as a hurdle for the Nifty 50. A decisive and sustained move above this zone could open the door for a rise towards 23,800–24,000 levels. On the downside, immediate support is placed at 23,231.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "Haven't applied to SEBI for permission to trade on our own platform, says NSE CEO ahead of IPO",
+      "snippet": "NSE's share sale will open for subscription on September 17 and close on September 21, with anchor investor bidding scheduled for September 16. The stock is expected to list on September 24",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    },
+    {
+      "headline": "Wall Street futures rise up to 0.6% as crude oil prices ease; CPI data awaited",
+      "snippet": "Brent crude futures slipped more than 3 percent but remained above USD 104 a barrel.",
+      "timestamp": "2026-09-12T06:55:31.559Z"
+    }
+  ],
+  "updatedAt": "2026-09-12T06:55:31.620Z",
+  "version": 1
+}

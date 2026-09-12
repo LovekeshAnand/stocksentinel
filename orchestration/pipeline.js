@@ -40,7 +40,7 @@ class SentinelPipeline extends EventEmitter {
   async start() {
     if (this.isRunning) return;
     this.isRunning = true;
-    console.log(`[Pipeline] 🛡️ StockSentinel multi-agent pipeline active. Polling interval: ${settings.pollIntervalSec}s`);
+    console.log(`[Pipeline] StockSentinel multi-agent pipeline active. Polling every ${settings.pollIntervalSec}s`);
 
     // Run first cycle immediately
     await this.runCycle();
@@ -68,72 +68,66 @@ class SentinelPipeline extends EventEmitter {
    * Execute one complete pipeline cycle with visible browser automation
    */
   async runCycle(forceExplore = false) {
-    console.log(`\n────────────────────────────────────────────────────────────`);
-    console.log(`[Pipeline] 🔄 Multi-Agent Cycle start: ${new Date().toLocaleTimeString()}`);
+    const cycleTime = new Date().toLocaleTimeString();
+    console.log(`\n${'━'.repeat(64)}`);
+    console.log(`[Pipeline] CYCLE @ ${cycleTime} — Chart Watcher + News Watcher + Strategist`);
+    console.log(`${'━'.repeat(64)}`);
 
     try {
-      // 1. Agent A1: Poll chart & technical patterns via visible webcmd automation
-      console.log(`[Pipeline] 📊 Executing Agent A1 (The Chart Watcher)...`);
+      // ── Agent A1: Live chart analysis (opens TradingView India charts) ──────
+      console.log(`[Pipeline] [A1] Chart Watcher: opening live NSE candlestick charts...`);
       const chartResult = await chartWatcher.pollChartSignals(forceExplore);
-      console.log(`[Pipeline] Agent A1 [${chartResult.phase.toUpperCase()}]: Discovered ${chartResult.count} technical pattern triggers.`);
+      console.log(`[Pipeline] [A1] Done — ${chartResult.count} pattern signal(s) confirmed.`);
 
-      // 2. Agent A2: Poll news & sentiment wires via visible webcmd + Scrapling
-      console.log(`[Pipeline] 📰 Executing Agent A2 (The News Watcher)...`);
+      // ── Agent A2: Live news scan (opens Moneycontrol / ET) ──────────────────
+      console.log(`[Pipeline] [A2] News Watcher: scanning Indian market news wires...`);
       const newsResult = await newsWatcher.pollSignals(forceExplore);
-      console.log(`[Pipeline] Agent A2 [${newsResult.phase.toUpperCase()}]: Ingested ${newsResult.count} market catalyst signals.`);
+      console.log(`[Pipeline] [A2] Done — ${newsResult.count} catalyst signal(s) ingested.`);
 
-      // 3. Correlate incoming signals by ticker
+      // ── Correlate signals by ticker ─────────────────────────────────────────
       const tickerMap = new Map();
-
       for (const cs of chartResult.signals || []) {
-        if (!tickerMap.has(cs.ticker)) tickerMap.set(cs.ticker, {});
-        tickerMap.get(cs.ticker).chartSignal = cs;
+        tickerMap.set(cs.ticker, { chartSignal: cs });
       }
-
       for (const ns of newsResult.signals || []) {
         if (!tickerMap.has(ns.ticker)) tickerMap.set(ns.ticker, {});
         tickerMap.get(ns.ticker).newsSignal = ns;
       }
 
-      console.log(`[Pipeline] 🔗 Active tickers for cross-signal evaluation: ${Array.from(tickerMap.keys()).join(', ')}`);
+      console.log(`[Pipeline] Cross-signal tickers: ${Array.from(tickerMap.keys()).join(', ')}`);
 
-      // 4. Process each correlated ticker through Dedup and The Strategist
+      // ── Strategist: Reason on each correlated ticker ────────────────────────
       for (const [ticker, signals] of tickerMap.entries()) {
         const { chartSignal, newsSignal } = signals;
 
-        // Dedup check to prevent repeated alert fatigue
         const primarySignal = newsSignal || chartSignal;
         if (dedup.isDuplicate(primarySignal)) {
-          console.log(`[Pipeline] 🔇 Suppressed duplicate signal for ${ticker}`);
+          console.log(`[Pipeline] Duplicate suppressed for ${ticker}`);
           continue;
         }
 
-        // Store signals in knowledge base
         if (chartSignal) memoryStore.addSignal(chartSignal);
-        if (newsSignal) memoryStore.addSignal(newsSignal);
+        if (newsSignal)  memoryStore.addSignal(newsSignal);
 
-        // 5. Build dual-lens context payload
         const contextPayload = contextBuilder.buildContext(ticker, { chartSignal, newsSignal });
 
-        // 6. The Strategist: Reason on dual evidence using local Qwen 2.5 7B (Epsilon)
-        console.log(`[Pipeline] 🧠 The Strategist: Synthesizing Chart + News evidence for ${ticker} via Qwen 2.5 7B...`);
+        console.log(`[Pipeline] [Strategist] Reasoning on ${ticker} via Qwen 2.5 7B...`);
         const proposal = await epsilonClient.generateProposal(contextPayload);
         proposal.chartSignal = chartSignal;
-        proposal.newsSignal = newsSignal;
+        proposal.newsSignal  = newsSignal;
 
-        console.log(`[Pipeline] 💡 Proposal Generated: ${proposal.ticker} ${proposal.action.toUpperCase()} (${proposal.confidence.toUpperCase()} confidence)`);
-        console.log(`[Pipeline] 📝 Rationale: ${proposal.rationale}`);
+        console.log(`[Pipeline] Proposal: ${proposal.ticker} ${proposal.action.toUpperCase()} (${proposal.confidence.toUpperCase()})`);
+        console.log(`[Pipeline] Rationale: ${proposal.rationale}`);
 
-        // 7. Submit to Human Approval Gate (Telegram + Web Cockpit)
         const queued = gateLogic.submitProposal(proposal);
         this.emit('new_proposal', queued);
       }
 
     } catch (err) {
-      console.error(`[Pipeline] Error in multi-agent cycle: ${err.message}`);
+      console.error(`[Pipeline] Error in cycle: ${err.message}`);
     }
 
-    console.log(`[Pipeline] 🏁 Multi-Agent Cycle completed.\n`);
+    console.log(`[Pipeline] Cycle complete. Next scan in ${settings.pollIntervalSec}s\n`);
   }
 }
 

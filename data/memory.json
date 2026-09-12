@@ -358,6 +358,65 @@
       "technical_bias": "BULLISH",
       "timestamp": "2026-09-12T06:18:33.017Z",
       "receivedAt": "2026-09-12T06:19:20.984Z"
+    },
+    {
+      "id": "chart_TATAMOTORS_1789196118756",
+      "ticker": "TATAMOTORS",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Heavy institutional volume spike (+78% above 20D average) with breakout above 50-day EMA at ₹975.20",
+      "price": 988.5,
+      "currency": "INR",
+      "volume": "14.2M shares",
+      "rsi": 72.4,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:55:18.756Z",
+      "receivedAt": "2026-09-12T06:55:31.623Z"
+    },
+    {
+      "id": "news_TATAMOTORS_1789196131622",
+      "ticker": "TATAMOTORS",
+      "headline": "Tata Motors Reports 32% YoY Surge in EV Deliveries with Record Commercial Order Inflow",
+      "snippet": "Strong operational numbers powered by domestic electric passenger vehicle dominance and expanded JLR margins across UK and Europe.",
+      "source": "Moneycontrol News Wire",
+      "timestamp": "2026-09-12T06:55:31.622Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T06:55:31.624Z"
+    },
+    {
+      "id": "chart_RELIANCE_1789196118756",
+      "ticker": "RELIANCE",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden crossover on NSE: 20-day EMA crossed above 50-day SMA at ₹2,910.00 with RSI at 67.8",
+      "price": 2942,
+      "currency": "INR",
+      "volume": "8.6M shares",
+      "rsi": 67.8,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:55:18.756Z",
+      "receivedAt": "2026-09-12T06:55:46.659Z"
+    },
+    {
+      "id": "news_RELIANCE_1789196131622",
+      "ticker": "RELIANCE",
+      "headline": "Reliance Jio Deploys Enterprise 5G Infrastructure and Announces Cloud AI Partnerships",
+      "snippet": "Chairman confirms accelerated commercial expansion across cloud data centers and retail omnichannel logistics.",
+      "source": "Economic Times Markets",
+      "timestamp": "2026-09-12T06:55:31.622Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T06:55:46.660Z"
+    },
+    {
+      "id": "chart_HDFCBANK_1789196118756",
+      "ticker": "HDFCBANK",
+      "pattern_type": "consolidation_breakout",
+      "pattern_details": "Nifty 50 banking breakout above ₹1,635.00 resistance with expanding volume",
+      "price": 1648.75,
+      "currency": "INR",
+      "volume": "11.5M shares",
+      "rsi": 64.2,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:55:18.756Z",
+      "receivedAt": "2026-09-12T06:56:01.684Z"
     }
   ],
   "proposals": [
@@ -928,6 +987,115 @@
       },
       "status": "PENDING",
       "createdAt": "2026-09-12T06:19:35.996Z"
+    },
+    {
+      "id": "prop_TATAMOTORS_1789196146657",
+      "ticker": "TATAMOTORS",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Heavy institutional volume spike (+78% above 20D average) with breakout above 50-day EMA at ₹975.20 at $988.5, reinforced by Agent A2 detecting positive news catalyst: \"Tata Motors Reports 32% YoY Surge in EV Deliveries with Record Commercial Order Inflow\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: volume_spike (Heavy institutional volume spike (+78% above 20D average) with breakout above 50-day EMA at ₹975.20)",
+        "news: positive sentiment (\"Tata Motors Reports 32% YoY Surge in EV Deliveries with Record Commercial Order Inflow\")"
+      ],
+      "source_signal_ids": [
+        "chart_TATAMOTORS_1789196118756",
+        "news_TATAMOTORS_1789196131622"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TATAMOTORS_1789196118756",
+        "ticker": "TATAMOTORS",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Heavy institutional volume spike (+78% above 20D average) with breakout above 50-day EMA at ₹975.20",
+        "price": 988.5,
+        "currency": "INR",
+        "volume": "14.2M shares",
+        "rsi": 72.4,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:55:18.756Z"
+      },
+      "newsSignal": {
+        "id": "news_TATAMOTORS_1789196131622",
+        "ticker": "TATAMOTORS",
+        "headline": "Tata Motors Reports 32% YoY Surge in EV Deliveries with Record Commercial Order Inflow",
+        "snippet": "Strong operational numbers powered by domestic electric passenger vehicle dominance and expanded JLR margins across UK and Europe.",
+        "source": "Moneycontrol News Wire",
+        "timestamp": "2026-09-12T06:55:31.622Z",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:55:46.657Z"
+    },
+    {
+      "id": "prop_RELIANCE_1789196161683",
+      "ticker": "RELIANCE",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Golden crossover on NSE: 20-day EMA crossed above 50-day SMA at ₹2,910.00 with RSI at 67.8 at $2942, reinforced by Agent A2 detecting positive news catalyst: \"Reliance Jio Deploys Enterprise 5G Infrastructure and Announces Cloud AI Partnerships\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: ma_crossover (Golden crossover on NSE: 20-day EMA crossed above 50-day SMA at ₹2,910.00 with RSI at 67.8)",
+        "news: positive sentiment (\"Reliance Jio Deploys Enterprise 5G Infrastructure and Announces Cloud AI Partnerships\")"
+      ],
+      "source_signal_ids": [
+        "chart_RELIANCE_1789196118756",
+        "news_RELIANCE_1789196131622"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_RELIANCE_1789196118756",
+        "ticker": "RELIANCE",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Golden crossover on NSE: 20-day EMA crossed above 50-day SMA at ₹2,910.00 with RSI at 67.8",
+        "price": 2942,
+        "currency": "INR",
+        "volume": "8.6M shares",
+        "rsi": 67.8,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:55:18.756Z"
+      },
+      "newsSignal": {
+        "id": "news_RELIANCE_1789196131622",
+        "ticker": "RELIANCE",
+        "headline": "Reliance Jio Deploys Enterprise 5G Infrastructure and Announces Cloud AI Partnerships",
+        "snippet": "Chairman confirms accelerated commercial expansion across cloud data centers and retail omnichannel logistics.",
+        "source": "Economic Times Markets",
+        "timestamp": "2026-09-12T06:55:31.622Z",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:56:01.683Z"
+    },
+    {
+      "id": "prop_HDFCBANK_1789196176706",
+      "ticker": "HDFCBANK",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Single-lens technical breakout: Agent A1 detected Nifty 50 banking breakout above ₹1,635.00 resistance with expanding volume at $1648.75.",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: consolidation_breakout (Nifty 50 banking breakout above ₹1,635.00 resistance with expanding volume)"
+      ],
+      "source_signal_ids": [
+        "chart_HDFCBANK_1789196118756"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_HDFCBANK_1789196118756",
+        "ticker": "HDFCBANK",
+        "pattern_type": "consolidation_breakout",
+        "pattern_details": "Nifty 50 banking breakout above ₹1,635.00 resistance with expanding volume",
+        "price": 1648.75,
+        "currency": "INR",
+        "volume": "11.5M shares",
+        "rsi": 64.2,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:55:18.756Z"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:56:16.706Z"
     }
   ],
   "tickerHistory": {},
