@@ -87,21 +87,71 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
       this.bot.sendMessage(msg.chat.id, '⚡ *Demo proposal generated!* Review below:', { parse_mode: 'Markdown' });
     });
 
-    // Text reply for quantity modification
-    this.bot.on('message', (msg) => {
-      if (msg.text && msg.text.startsWith('/')) return; // handled by commands
+    // /watchlist command
+    this.bot.onText(/\/watchlist/, (msg) => {
+      const watchlist = require('../config/watchlist');
+      const list = watchlist.tickers.map(t => `• *${t.symbol}* (${t.name})\n  Sector: ${t.sector} | Default Qty: ${t.defaultQuantity}`).join('\n\n');
+      this.bot.sendMessage(msg.chat.id, `📋 *Active Sentinel Watchlist*\n\n${list}`, { parse_mode: 'Markdown' });
+    });
 
-      const proposalId = this.activeModifications.get(msg.chat.id);
+    // /trust command
+    this.bot.onText(/\/trust/, (msg) => {
+      const watchlist = require('../config/watchlist');
+      const stats = watchlist.tickers.map(t => {
+        const ctx = memoryStore.getTickerContext(t.symbol);
+        const bar = '█'.repeat(Math.round(ctx.trustScore * 10)) + '░'.repeat(10 - Math.round(ctx.trustScore * 10));
+        return `• *${t.symbol}*: [${bar}] ${(ctx.trustScore * 100).toFixed(0)}%\n  Approved: ${ctx.approvedCount} | Rejected: ${ctx.rejectedCount} | Last: ${ctx.lastDecision || 'None'}`;
+      }).join('\n\n');
+      this.bot.sendMessage(msg.chat.id, `🧠 *Memory Layer — User Trust Ratings*\n\n${stats}\n\n_Trust scores dynamically tune Strategist proposal confidence._`, { parse_mode: 'Markdown' });
+    });
+
+    // /help command
+    this.bot.onText(/\/help/, (msg) => {
+      const help = `
+🤖 *StockSentinel Commands & Controls*
+
+• /start - Connect chat and wake the agent
+• /status - View pending approvals & active engine
+• /demo - Trigger a live simulated trade proposal
+• /watchlist - View actively monitored tickers
+• /trust - View memory trust score graph per ticker
+• /help - View this guide
+
+💡 *Interactive Natural Language*:
+You can also ask me natural questions anytime!
+Try asking:
+- "What do you think of TSLA?"
+- "Why do you need human approval?"
+- "What is your strategy?"
+`.trim();
+      this.bot.sendMessage(msg.chat.id, help, { parse_mode: 'Markdown' });
+    });
+
+    // Handle all non-command text queries (Unknown Query Handler)
+    this.bot.on('message', async (msg) => {
+      if (!msg.text || msg.text.startsWith('/')) return;
+
+      const chatId = msg.chat.id;
+      this.chatId = chatId; // capture active user
+
+      // Check if user was in middle of modifying a trade quantity
+      const proposalId = this.activeModifications.get(chatId);
       if (proposalId) {
         const newQty = parseInt(msg.text.trim(), 10);
         if (!isNaN(newQty) && newQty > 0) {
-          this.activeModifications.delete(msg.chat.id);
+          this.activeModifications.delete(chatId);
           const result = gateLogic.modifyAndApprove(proposalId, { quantity: newQty });
-          this.bot.sendMessage(msg.chat.id, `✏️ *Quantity updated to ${newQty}!* Trade approved and sent to Agent B for paper trading pre-fill.`, { parse_mode: 'Markdown' });
+          this.bot.sendMessage(chatId, `✏️ *Quantity updated to ${newQty}!* Trade approved and sent to Agent B for paper trading pre-fill.`, { parse_mode: 'Markdown' });
         } else {
-          this.bot.sendMessage(msg.chat.id, '❌ Please enter a valid positive number for quantity.');
+          this.bot.sendMessage(chatId, '❌ Please enter a valid positive number for quantity.');
         }
+        return;
       }
+
+      // Handle Arbitrary / Unknown User Queries with Financial Intelligence
+      const query = msg.text.trim();
+      console.log(`[TelegramBot] 💬 Received natural language query: "${query}"`);
+      await this.handleUnknownQuery(chatId, query);
     });
 
     // Handle Inline Keyboard Button Taps
@@ -138,6 +188,22 @@ ${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.sug
           this.activeModifications.set(chatId, proposalId);
           await this.bot.answerCallbackQuery(query.id, { text: 'Type new quantity' });
           this.bot.sendMessage(chatId, `✏️ Please type the *new quantity* you wish to execute for proposal *${proposalId}*:`, { parse_mode: 'Markdown' });
+        } else if (action === 'demo') {
+          const sym = proposalId || 'TSLA';
+          await this.bot.answerCallbackQuery(query.id, { text: `Simulating ${sym}...` });
+          gateLogic.submitProposal({
+            ticker: sym,
+            action: 'buy',
+            suggested_quantity: 15,
+            confidence: 'high',
+            headline: `${sym} records strong upside catalyst with record market volume`,
+            rationale: `Strong momentum breakout detected on ${sym}. Favorable risk/reward profile for strategic long entry.`,
+            engine: 'Local Qwen 2.5 7B'
+          });
+        } else if (data === 'cmd_status') {
+          await this.bot.answerCallbackQuery(query.id, { text: 'Loading status...' });
+          const pending = gateLogic.getPendingList();
+          this.bot.sendMessage(chatId, `📊 *Cockpit Status*\nPending Approvals: *${pending.length}*\nWatching: *TSLA, NVDA, AAPL, MSFT, GOOGL*`, { parse_mode: 'Markdown' });
         }
       } catch (err) {
         await this.bot.answerCallbackQuery(query.id, { text: `Error: ${err.message}` });
@@ -196,6 +262,102 @@ Tap below to approve, reject, or adjust quantity.
     } catch (err) {
       console.error('[TelegramBot] Failed to send Telegram alert:', err.message);
     }
+  }
+
+  /**
+   * Intelligently handle arbitrary or unknown natural language user queries
+   */
+  async handleUnknownQuery(chatId, query) {
+    if (!this.bot) return;
+
+    const lower = query.toLowerCase();
+    const watchlist = require('../config/watchlist');
+
+    // 1. Check if user is asking about a specific ticker
+    const matchedTicker = watchlist.tickers.find(t => 
+      lower.includes(t.symbol.toLowerCase()) || 
+      lower.includes(t.name.toLowerCase()) ||
+      t.keywords.some(kw => lower.includes(kw.toLowerCase()))
+    );
+
+    if (matchedTicker) {
+      const sym = matchedTicker.symbol;
+      const ctx = memoryStore.getTickerContext(sym);
+      const recentSignal = memoryStore.data.signals.filter(s => s.ticker === sym).slice(-1)[0];
+      const recentProposal = memoryStore.data.proposals.filter(p => p.ticker === sym).slice(-1)[0];
+
+      const scorePct = Math.round(ctx.trustScore * 100);
+      const bar = '█'.repeat(Math.round(ctx.trustScore * 10)) + '░'.repeat(10 - Math.round(ctx.trustScore * 10));
+
+      const reply = `
+📊 *Ticker Intelligence: ${sym}* (${matchedTicker.name})
+Sector: \`${matchedTicker.sector}\`
+━━━━━━━━━━━━━━━━━━━━━━━━
+🧠 *Memory Trust Rating:* [${bar}] *${scorePct}%*
+• Approved: \`${ctx.approvedCount}\` | Rejected: \`${ctx.rejectedCount}\`
+• Last Decision: \`${ctx.lastDecision || 'None yet'}\`
+
+📰 *Latest Catalyst:*
+"${recentSignal ? recentSignal.headline : 'No recent headlines detected for ' + sym}"
+
+🎯 *Latest Strategist Proposal:*
+${recentProposal ? `*${recentProposal.action.toUpperCase()}* (${recentProposal.suggested_quantity} units) — _${recentProposal.rationale}_` : 'No active proposal. Waiting for next market catalyst.'}
+`.trim();
+
+      return this.bot.sendMessage(chatId, reply, {
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: `⚡ Test ${sym} Signal`, callback_data: `demo:${sym}` }]
+          ]
+        }
+      });
+    }
+
+    // 2. Check if user is asking about system identity, philosophy, or strategy
+    if (lower.includes('who are you') || lower.includes('how it works') || lower.includes('strategy') || lower.includes('philosophy') || lower.includes('what is this') || lower.includes('rules')) {
+      const explain = `
+🛡️ *About StockSentinel*
+
+StockSentinel is an advanced *human-gated trading agent* built for the SLAB Hackathon:
+
+1. 👁️ *The Watcher (Agent A)*: Scrapes financial news in milliseconds via *Scrapling* and maps DOM structures using *webcmd*.
+2. 🧠 *The Strategist*: Uses a local *Qwen 2.5 7B LLM (Epsilon)* to evaluate news catalysts against your historical trust profile.
+3. 📱 *Human Approval Gate*: Sends interactive alerts here. *NO ORDER CAN PROCEED WITHOUT YOUR EXPLICIT TAP!*
+4. ⚡ *The Executor (Agent B)*: Navigates to TradingView Paper Trading, pre-fills the ticket, and *strictly halts before confirm*.
+
+💡 *Core Philosophy*: _Watch tirelessly. Reason clearly. Prepare precisely. Act only on command._
+`.trim();
+      return this.bot.sendMessage(chatId, explain, { parse_mode: 'Markdown' });
+    }
+
+    // 3. Fallback intelligent response for general market/financial questions
+    const fallbackText = `
+💬 *StockSentinel Assistant*
+
+I received: _"${query}"_
+
+I am actively monitoring the markets for: *TSLA, NVDA, AAPL, MSFT, GOOGL*.
+Whenever breaking news breaks on these tickers, I'll formulate a trade proposal and ask for your approval here!
+
+📌 *Quick Actions:*
+• /status — Check pipeline status
+• /demo — Simulate a trade proposal
+• /watchlist — View tracked stocks
+• /trust — View memory trust scores
+`.trim();
+
+    this.bot.sendMessage(chatId, fallbackText, {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '⚡ Trigger Demo Signal', callback_data: 'demo:TSLA' },
+            { text: '📊 Cockpit Status', callback_data: 'cmd_status' }
+          ]
+        ]
+      }
+    });
   }
 
   /**
