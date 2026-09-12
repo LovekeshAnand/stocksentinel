@@ -382,7 +382,7 @@
             </div>
             <div class="actions-row">
               <button class="btn btn-approve" onclick="approveTrade('${p.id}')">
-                ✅ Approve & Pre-fill Order
+                ✅ Approve & Execute Trade
               </button>
               <button class="btn btn-reject" onclick="rejectTrade('${p.id}')">
                 ❌ Reject
@@ -394,7 +394,7 @@
     }
 
     function renderTrust(history) {
-      const tickers = ['TSLA', 'NVDA', 'AAPL', 'MSFT', 'GOOGL'];
+      const tickers = ['RELIANCE', 'TATAMOTORS', 'HDFCBANK', 'TCS', 'INFY', 'ICICIBANK'];
       trustList.innerHTML = tickers.map(sym => {
         const h = history[sym] || { trustScore: 0.70, approvedCount: 0, rejectedCount: 0 };
         const scorePct = Math.round((h.trustScore || 0.70) * 100);

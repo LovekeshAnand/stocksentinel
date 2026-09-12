@@ -26,18 +26,18 @@ module.exports = {
 
   // Paper Trading Configuration
   paperTrading: {
-    platform: 'TradingView',
-    url: process.env.PAPER_TRADING_URL || 'https://www.tradingview.com/chart/',
+    platform: 'TradingView India',
+    url: process.env.PAPER_TRADING_URL || 'https://in.tradingview.com/chart/',
     timeoutMs: 30000,
     headless: false // Show browser window for live visual automation
   },
 
-  // Chart & Screener Sources (Agent A1)
+  // Chart & Screener Sources (Agent A1) — Indian Equities (NSE/BSE)
   chartSources: [
     {
-      id: 'tradingview-screener',
-      name: 'TradingView US Market Screener',
-      url: 'https://www.tradingview.com/markets/stocks-usa/market-movers-gainers/',
+      id: 'tradingview-india',
+      name: 'TradingView India Screener (NSE)',
+      url: 'https://in.tradingview.com/markets/stocks-india/market-movers-gainers/',
       selectorHints: {
         tableSelector: 'tr.listRow, tr[data-rowkey]',
         symbolSelector: 'a.tickerName-grids, .tickerNameBox-grids',
@@ -46,29 +46,40 @@ module.exports = {
       }
     },
     {
-      id: 'yahoo-gainers',
-      name: 'Yahoo Finance Active Markets Screener',
-      url: 'https://finance.yahoo.com/markets/stocks/most-active/',
+      id: 'moneycontrol-nse',
+      name: 'Moneycontrol NSE Most Active',
+      url: 'https://www.moneycontrol.com/stocks/marketstats/nse-mostactive-stocks.html',
       selectorHints: {
-        tableSelector: 'table tbody tr',
+        tableSelector: 'table.mctable1 tbody tr, table tbody tr',
         symbolSelector: 'td:nth-child(1) a',
-        priceSelector: 'td:nth-child(2)',
-        volumeSelector: 'td:nth-child(6)'
+        priceSelector: 'td:nth-child(4), td:nth-child(2)',
+        volumeSelector: 'td:nth-child(7)'
       }
     }
   ],
 
-  // News Sources (Agent A2)
+  // News Sources (Agent A2) — Indian Financial Wires
   newsSources: [
     {
-      id: 'yahoo-finance',
-      name: 'Yahoo Finance Top Market News',
-      url: 'https://finance.yahoo.com/topic/stock-market-news/',
+      id: 'moneycontrol-markets',
+      name: 'Moneycontrol Indian Markets News',
+      url: 'https://www.moneycontrol.com/news/business/markets/',
       selectorHints: {
-        itemSelector: 'section[data-testid="storyitem"], li.stream-item, .js-stream-content',
-        headlineSelector: 'h3, a.subtle-link, a',
+        itemSelector: 'li.clearfix, article, section',
+        headlineSelector: 'h2 a, h3 a, a',
         snippetSelector: 'p',
-        timeSelector: 'time, span.publishing'
+        timeSelector: 'span'
+      }
+    },
+    {
+      id: 'economictimes-markets',
+      name: 'The Economic Times Markets',
+      url: 'https://economictimes.indiatimes.com/markets/stocks/news',
+      selectorHints: {
+        itemSelector: '.eachStory, article',
+        headlineSelector: 'h3 a, a',
+        snippetSelector: 'p',
+        timeSelector: 'time'
       }
     }
   ],

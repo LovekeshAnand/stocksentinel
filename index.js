@@ -35,7 +35,17 @@ async function bootstrap() {
     // 3. Report Local LLM Epsilon Engine status
     console.log(`[System] 🧠 Reasoning Layer: Local Epsilon Engine (${settings.epsilon.tier.toUpperCase()} / Qwen 2.5 7B)`);
 
-    // 4. Start Orchestration Pipeline
+    // 4. Pre-launch Visible Browser immediately on desktop
+    console.log('[System] 🚀 Launching visible browser automation window...');
+    const webcmd = require('./agents/webcmd_adapter');
+    const chartPage = await webcmd.focusTab('chart');
+    const targetUrl = settings.chartSources[0].url;
+    console.log(`[System] 👁️  Opening Indian Market Screener: ${targetUrl}`);
+    chartPage.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 30000 })
+      .then(() => webcmd.injectHUD(chartPage, 'AGENT A1 (CHART WATCHER)', 'Monitoring Indian Equities (NSE/BSE): Volume Spikes & MA Breakouts', '#10b981'))
+      .catch(() => {});
+
+    // 5. Start Multi-Agent Orchestration Pipeline
     await pipeline.start();
 
   } catch (err) {

@@ -125,27 +125,34 @@ I will *NEVER* submit an order without your explicit confirmation tap!
     if (text.startsWith('/status')) {
       const pending = gateLogic.getPendingList();
       const statusText = `
-📊 *System Cockpit Status*
-• Active Watchlist: TSLA, NVDA, AAPL, MSFT, GOOGL
+📊 *System Cockpit Status (NSE / BSE)*
+• Active Watchlist: RELIANCE, TATAMOTORS, HDFCBANK, TCS, INFY, ICICIBANK
 • Reasoning Engine: Local Epsilon Qwen 2.5 7B
+• Target Exchange: National Stock Exchange (NSE)
 • Pending Human Approvals: *${pending.length}*
-${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.suggested_quantity} units)`).join('\n')}
+${pending.map(p => `  - [${p.id}] ${p.ticker} ${p.action.toUpperCase()} (${p.suggested_quantity} shares)`).join('\n')}
 `.trim();
       return this.sendMessage(chatId, statusText);
     }
 
     if (text.startsWith('/demo')) {
       const mockProposal = {
-        ticker: 'TSLA',
+        ticker: 'TATAMOTORS',
         action: 'buy',
-        suggested_quantity: 15,
+        suggested_quantity: 25,
         confidence: 'high',
-        rationale: 'Tesla announced European regulatory green-light for Cybercab fleet trials ahead of schedule, sparking heavy pre-market momentum.',
-        headline: 'Tesla expands European robotaxi pilot with formal regulatory clearance',
+        rationale: 'High-conviction bullish convergence: Agent A1 detected Volume Spike (+78% above 20D average) with breakout above ₹975.20 EMA resistance, reinforced by Agent A2 detecting strong EV delivery growth and expanding commercial order backlog.',
+        headline: 'Tata Motors Reports 32% YoY Surge in EV Deliveries with Record Commercial Order Inflow',
+        chartSignal: {
+          pattern_type: 'volume_spike',
+          pattern_details: 'Volume spike (+78% above 20D average) with breakout above ₹975.20 EMA',
+          price: 988.50,
+          rsi: 72.4
+        },
         engine: 'Local Qwen 2.5 7B'
       };
       gateLogic.submitProposal(mockProposal);
-      return this.sendMessage(chatId, '⚡ *Demo proposal generated!* Review below:');
+      return this.sendMessage(chatId, '⚡ *Indian market demo proposal generated!* Review below:');
     }
 
     if (text.startsWith('/watchlist')) {

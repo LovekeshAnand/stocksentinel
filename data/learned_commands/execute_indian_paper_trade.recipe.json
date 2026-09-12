@@ -1,0 +1,12 @@
+{
+  "platform": "TradingView India",
+  "url": "https://in.tradingview.com/chart/?symbol=NSE%3ATATAMOTORS",
+  "symbolSearchSelector": "button[id=\"header-toolbar-symbol-search\"], div[data-name=\"legend-source-title\"]",
+  "buyButtonSelector": "button[data-name=\"buy\"], [data-role=\"buy-button\"]",
+  "sellButtonSelector": "button[data-name=\"sell\"], [data-role=\"sell-button\"]",
+  "quantityInputSelector": "input[data-property=\"quantity\"], input[type=\"number\"]",
+  "confirmButtonSelector": "button[data-name=\"submit\"], button[type=\"submit\"]",
+  "learnedAt": "2026-09-12T06:20:06.061Z",
+  "updatedAt": "2026-09-12T06:20:06.135Z",
+  "version": 1
+}

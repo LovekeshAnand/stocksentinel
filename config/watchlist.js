@@ -1,49 +1,60 @@
 /**
- * StockSentinel Watchlist Configuration
- * Defines target tickers, search keywords, and risk thresholds
+ * StockSentinel Watchlist Configuration — Indian Equities (NSE / BSE)
+ * High-liquidity Nifty 50 market leaders for live pattern & catalyst monitoring
  */
 
 module.exports = {
+  currency: 'INR',
+  currencySymbol: '₹',
+  exchange: 'NSE',
   tickers: [
     {
-      symbol: 'TSLA',
-      name: 'Tesla, Inc.',
-      keywords: ['Tesla', 'TSLA', 'Elon Musk', 'Supercharger', 'Gigafactory', 'Cybercab'],
-      defaultQuantity: 10,
-      maxQuantity: 50,
-      sector: 'Automotive / Tech'
-    },
-    {
-      symbol: 'NVDA',
-      name: 'NVIDIA Corporation',
-      keywords: ['Nvidia', 'NVDA', 'Jensen Huang', 'Blackwell', 'Hopper', 'AI chip', 'GPU demand'],
-      defaultQuantity: 5,
-      maxQuantity: 25,
-      sector: 'Semiconductors'
-    },
-    {
-      symbol: 'AAPL',
-      name: 'Apple Inc.',
-      keywords: ['Apple', 'AAPL', 'iPhone', 'Tim Cook', 'Apple Intelligence', 'Vision Pro'],
+      symbol: 'RELIANCE',
+      name: 'Reliance Industries Ltd.',
+      keywords: ['Reliance', 'RIL', 'Mukesh Ambani', 'Jio', 'Reliance Retail', 'Jio Financial'],
       defaultQuantity: 15,
       maxQuantity: 100,
-      sector: 'Consumer Electronics'
+      sector: 'Energy / Telecommunications / Retail'
     },
     {
-      symbol: 'MSFT',
-      name: 'Microsoft Corporation',
-      keywords: ['Microsoft', 'MSFT', 'Satya Nadella', 'Azure', 'Copilot', 'OpenAI'],
-      defaultQuantity: 10,
-      maxQuantity: 50,
-      sector: 'Enterprise Software'
+      symbol: 'TATAMOTORS',
+      name: 'Tata Motors Ltd.',
+      keywords: ['Tata Motors', 'TATAMOTORS', 'JLR', 'Jaguar Land Rover', 'Nexon EV', 'TaMo', 'Tata EV'],
+      defaultQuantity: 25,
+      maxQuantity: 150,
+      sector: 'Automotive / Electric Vehicles'
     },
     {
-      symbol: 'GOOGL',
-      name: 'Alphabet Inc.',
-      keywords: ['Google', 'GOOGL', 'Alphabet', 'Sundar Pichai', 'Gemini', 'Google Cloud'],
+      symbol: 'HDFCBANK',
+      name: 'HDFC Bank Ltd.',
+      keywords: ['HDFC Bank', 'HDFCBANK', 'HDFC', 'Shashidhar Jagdishan', 'private bank credit'],
+      defaultQuantity: 20,
+      maxQuantity: 100,
+      sector: 'Banking & Financial Services'
+    },
+    {
+      symbol: 'TCS',
+      name: 'Tata Consultancy Services Ltd.',
+      keywords: ['TCS', 'Tata Consultancy', 'K Krithivasan', 'IT export', 'BFSI tech'],
       defaultQuantity: 10,
       maxQuantity: 50,
-      sector: 'Internet Services'
+      sector: 'Information Technology'
+    },
+    {
+      symbol: 'INFY',
+      name: 'Infosys Ltd.',
+      keywords: ['Infosys', 'INFY', 'Salil Parekh', 'Narayana Murthy', 'digital transformation'],
+      defaultQuantity: 15,
+      maxQuantity: 75,
+      sector: 'Information Technology'
+    },
+    {
+      symbol: 'ICICIBANK',
+      name: 'ICICI Bank Ltd.',
+      keywords: ['ICICI Bank', 'ICICIBANK', 'Sandeep Bakhshi', 'retail loan growth'],
+      defaultQuantity: 20,
+      maxQuantity: 100,
+      sector: 'Banking & Financial Services'
     }
   ]
 };
