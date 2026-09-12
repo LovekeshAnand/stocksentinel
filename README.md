@@ -3,22 +3,22 @@
 **A Self-Learning, Human-Gated Browser Agent Architecture for Market Analysis and Supervised Execution**
 
 *Developed for the Self-Learning Agent Browser (SLAB) Hackathon @ MAIT — Hosted by webcmd*  
-*Autonomous Perception · Local Reasoning via Qwen 2.5 7B · Human-Gated Execution via Telegram*
+*Autonomous Perception · Local Reasoning via Qwen 2.5 7B · Dual Telegram Bots · Paper Trading Simulation*
 
 ---
 
 ## 1. Abstract & Executive Summary
 
 Retail and discretionary market participants face three compounding operational challenges:
-1. **Information Velocity and Dispersion**: Crucial market-moving catalysts are fragmented across hundreds of disparate digital portals, feeds, and regulatory filing disclosures.
-2. **Analysis Latency**: Synthesizing textual narrative into structured risk parameters (directional bias, sizing, technical confluence) under tight execution windows is cognitively demanding and prone to emotional bias.
-3. **Execution Friction and Operational Risk**: Manually navigating platform interfaces, searching tickers, selecting order types, and setting sizing parameters introduces latency and execution error.
+1. **Information Velocity and Dispersion**: Crucial market-moving catalysts are fragmented across disparate digital portals, search wires, and regulatory disclosures.
+2. **Analysis Latency**: Synthesizing textual news narrative with technical chart patterns into structured risk parameters (directional bias, sizing, technical confluence) under tight execution windows is cognitively demanding.
+3. **Execution Friction and Operational Risk**: Manually navigating platform interfaces, searching tickers, selecting order types, and calculating sizing introduces latency and error.
 
 Fully autonomous algorithmic execution systems eliminate friction but introduce existential tail risk by eliminating human discretionary judgment from capital-allocating events. Such systems are vulnerable to LLM hallucinations, flash crashes, and regulatory infractions.
 
 **StockSentinel** resolves this trade-off by establishing a bifurcated agentic boundary:
-- **Tireless Autonomous Operations**: Continuous DOM ingestion, pattern mapping, signal extraction, historical memory deduplication, and local multi-factor reasoning are executed autonomously.
-- **Strictly Supervised Execution**: The final capital-committing order submission is isolated behind an air-gapped **Human Approval Gate**. Orders are pre-filled on the execution platform via browser automation, but the final confirmation click remains strictly with the human operator.
+- **Tireless Autonomous Operations**: Continuous DOM ingestion, live candlestick chart pattern scanning, targeted active news searching across Indian Equities (NSE/BSE), memory deduplication, and local multi-factor reasoning are executed autonomously.
+- **Strictly Supervised Execution**: The final capital-committing order submission is isolated behind an air-gapped **Human Approval Gate**. Once approved via Telegram or the Web Cockpit, **Agent B** launches an interactive **Paper Trading Terminal & Simulation Engine** directly inside TradingView India, visibly animating order entry, button clicks, FIX 4.4 fill modals, and live portfolio tracking.
 
 ```
 "Watch tirelessly. Reason clearly. Prepare precisely. Act only on command."
@@ -28,21 +28,21 @@ Fully autonomous algorithmic execution systems eliminate friction but introduce 
 
 ## 2. System Architecture
 
-The StockSentinel architecture comprises three cooperating browser agents, an event-driven memory layer, a local dual-lens reasoning engine, and a human approval gate.
+The StockSentinel architecture comprises three cooperating browser agents, a persistent knowledge memory layer, a local dual-lens reasoning engine (Qwen 2.5 7B), and a dual Telegram bot control gate.
 
 ```mermaid
 flowchart TD
-    subgraph PERCEPTION["Layer 1: Dual-Lens Perception Agents"]
+    subgraph PERCEPTION["Layer 1: Dual-Lens Perception Agents (NSE Equities)"]
         subgraph AGENT_A1["Agent A1: The Chart Watcher"]
-            C1["Live Market Screeners\n(Yahoo Most Active, TradingView)"] --> C2["Visible Browser Navigation\n(Headless: False + Live HUD)"]
-            C2 --> C3["Technical Pattern Engine\n(Volume Spikes, Breakouts, RSI)"]
-            C3 --> C4["Chart Signal Dispatch\n(Ticker, Price, Volume, Bias)"]
+            C1["TradingView India Live Charts\n(NSE:TATAMOTORS, RELIANCE, etc.)"] --> C2["Visible Browser Navigation\n(Headless: False + Neon Scanline)"]
+            C2 --> C3["Technical Pattern Engine\n(Volume Accumulation, 20/50 EMA Cross, RSI)"]
+            C3 --> C4["Chart Signal Dispatch\n(Ticker, Price in ₹, Volume, Bias)"]
         end
 
         subgraph AGENT_A2["Agent A2: The News Watcher"]
-            N1["Financial News Wires\n(Yahoo Finance, MarketWatch)"] --> N2["Scrapling + Visible Browser\n(Stealth Ingestion + Live Tab)"]
-            N2 --> N3["Sentiment & Catalyst Parser\n(NLP Keyword Extraction)"]
-            N3 --> N4["News Signal Dispatch\n(Ticker, Headline, Snippet)"]
+            N1["Active Stock News Search\n(Bing News Search + Google Financial RSS)"] --> N2["Visible Browser Search Tab\n(Live Query Typing + Card Highlights)"]
+            N2 --> N3["Sentiment & Catalyst Parser\n(Strict Watchlist Relevance)"]
+            N3 --> N4["News Signal Dispatch\n(Ticker, Headline, Publisher, Timestamp)"]
         end
     end
 
@@ -52,6 +52,7 @@ flowchart TD
         M1 -- Duplicate --> M2["Drop / Suppress Alert"]
         M1 -- Novel Signals --> M3["Append to Historical Knowledge Graph"]
         M3 --> M4["Compute Per-Ticker Trust Profile\n(Approved vs Rejected History)"]
+        M3 --> M5["Simulated Paper Portfolio Engine\n(₹10,00,000 Cash, Positions, P&L)"]
     end
 
     subgraph REASONING["Layer 3: The Strategist (Local LLM)"]
@@ -60,23 +61,24 @@ flowchart TD
         S2 --> S3["Structured Proposal Generator\n(Convergence Analysis: Action, Sizing, Rationale)"]
     end
 
-    subgraph GATE["Layer 4: Human Approval Gate"]
-        S3 --> G1["Telegram Gateway Bot\n(Interactive Push Alert)"]
-        S3 --> G2["Real-Time Web Cockpit\n(WebSocket Telemetry Stream)"]
-        G1 <--> G3{"Discretionary Human Choice"}
-        G2 <--> G3
-        G3 -- Reject --> G4["Log Rejection & Penalize Trust Score"]
-        G3 -- Modify --> G5["Update Share Sizing / Limit"]
-        G3 -- Approve --> G6["Dispatch Execution Token"]
+    subgraph GATE["Layer 4: Dual Telegram Bot & Cockpit Gate"]
+        S3 --> G1["Approval Gate Bot (@BotFather)\n(One-Tap Approve / Reject / Modify)"]
+        S3 --> G2["Market Insights Bot (@stocksentinel_news_bot)\n(30-Min Push + /insights)"]
+        S3 --> G3["Real-Time Web Cockpit\n(http://localhost:3000 WebSocket Stream)"]
+        G1 <--> G4{"Discretionary Human Choice"}
+        G3 <--> G4
+        G4 -- Reject --> G5["Log Rejection & Penalize Trust Score"]
+        G4 -- Modify --> G6["Update Share Sizing / Limit"]
+        G4 -- Approve --> G7["Dispatch Execution Token"]
     end
 
-    subgraph EXECUTION["Layer 5: Supervised Execution"]
-        G6 --> E1["Agent B: The Executor\n(webcmd Platform Automation)"]
-        E1 --> E2["TradingView Paper Trading Platform"]
-        E2 --> E3["Foreground Visible Browser Tab"]
-        E3 --> E4["Input Approved Order Parameters\n(Symbol, Sizing, Direction)"]
-        E4 --> E5["HALT: Display Lock Overlay\n(Autonomous Execution Blocked)"]
-        E5 -. Final Click .-> E6["Human Final Confirmation Click"]
+    subgraph EXECUTION["Layer 5: Supervised Paper Trading Execution"]
+        G7 --> E1["Agent B: The Executor\n(webcmd Platform Automation)"]
+        E1 --> E2["TradingView India Platform Tab"]
+        E2 --> E3["Inject Live Paper Trading Terminal & DOM"]
+        E3 --> E4["Animate Order Entry & Button Click\n(Submit Order → Routing → Fill)"]
+        E4 --> E5["FIX 4.4 Order Fill Modal\n(Trade ID, Fill Price, Fee ₹20)"]
+        E5 --> E6["Docked Open Positions & Live P&L Dock"]
     end
 ```
 
@@ -85,169 +87,147 @@ flowchart TD
 ## 3. Subsystem Specifications
 
 ### 3.1 Agent A1: The Chart Watcher (Technical Pattern Agent)
-Agent A1 continuously monitors live market screeners and chart interfaces for technical patterns across watchlisted assets (`TSLA`, `NVDA`, `AAPL`, `MSFT`, `GOOGL`).
+Agent A1 continuously monitors live candlestick charts on **TradingView India** for high-conviction technical setups across watchlisted Indian assets (`TATAMOTORS`, `RELIANCE`, `HDFCBANK`, `TCS`, `INFY`, `ICICIBANK`).
 
-- **Visible Browser Automation**: Runs inside a visible Chromium/Edge browser window (`headless: false`) maximized on the desktop. Injects an on-screen HUD overlay (`STOCKSENTINEL // AGENT A1 (CHART WATCHER)`) displaying real-time scanning status.
-- **Dynamic DOM Highlighting**: Locates target ticker rows and injects glowing neon outlines and identifying badges into the active web page, providing visual telemetry for human operators and evaluators.
-- **Pattern Detection Rules**:
-  - *Volume Spike*: Identifies trading volume exceeding 1.2x the 3-month trailing average.
-  - *Moving Average Breakout*: Discovers short-term exponential moving average (EMA) crosses above long-term trends.
-  - *RSI Extrema*: Flags overbought (>70) and oversold (<30) momentum conditions.
+- **Visible Browser Automation**: Spawns an isolated desktop Chrome window (`headless: false`) maximized on screen with custom telemetry HUDs.
+- **Visual Chart Sweeps**: Sweeps crosshair mouse paths across the chart and triggers an animated neon scanline across candlestick data.
+- **Pattern Recognition**:
+  - *Volume Accumulation Breakout*: Detects volume surges exceeding +75% of the 20-day moving average.
+  - *EMA Golden Crossover*: Flags 20-day EMA crosses above the 50-day SMA.
+  - *Resistance Level Expansion*: Identifies multi-week consolidation breakouts.
+- **Institutional Pattern HUD**: Injects a 3-column quant momentum HUD on screen showing Price, RSI (14D), Volume Delta, and Technical Bias.
 - **Signal Output Schema**:
 ```json
 {
-  "id": "chart_TSLA_1726119600000",
-  "ticker": "TSLA",
+  "id": "chart_TATAMOTORS_1789198000000",
+  "ticker": "TATAMOTORS",
+  "currency": "INR",
   "pattern_type": "volume_spike",
-  "pattern_details": "Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20",
-  "price": 248.80,
-  "volume": "98.45M",
-  "rsi": 71.4,
+  "pattern_details": "Institutional volume spike +78% above 20-day average with breakout above ₹975.20 EMA",
+  "price": 988.50,
+  "volume": "14.2M",
+  "rsi": 72.4,
   "technical_bias": "BULLISH",
-  "timestamp": "2026-09-12T05:30:00.000Z"
+  "timestamp": "2026-09-12T07:30:00.000Z"
 }
 ```
 
 ---
 
-### 3.2 Agent A2: The News Watcher (Sentiment Signal Agent)
-Agent A2 continuously tracks breaking financial news feeds and market aggregators for fundamental catalysts.
+### 3.2 Agent A2: The News Watcher (Active Stock Search Edition)
+Rather than passively scrolling generic news front pages, Agent A2 **actively executes targeted news searches** for every stock in your portfolio.
 
-- **Dual Ingestion (Scrapling + Visible Browser)**: Utilizes Scrapling for millisecond-grade DOM retrieval and Cloudflare bypass in the background, while maintaining a synchronized visible browser tab with an active on-page HUD overlay.
-- **Visual Card Highlighting**: As articles are matched against watchlist keywords, Agent A2 draws glowing bounding boxes and tags on the web page in real time.
+- **Active Search Queries**: Formulates targeted queries per ticker (e.g., `"Tata Motors Ltd. share news NSE"`, `"Reliance Industries Ltd. share news NSE"`).
+- **Multi-Source Parallel Feeds**:
+  - *Desktop Browser Search*: Navigates tab `news_search` to live search engines (Bing News / Financial Search Wire), visibly typing queries and highlighting search cards.
+  - *Parallel RSS Wire*: Fetches Google Financial News RSS search feeds for all 6 watchlist tickers simultaneously.
+- **Strict Watchlist Relevance**: Filters out general macro noise, capturing only verified company catalysts.
+- **Breaking Wire Alert Card**: Injects an institutional Bloomberg-style breaking news card at the bottom-right with live ticker badges, publisher attribution, and pipeline routing status.
 - **Signal Output Schema**:
 ```json
 {
-  "id": "news_TSLA_1726119600000",
-  "ticker": "TSLA",
-  "headline": "Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros",
-  "snippet": "Regulatory filings and fleet telemetry indicate rapid scale-up in autonomous ride-hailing trial operations ahead of investor conference.",
-  "source": "MarketWatch News Wire",
-  "timestamp": "2026-09-12T05:30:00.000Z",
+  "id": "news_TATAMOTORS_1789198072303_256",
+  "ticker": "TATAMOTORS",
+  "headline": "Tata Motors Reports 32% YoY Surge in EV Deliveries with Record JLR Order Inflow",
+  "snippet": "Domestic EV dominance and expanded JLR margins drive bullish outlook.",
+  "source": "Financial News Search Wire",
+  "timestamp": "2026-09-12T07:27:52.151Z",
   "raw_sentiment_hint": "positive"
 }
 ```
 
 ---
 
-### 3.3 Memory Layer: Deduplication & Trust Scoring
-A stateless alert system creates user alert fatigue, causing operators to ignore critical signals. The StockSentinel Memory Layer enforces two stateful filters:
+### 3.3 The Strategist: Local Reasoning Layer (Qwen 2.5 7B via Epsilon)
+To ensure absolute data confidentiality and zero external API dependencies during live execution, multi-factor reasoning is processed entirely on-device using **Qwen 2.5 7B** hosted through the **Epsilon Engine** (`./engine`).
 
-1. **Sliding-Window Deduplication**: Incoming signals are hashed using ticker symbols, pattern categories, and normalized headline strings (`ticker:pattern:headline:price`). Any duplicate detected within a 2-hour sliding window is suppressed.
-2. **Bayesian-Inspired Trust Scoring**: The system maintains an ongoing record of user decisions per ticker symbol.
-
-```mermaid
-stateDiagram-v2
-    [*] --> InitialState: Default Trust (0.70)
-    InitialState --> ApprovedState: Operator Approves Trade
-    ApprovedState --> HighTrust: Trust Increment (+0.05)
-    InitialState --> RejectedState: Operator Rejects Trade
-    RejectedState --> LowTrust: Trust Penalty (-0.15)
-    LowTrust --> SizingReduction: Lower Maximum Allocated Units
-    LowTrust --> WatchOnlyState: Trust < 0.40 (Force WATCH_ONLY)
-    HighTrust --> StandardSizing: Trust >= 0.70 (Standard Sizing Permitted)
-```
-
-If a user repeatedly rejects proposals on a specific ticker, its trust score declines. This score is injected into the LLM context, instructing the reasoning engine to downgrade actionable signals to `watch_only` or reduce recommended quantities.
-
----
-
-### 3.4 The Strategist: Local Reasoning Layer (Qwen 2.5 7B via Epsilon)
-To ensure absolute data confidentiality and zero external API dependencies during live execution, reasoning is processed entirely on-device using **Qwen 2.5 7B** hosted through the **Epsilon Engine** (`./engine`).
-
-- **Dual-Lens Context Assembly**: The Strategist ingests both Agent A1's chart pattern and Agent A2's news catalyst for the same ticker symbol.
-- **Cross-Signal Synthesis Rules**:
-  - *Bullish Convergence* (Bullish Chart + Positive News): High confidence BUY proposal.
-  - *Bearish Convergence* (Bearish Breakdown + Negative News): High confidence SELL proposal.
-  - *Signal Conflict* (Bullish Chart + Negative News): Downgraded to HOLD / WATCH_ONLY with an explicit risk warning.
-  - *Single Lens Active*: Proposes on single-source evidence, explicitly disclosing that only one lens contributed.
+- **Dual-Lens Context Assembly**: Correlates technical patterns from Agent A1 with fundamental catalysts from Agent A2 for the same asset.
+- **Synthesis Logic**:
+  - *Bullish Convergence* (Bullish Breakout + Positive Catalyst): Emits a HIGH confidence BUY proposal.
+  - *Bearish Convergence* (Breakdown + Adverse Catalyst): Emits a HIGH confidence SELL proposal.
+  - *Signal Conflict* (Bullish Chart + Negative Catalyst): Downgrades to WATCH_ONLY with risk disclosure.
 - **Structured Proposal Output**:
 ```json
 {
-  "ticker": "TSLA",
+  "ticker": "TATAMOTORS",
   "action": "buy",
-  "suggested_quantity": 15,
+  "suggested_quantity": 25,
   "confidence": "high",
-  "rationale": "High-conviction bullish convergence: Agent A1 detected volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20, reinforced by Agent A2 detecting positive news catalyst regarding robotaxi fleet expansion. Both technical and fundamental lenses align.",
+  "rationale": "High-conviction bullish convergence: Agent A1 detected Volume Spike (+78% above 20D average) with breakout above ₹975.20 EMA resistance at ₹988.50, reinforced by Agent A2 detecting strong EV delivery growth and expanding commercial order backlog. Both technical and fundamental lenses align.",
   "signals_considered": [
-    "chart: volume_spike (RSI 71.4)",
-    "news: positive sentiment (robotaxi fleet expansion)"
+    "chart: volume_spike (RSI 72.4, Price ₹988.50)",
+    "news: positive sentiment (EV delivery surge & JLR orders)"
   ],
-  "source_signal_ids": ["chart_TSLA_1726119600000", "news_TSLA_1726119600000"],
   "engine": "Local Qwen 2.5 7B (Epsilon Strategist)"
 }
 ```
 
 ---
 
-### 3.5 Human Approval Gate: Telegram Integration
-The Human Approval Gate is the operational centerpiece of StockSentinel. It provides direct, bi-directional command-and-control through an interactive Telegram Bot interface.
+### 3.4 Dual Telegram Bot Architecture
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Pipeline as Orchestration Pipeline
-    participant Gate as Approval Gate Controller
-    participant Bot as Telegram Bot Client
-    participant User as Human Operator (Mobile)
-    participant Exec as Agent B (Browser Executor)
+StockSentinel deploys two separate, specialized Telegram bots to separate trade decisions from market intelligence:
 
-    Pipeline->>Gate: Dispatches Trade Proposal
-    Gate->>Bot: Formats Rich Alert with Inline Keyboard
-    Bot->>User: Renders Push Alert on Mobile Device
-    Note over User: Operator inspects Rationale, Sizing, and Catalyst
-    
-    alt Operator Approves
-        User->>Bot: Taps [Approve]
-        Bot->>Gate: Callback Query: approve:prop_id
-        Gate->>Pipeline: Emits PROPOSAL_APPROVED Event
-        Pipeline->>Exec: Dispatches Pre-Fill Command
-        Exec->>Exec: Launches Browser, Inputs Ticket, Halts at Confirm
-        Gate->>Bot: Sends Execution Verification Notice
-    else Operator Rejects
-        User->>Bot: Taps [Reject]
-        Bot->>Gate: Callback Query: reject:prop_id
-        Gate->>Gate: Logs Rejection & Penalizes Ticker Trust
-        Gate->>Bot: Updates Message: REJECTED (No Action Taken)
-    else Operator Modifies Sizing
-        User->>Bot: Taps [Modify Quantity]
-        Bot->>User: Requests Numeric Quantity Input
-        User->>Bot: Sends "25"
-        Bot->>Gate: Updates Quantity & Dispatches Approval
-        Gate->>Exec: Dispatches Pre-Fill with Modified Quantity
-    end
+```
+┌────────────────────────────────────────────────────────┐
+│                   TELEGRAM ECOSYSTEM                   │
+├───────────────────────────┬────────────────────────────┤
+│    APPROVAL GATE BOT      │    MARKET INSIGHTS BOT     │
+│   (Trade Execution Gate)  │  (@stocksentinel_news_bot) │
+├───────────────────────────┼────────────────────────────┤
+│ • HIGH/MED Trade Alerts   │ • 30-Min Market Push       │
+│ • One-Tap [Approve/Reject]│ • Watchlist Trust Summaries│
+│ • /portfolio (Paper Cash) │ • Read-Only Intelligence   │
+│ • /simulate [ticker]      │ • /insights, /pause, /resume│
+└───────────────────────────┴────────────────────────────┘
 ```
 
-#### Interactive Command Matrix
-| Command | Parameter | Functionality |
+#### Bot 1: The Approval Gate Bot
+- Sends high-conviction BUY/SELL trade proposals with interactive inline buttons (`[✅ Approve]`, `[❌ Reject]`, `[✏️ Modify]`).
+- Clean Indian pricing format (`₹988.50`).
+- Quality filter: Silently suppresses `watch_only` and LOW confidence noise.
+
+#### Bot 2: The Market Insights Bot (`@stocksentinel_news_bot`)
+- **Auto Chat-ID Detection**: Polling auto-detects your Chat ID on `/start` and persists it directly into `.env` (`INSIGHTS_BOT_CHAT_ID`).
+- **Periodic Market Push**: Automatically pushes a full watchlist summary every 30 minutes (configurable via `INSIGHTS_INTERVAL_MIN`).
+- **Commands**: `/insights`, `/watchlist`, `/status`, `/pause`, `/resume`.
+
+#### Telegram Command Matrix
+| Command | Bot | Functionality |
 |---|---|---|
-| `/start` | None | Initializes session and registers user Chat ID |
-| `/status` | None | Displays active watchlist, reasoning engine status, and pending approvals |
-| `/demo` | None | Generates an instantaneous live simulated proposal for verification |
-| `/watchlist` | None | Lists all actively monitored tickers, names, sectors, and default caps |
-| `/trust` | None | Renders visual trust score indicators and historical decision tallies |
-| `/help` | None | Displays operational manual and interaction rules |
-| Natural Query | Arbitrary Text | Natural language interpreter answering market questions and ticker status |
+| `/start` | Both | Registers session and auto-saves Chat ID to `.env` |
+| `/status` | Both | Displays pending approvals, pipeline counters, and engine health |
+| `/portfolio` | Approval | Displays live virtual cash, realized P&L, and open paper positions |
+| `/simulate [ticker]` | Approval | Triggers live interactive paper trade execution directly in the browser |
+| `/insights` | Insights | Generates on-demand market intelligence report with trust bars |
+| `/watchlist` | Both | Lists active NSE tickers, sectors, and default quantities |
+| `/trust` | Approval | Renders visual trust score indicators per ticker |
+| `/demo` | Approval | Emits an immediate high-conviction test proposal |
 
 ---
 
-### 3.5 Agent B: The Executor (TradingView Paper Trading)
-Agent B remains dormant until an approval token is dispatched by the Approval Gate.
+### 3.5 Agent B: The Executor (Paper Trading Simulation Engine)
+Agent B remains dormant until an approval token is dispatched by the Approval Gate (or via `/simulate`).
 
-- **Automation Technology**: Driven by webcmd browser automation primitives (using Puppeteer Core linked to installed Chromium/Edge binaries).
-- **Workflow Operations**:
-  1. Activates browser window and navigates to the target paper trading interface (`https://www.tradingview.com/chart/`).
-  2. Traverses to the search interface and enters the target ticker symbol.
-  3. Selects the verified directional ticket (`BUY` or `SELL`).
-  4. Enters the exact approved share quantity.
-  5. Injects an on-screen DOM verification banner confirming parameter alignment.
-- **The Halt Boundary**: Agent B is architecturally restricted from interacting with the final submission element. It leaves the ticket open and focused, requiring the operator's physical click on the platform to route the order.
+- **TradingView India Integration**: Activates the browser tab and loads the exact NSE candlestick chart (`https://in.tradingview.com/chart/?symbol=NSE:TATAMOTORS`).
+- **Interactive Order Entry Pad**: Injects an institutional Order DOM ticket docked on the right side of TradingView.
+- **Visible Input Automation**:
+  1. The agent visibly types the approved quantity digit-by-digit into the quantity field.
+  2. Dynamically calculates estimated order consideration in real time.
+  3. Moves to and clicks the `SUBMIT BUY ORDER` button with state ripple animations:  
+     `SUBMIT ORDER` → `⚡ ROUTING TO NSE GATEWAY...` (amber) → `✓ FILLED @ ₹988.50` (emerald).
+- **FIX 4.4 Order Fill Modal**: Displays a centered execution confirmation ticket showing Trade ID (e.g. `#TX-NSE-869728`), Fill Price, Executed Quantity, Fee (`₹20.00`), and timestamp.
+- **Docked Open Positions Bar**: Displays all open positions docked at the bottom of the screen with live updating unrealized P&L and virtual cash balance.
+- **Persistent Virtual Portfolio**:
+  - Initial Capital: **₹10,00,000** (₹10 Lakhs virtual cash).
+  - Automatically deducts consideration and flat NSE exchange fees (`₹20.00`).
+  - Tracks open positions, average entry prices, and realized P&L in `data/memory.json`.
 
 ---
 
 ## 4. webcmd Sponsor Infrastructure Alignment
 
-The hackathon guidelines explicitly prioritize the demonstrate-and-evaluate cycle of webcmd:
+The hackathon guidelines prioritize the demonstrate-and-evaluate cycle of webcmd:
 
 ### 4.1 Exploration vs. Reuse Paradigm
 ```mermaid
@@ -266,15 +246,14 @@ graph LR
     PHASE1 ==> PHASE2
 ```
 
-- **Exploration Phase**: On initial execution, the agent executes full structural discovery, evaluating alternative selectors, determining optimal container anchors, and saving structured JSON recipes to `data/learned_commands/`.
-- **Fast Reuse Phase**: On subsequent intervals, exploration overhead is bypassed entirely. The agent applies pre-compiled selector recipes, reducing cycle time from tens of seconds to under 2 seconds.
+- **Exploration Phase**: On initial execution, the agent maps structural DOM selectors and saves structured JSON recipes to `data/learned_commands/`.
+- **Fast Reuse Phase**: On subsequent cycles, exploration overhead is bypassed entirely. The agent applies pre-compiled recipes, reducing cycle time from tens of seconds to under 2 seconds.
 
 ### 4.2 Self-Healing & Layout Shift Recovery
-Web pages regularly update layouts, invalidate CSS classes, or alter DOM hierarchies. If a pre-learned recipe fails during execution:
-1. Agent catches the selector mismatch exception.
-2. Rather than crashing or silently aborting, the agent triggers an automated self-healing routine.
-3. Exploration phase is re-engaged autonomously to map the modified DOM structure.
-4. The updated recipe is saved as an incremented version (e.g., `v2`), restoring execution continuity.
+If a website layout changes or an element is displaced:
+1. The agent intercepts the selector mismatch.
+2. The agent re-engages the automated exploration routine to re-map the DOM.
+3. The updated recipe is saved to restore continuous execution without human intervention.
 
 ---
 
@@ -285,35 +264,34 @@ stocksentinel/
 ├── agents/
 │   ├── agent_a_watcher/
 │   │   ├── scrapling_fetch.py         # Undetected high-speed DOM retrieval engine
-│   │   └── webcmd_news.js             # Agent A controller: explore, reuse, and signal extraction
+│   │   └── webcmd_news.js             # Agent A2: Active news search & catalyst extraction
+│   ├── agent_a1_chart_watcher/
+│   │   └── webcmd_chart.js            # Agent A1: TradingView live candlestick pattern scanner
 │   ├── agent_b_executor/
-│   │   └── webcmd_trade.js            # Agent B controller: TradingView order pre-fill automation
-│   └── webcmd_adapter.js              # Core webcmd bridge: recipe storage, reuse, and self-healing
+│   │   └── webcmd_trade.js            # Agent B: Paper trading terminal & simulation engine
+│   └── webcmd_adapter.js              # webcmd bridge: browser management, HUDs, and recipes
 ├── approval_gate/
 │   ├── public/
 │   │   └── index.html                 # Real-time WebSocket visual cockpit dashboard
-│   ├── gate_logic.js                  # Central human-gate authority & event emitter
+│   ├── gate_logic.js                  # Central human-gate authority & quality filter
 │   ├── server.js                      # Express API and WebSocket telemetry broadcaster
-│   └── telegram_bot.js                # Bi-directional Telegram Bot integration
+│   ├── telegram_bot.js                # Approval Gate Bot (trade proposals & commands)
+│   └── insights_bot.js                # Market Insights Bot (periodic intelligence pushes)
 ├── config/
-│   ├── settings.js                    # Global system parameters, timeouts, and URLs
-│   └── watchlist.js                   # Target tickers, sector definitions, and sizing bounds
+│   ├── settings.js                    # Global parameters, bot tokens, and endpoints
+│   └── watchlist.js                   # Indian Equities (NSE) watchlist and sizing limits
 ├── data/
-│   ├── learned_commands/              # Persistent webcmd recipe storage (explore artifacts)
-│   └── memory.json                    # Knowledge store: signals, proposals, and trust metrics
-├── engine/                            # Local Epsilon LLM engine directory
-│   ├── backend/
-│   │   ├── main.py                    # Epsilon engine entry point
-│   │   └── tiers/model_manager.py     # Qwen 2.5 7B model lifecycle and process manager
-│   └── config.yaml                    # Local engine tiered routing configuration
+│   ├── learned_commands/              # Persistent webcmd recipe storage
+│   └── memory.json                    # Knowledge store: signals, proposals, and portfolio
 ├── memory/
 │   ├── dedup.js                       # Sliding-window signal deduplication engine
-│   └── store.js                       # Knowledge graph manager for proposals and trust scoring
+│   └── store.js                       # Knowledge graph manager & virtual portfolio tracker
 ├── orchestration/
-│   └── pipeline.js                    # Central event loop coordinating Agents A, Strategist, Gate, B
+│   └── pipeline.js                    # Central event loop coordinating Agents A1, A2, Strategist, Gate, B
+├── simulate_trade.js                  # Standalone CLI paper trade simulation runner
 ├── .env.example                       # Environment configuration template
 ├── index.js                           # Master application entry point
-├── package.json                       # Project dependencies and script declarations
+├── package.json                       # Dependencies and script declarations
 ├── stocksentinel.md                   # Hackathon specification document
 └── README.md                          # Comprehensive technical documentation
 ```
@@ -325,7 +303,7 @@ stocksentinel/
 ### 6.1 Prerequisites
 - **Node.js**: Version 18.0.0 or higher
 - **Python**: Version 3.10 or higher
-- **Browser**: Google Chrome or Microsoft Edge installed on system path
+- **Browser**: Google Chrome or Microsoft Edge installed on Windows/Mac/Linux
 
 ### 6.2 Step-by-Step Setup
 
@@ -342,7 +320,7 @@ stocksentinel/
 
 3. **Install Python Scraping & Browser Automation Libraries**:
    ```bash
-   python -m pip install scrapling curl_cffi playwright patchright browserforge
+   pip install scrapling curl_cffi playwright patchright browserforge
    ```
 
 4. **Configure Environment Variables**:
@@ -353,24 +331,25 @@ stocksentinel/
 
 5. **Set Configuration Parameters in `.env`**:
    ```env
-   # Telegram Bot Token (obtained from @BotFather)
-   TELEGRAM_BOT_TOKEN=your_telegram_bot_token_here
-   TELEGRAM_CHAT_ID=
+   # ── Approval Gate Bot (main trade alert bot) ──────────────────────
+   TELEGRAM_BOT_TOKEN=your_approval_bot_token_here
+   TELEGRAM_CHAT_ID=your_chat_id_here
 
-   # Local Epsilon LLM Engine Parameters
+   # ── Market Insights Bot (second bot — market summaries) ───────────
+   INSIGHTS_BOT_TOKEN=your_insights_bot_token_here
+   INSIGHTS_BOT_CHAT_ID=
+   INSIGHTS_INTERVAL_MIN=30
+
+   # ── Epsilon Local LLM Engine (Qwen 2.5 7B) ─────────────────────────
    EPSILON_ENGINE_PATH=./engine
    EPSILON_TIER=balanced
    EPSILON_TIMEOUT_MS=60000
 
-   # Pipeline Orchestration
+   # ── Pipeline Configuration ─────────────────────────────────────────
    POLL_INTERVAL_SEC=30
    PORT=3000
-   PAPER_TRADING_URL=https://www.tradingview.com/chart/
+   PAPER_TRADING_URL=https://in.tradingview.com/chart/
    ```
-
-6. **Initialize Telegram Connection**:
-   - Open Telegram and initiate a conversation with your bot.
-   - Send `/start` to bind your chat ID to the Approval Gate.
 
 ---
 
@@ -381,9 +360,21 @@ Launch the complete StockSentinel pipeline:
 ```bash
 npm start
 ```
+Within 2 seconds, Chrome will launch maximized on your desktop, initiating the multi-agent perception loop.
 
-### 7.2 Accessing the Live Cockpit
-Open a web browser to:
+### 7.2 Running the Paper Trading Simulation
+You can trigger the interactive paper trading simulation at any time:
+```bash
+# Run default simulation (TATAMOTORS BUY 25)
+npm run simulate
+
+# Or with custom parameters:
+node simulate_trade.js RELIANCE BUY 15
+node simulate_trade.js HDFCBANK BUY 20
+```
+
+### 7.3 Accessing the Live Web Cockpit
+Open your browser to:
 ```
 http://localhost:3000
 ```
@@ -391,35 +382,30 @@ The visual cockpit provides:
 - Live status across all four operational tiers.
 - Real-time display of pending human approvals synchronized via WebSockets.
 - Streaming telemetry event log showing ingestion and reasoning milestones.
-- Dynamic Memory & Trust Graph visualization showing historical approval ratios.
-- **Trigger Live Demo Signal** button for instantaneous evaluation without waiting for external market news.
+- Dynamic Memory & Trust Graph visualization.
 
 ---
 
 ## 8. Live Demonstration Script (Evaluation Protocol)
 
 ### Stage 1: Problem Demonstration (20 Seconds)
-- Illustrate the cognitive overhead of manually tracking news across multiple financial portals while simultaneously managing order entry screens.
-- Emphasize the risk of fully autonomous bots that execute without discretionary human oversight.
+- Highlight the cognitive friction of manually reading financial news portals while scanning candlestick charts and managing order entry windows.
+- Emphasize the dangers of uncontrolled autonomous execution vs. the safety of human-gated architecture.
 
-### Stage 2: webcmd Perception & Fast Reuse (60 Seconds)
-- Observe Agent A poll the market news source.
-- Highlight the transition in telemetry logs from `[EXPLORE PHASE]` (initial DOM structural mapping) to `[REUSE PHASE]` (sub-2-second execution utilizing saved command recipes).
-- Point to `data/learned_commands/read_financial_news.recipe.json` as the verified self-learning artifact.
+### Stage 2: Dual-Lens Perception & Active News Search (60 Seconds)
+- Watch Agent A1 navigate TradingView India live charts, sweep crosshairs, and project the 3-column quant pattern HUD.
+- Watch Agent A2 actively search for `"Tata Motors Ltd. share news NSE"` across financial news search wires, highlight matching cards, and inject the breaking catalyst alert.
 
-### Stage 3: Supervised Execution via Telegram Gate (90 Seconds)
-- Trigger a market catalyst alert (via `/demo` in Telegram or the web cockpit button).
-- Show the incoming rich alert on the mobile Telegram client, complete with:
-  - Ticker, directional action, and calculated share sizing.
-  - Plain-English rationale generated by the local Qwen 2.5 7B model.
-  - Interactive approval controls (`Approve`, `Reject`, `Modify`).
-- Tap `Approve` on the mobile device.
-- Observe Agent B immediately activate the paper trading interface, populate the ticker and quantity fields, and **visibly halt before the submit button**.
-- Demonstrate the strict human boundary: the final submission click requires manual execution.
+### Stage 3: Supervised Execution via Telegram Gate (60 Seconds)
+- Tap `/demo` on Telegram to emit a high-conviction convergence proposal.
+- Observe the rich mobile alert with rationale, sizing, and pricing in `₹`.
+- Tap `[✅ Approve]` on your phone.
 
-### Stage 4: Self-Learning Memory Feedback (30 Seconds)
-- Reject a subsequent trade on `TSLA`.
-- Display the Cockpit Trust Graph: show the trust score adjust downward, demonstrating stateful adaptation rather than stateless prompting.
+### Stage 4: Interactive Paper Trading Simulation (60 Seconds)
+- Watch Agent B immediately bring TradingView India to the front.
+- Watch the Order Entry Pad inject on screen, animate typing `25 shares`, and visually depress the `SUBMIT BUY ORDER` button.
+- Observe the centered FIX 4.4 Order Fill confirmation ticket pop up with Trade ID `#TX-NSE-...`.
+- Review the docked positions bar updating the portfolio cash and position P&L in real time.
 
 ---
 
@@ -427,8 +413,8 @@ The visual cockpit provides:
 
 | Hackathon Requirement | System Implementation & Evidence |
 |---|---|
-| **Built with webcmd** | webcmd is the core browser automation backbone for both Agent A (news exploration and reuse) and Agent B (order form automation). |
-| **Human Approval for Sensitive Actions** | Fully enforced at the architectural level. No order is transmitted to execution without explicit approval via Telegram or Cockpit. |
-| **Local / Independent Reasoning** | Powered entirely by on-device Qwen 2.5 7B through the Epsilon engine, requiring zero proprietary model APIs. |
-| **Live Reliability & Robustness** | Scrapling bypasses anti-bot barriers; webcmd self-healing automatically recovers from DOM layout changes. |
-| **Terms of Service Adherence** | Utilizes public read-only market feeds and standard interactive interfaces on simulated paper trading environments. |
+| **Built with webcmd** | webcmd is the core browser automation backbone powering Agent A1 (chart pattern mapping), Agent A2 (news search & scraping), and Agent B (order DOM automation). |
+| **Human Approval for Sensitive Actions** | Strictly enforced at the architectural level. No order is ever clicked or executed without explicit authorization via Telegram or Cockpit. |
+| **Local / Independent Reasoning** | Powered entirely by on-device Qwen 2.5 7B through the local Epsilon engine, requiring zero proprietary model APIs. |
+| **Live Reliability & Robustness** | Scrapling and active search feeds guarantee fresh catalyst delivery; webcmd self-healing automatically recovers from DOM layout shifts. |
+| **Terms of Service Adherence** | Operates exclusively on public read-only market data and standard interactive simulated paper trading environments. |
