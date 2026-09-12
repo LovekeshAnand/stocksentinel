@@ -16,8 +16,11 @@ class SignalDeduplicator {
     const cleanHeadline = (signal.headline || '')
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '')
-      .trim();
-    return `${ticker}:${cleanHeadline}`;
+      .slice(0, 40);
+    const patternKey = signal.pattern_type || '';
+    const priceKey = signal.price ? Math.round(signal.price) : '';
+
+    return `${ticker}:${patternKey}:${cleanHeadline}:${priceKey}`;
   }
 
   /**

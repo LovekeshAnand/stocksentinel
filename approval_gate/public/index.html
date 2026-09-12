@@ -351,15 +351,29 @@
 
       proposalsList.innerHTML = proposals.map(p => {
         const badgeClass = p.action === 'buy' ? 'badge-buy' : (p.action === 'sell' ? 'badge-sell' : 'badge-hold');
+        
+        const chartBadge = p.chartSignal 
+          ? `<div style="background:rgba(16,185,129,0.12); border:1px solid #10b981; border-radius:6px; padding:6px 10px; font-size:12px; margin-bottom:8px; color:#34d399;">
+               <b>📊 Agent A1 (Chart Pattern):</b> ${p.chartSignal.pattern_type} (${p.chartSignal.pattern_details})
+             </div>`
+          : '';
+
+        const newsBadge = (p.newsSignal || p.headline)
+          ? `<div style="background:rgba(56,189,248,0.12); border:1px solid #38bdf8; border-radius:6px; padding:6px 10px; font-size:12px; margin-bottom:10px; color:#7dd3fc;">
+               <b>📰 Agent A2 (News Wire):</b> "${p.newsSignal?.headline || p.headline}"
+             </div>`
+          : '';
+
         return `
           <div class="proposal-card" id="card-${p.id}">
             <div class="proposal-top">
               <div class="proposal-ticker">${p.ticker}</div>
               <div class="badge ${badgeClass}">${p.action}</div>
             </div>
-            <div class="headline-box">"${p.headline || 'Market catalyst detected'}"</div>
+            ${chartBadge}
+            ${newsBadge}
             <div class="rationale-box">
-              <b>Qwen 2.5 7B Rationale:</b> ${p.rationale}
+              <b>Qwen 2.5 7B Dual-Lens Rationale:</b> ${p.rationale}
             </div>
             <div class="meta-row">
               <span>Qty: <b>${p.suggested_quantity}</b> units</span>

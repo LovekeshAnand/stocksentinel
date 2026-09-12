@@ -1,0 +1,12 @@
+{
+  "platform": "TradingView",
+  "url": "https://www.tradingview.com/chart/",
+  "tickerInputSelector": "input[data-role=\"search\"], #header-toolbar-symbol-search, input[placeholder*=\"Search\"]",
+  "buyButtonSelector": "button[data-name=\"buy\"], [data-role=\"buy-button\"], .buy-button",
+  "sellButtonSelector": "button[data-name=\"sell\"], [data-role=\"sell-button\"], .sell-button",
+  "quantityInputSelector": "input[data-property=\"quantity\"], input[type=\"number\"], input[name=\"qty\"]",
+  "confirmButtonSelector": "button[data-name=\"submit\"], button[type=\"submit\"], [data-role=\"submit-order\"]",
+  "learnedAt": "2026-09-12T06:11:23.969Z",
+  "updatedAt": "2026-09-12T06:11:23.998Z",
+  "version": 1
+}

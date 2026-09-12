@@ -339,8 +339,16 @@ Whenever breaking news breaks on these tickers, I'll formulate a trade proposal 
 
     const actionBadge = proposal.action.toUpperCase() === 'BUY' ? '🟢 BUY' : (proposal.action.toUpperCase() === 'SELL' ? '🔴 SELL' : '🟡 HOLD');
 
+    const chartInfo = proposal.chartSignal 
+      ? `📊 *Agent A1 (Chart Evidence):*\n• ${proposal.chartSignal.pattern_type}: ${proposal.chartSignal.pattern_details}\n• Price: $${proposal.chartSignal.price || 'N/A'} | RSI: ${proposal.chartSignal.rsi || 'N/A'}`
+      : `📊 *Agent A1 (Chart Evidence):* Technical baseline active`;
+
+    const newsInfo = proposal.newsSignal || proposal.headline
+      ? `📰 *Agent A2 (News Evidence):*\n"${proposal.newsSignal?.headline || proposal.headline}"`
+      : `📰 *Agent A2 (News Evidence):* Fundamental baseline active`;
+
     const text = `
-🚨 *STOCK SENTINEL TRADE PROPOSAL* 🚨
+🚨 *STOCKSENTINEL TRADE PROPOSAL* 🚨
 ━━━━━━━━━━━━━━━━━━━━━━━━
 📈 *Ticker:* \`${proposal.ticker}\`
 🎯 *Action:* *${actionBadge}*
@@ -348,10 +356,11 @@ Whenever breaking news breaks on these tickers, I'll formulate a trade proposal 
 📊 *Confidence:* \`${(proposal.confidence || 'medium').toUpperCase()}\`
 🧠 *Engine:* \`${proposal.engine || 'Local Qwen 2.5 7B'}\`
 
-📰 *Market Catalyst:*
-"${proposal.headline || 'Incoming news wire'}"
+${chartInfo}
 
-💡 *Strategist Rationale:*
+${newsInfo}
+
+💡 *Strategist Combined Rationale:*
 ${proposal.rationale}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 *HUMAN DECISION REQUIRED:*

@@ -29,10 +29,36 @@ module.exports = {
     platform: 'TradingView',
     url: process.env.PAPER_TRADING_URL || 'https://www.tradingview.com/chart/',
     timeoutMs: 30000,
-    headless: false // Show browser window for live demo visibility
+    headless: false // Show browser window for live visual automation
   },
 
-  // News Sources
+  // Chart & Screener Sources (Agent A1)
+  chartSources: [
+    {
+      id: 'tradingview-screener',
+      name: 'TradingView US Market Screener',
+      url: 'https://www.tradingview.com/markets/stocks-usa/market-movers-gainers/',
+      selectorHints: {
+        tableSelector: 'tr.listRow, tr[data-rowkey]',
+        symbolSelector: 'a.tickerName-grids, .tickerNameBox-grids',
+        priceSelector: 'td:nth-child(2), .cell-numeric',
+        volumeSelector: 'td:nth-child(6)'
+      }
+    },
+    {
+      id: 'yahoo-gainers',
+      name: 'Yahoo Finance Active Markets Screener',
+      url: 'https://finance.yahoo.com/markets/stocks/most-active/',
+      selectorHints: {
+        tableSelector: 'table tbody tr',
+        symbolSelector: 'td:nth-child(1) a',
+        priceSelector: 'td:nth-child(2)',
+        volumeSelector: 'td:nth-child(6)'
+      }
+    }
+  ],
+
+  // News Sources (Agent A2)
   newsSources: [
     {
       id: 'yahoo-finance',
@@ -43,17 +69,6 @@ module.exports = {
         headlineSelector: 'h3, a.subtle-link, a',
         snippetSelector: 'p',
         timeSelector: 'time, span.publishing'
-      }
-    },
-    {
-      id: 'marketwatch',
-      name: 'MarketWatch Top Stories',
-      url: 'https://www.marketwatch.com/markets',
-      selectorHints: {
-        itemSelector: '.article__content, .element--article',
-        headlineSelector: '.article__headline a, h3 a',
-        snippetSelector: '.article__summary, p',
-        timeSelector: '.article__timestamp'
       }
     }
   ],

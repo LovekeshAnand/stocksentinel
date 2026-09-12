@@ -59,6 +59,246 @@
       "timestamp": "2026-09-12T05:34:07.826Z",
       "raw_sentiment_hint": "positive",
       "receivedAt": "2026-09-12T05:34:22.859Z"
+    },
+    {
+      "id": "sig_TSLA_1789191885047_20",
+      "ticker": "TSLA",
+      "headline": "Tesla surges 6% following announcement of accelerated Cybercab production and record European deliveries",
+      "snippet": "Elon Musk confirmed that commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:44:45.046Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T05:44:45.047Z"
+    },
+    {
+      "id": "sig_NVDA_1789191885047_944",
+      "ticker": "NVDA",
+      "headline": "NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infrastructure demand soars",
+      "snippet": "CEO Jensen Huang noted cloud hyperscaler order books are filled well into next year, beating Wall Street consensus projections.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:44:45.047Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T05:44:45.476Z"
+    },
+    {
+      "id": "sig_AAPL_1789191885047_369",
+      "ticker": "AAPL",
+      "headline": "Apple faces regulatory scrutiny over European App Store terms, shares dip 1.5%",
+      "snippet": "EU antitrust regulators have opened an inquiry into compliance with digital market guidelines affecting service revenue projections.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:44:45.047Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T05:44:45.878Z"
+    },
+    {
+      "id": "sig_MSFT_1789191885047_858",
+      "ticker": "MSFT",
+      "headline": "Microsoft deepens AI enterprise copilot integrations across Azure cloud portfolio",
+      "snippet": "Satya Nadella emphasized high customer retention and accelerating annualized recurring revenue growth in commercial cloud.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:44:45.047Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T05:44:46.262Z"
+    },
+    {
+      "id": "sig_TSLA_1789191910193_477",
+      "ticker": "TSLA",
+      "headline": "Tesla surges 6% following announcement of accelerated Cybercab production and record European deliveries",
+      "snippet": "Elon Musk confirmed that commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:45:10.193Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T05:45:10.194Z"
+    },
+    {
+      "id": "sig_NVDA_1789191910194_313",
+      "ticker": "NVDA",
+      "headline": "NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infrastructure demand soars",
+      "snippet": "CEO Jensen Huang noted cloud hyperscaler order books are filled well into next year, beating Wall Street consensus projections.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:45:10.193Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T05:45:10.559Z"
+    },
+    {
+      "id": "sig_AAPL_1789191910194_157",
+      "ticker": "AAPL",
+      "headline": "Apple faces regulatory scrutiny over European App Store terms, shares dip 1.5%",
+      "snippet": "EU antitrust regulators have opened an inquiry into compliance with digital market guidelines affecting service revenue projections.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:45:10.193Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T05:45:10.909Z"
+    },
+    {
+      "id": "sig_MSFT_1789191910194_368",
+      "ticker": "MSFT",
+      "headline": "Microsoft deepens AI enterprise copilot integrations across Azure cloud portfolio",
+      "snippet": "Satya Nadella emphasized high customer retention and accelerating annualized recurring revenue growth in commercial cloud.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:45:10.193Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T05:45:11.254Z"
+    },
+    {
+      "id": "sig_TSLA_1789192293321_809",
+      "ticker": "TSLA",
+      "headline": "Tesla surges 6% following announcement of accelerated Cybercab production and record European deliveries",
+      "snippet": "Elon Musk confirmed that commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:51:33.321Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T05:51:33.322Z"
+    },
+    {
+      "id": "sig_NVDA_1789192293321_158",
+      "ticker": "NVDA",
+      "headline": "NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infrastructure demand soars",
+      "snippet": "CEO Jensen Huang noted cloud hyperscaler order books are filled well into next year, beating Wall Street consensus projections.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:51:33.321Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T05:51:48.349Z"
+    },
+    {
+      "id": "sig_AAPL_1789192293321_828",
+      "ticker": "AAPL",
+      "headline": "Apple faces regulatory scrutiny over European App Store terms, shares dip 1.5%",
+      "snippet": "EU antitrust regulators have opened an inquiry into compliance with digital market guidelines affecting service revenue projections.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:51:33.321Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T05:52:03.372Z"
+    },
+    {
+      "id": "sig_MSFT_1789192293321_937",
+      "ticker": "MSFT",
+      "headline": "Microsoft deepens AI enterprise copilot integrations across Azure cloud portfolio",
+      "snippet": "Satya Nadella emphasized high customer retention and accelerating annualized recurring revenue growth in commercial cloud.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T05:51:33.321Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T05:52:18.398Z"
+    },
+    {
+      "id": "chart_NVDA_1789193280739",
+      "ticker": "NVDA",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Live Screener Alert: Heavy institutional volume (72.302M vs 3M avg 132.797M) with price at $218.29 (-0.03%)",
+      "price": 218.29,
+      "volume": "72.302M",
+      "rsi": 68.4,
+      "technical_bias": "NEUTRAL",
+      "timestamp": "2026-09-12T06:08:00.739Z",
+      "receivedAt": "2026-09-12T06:08:15.815Z"
+    },
+    {
+      "id": "news_NVDA_1789193295815_179",
+      "ticker": "NVDA",
+      "headline": "NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth",
+      "snippet": "CEO unveils expanded hyperscaler partnerships and production ramp acceleration across global data centers.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T06:08:15.814Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T06:08:15.815Z"
+    },
+    {
+      "id": "chart_AAPL_1789193280739",
+      "ticker": "AAPL",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Live Screener Alert: Heavy institutional volume (41.982M vs 3M avg 53.863M) with price at $332.27 (+1.75%)",
+      "price": 332.27,
+      "volume": "41.982M",
+      "rsi": 68.4,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:08:00.739Z",
+      "receivedAt": "2026-09-12T06:08:30.859Z"
+    },
+    {
+      "id": "news_AAPL_1789193295815_286",
+      "ticker": "AAPL",
+      "headline": "Apple Accelerates On-Device Neural Engine Compute for Upcoming iPhone Hardware Cycle",
+      "snippet": "Supply chain checks indicate increased chip packaging orders to handle private AI workload execution.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T06:08:15.814Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T06:08:30.859Z"
+    },
+    {
+      "id": "chart_TSLA_1789193280739",
+      "ticker": "TSLA",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20",
+      "price": 248.8,
+      "volume": "98.45M",
+      "rsi": 71.4,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:08:00.739Z",
+      "receivedAt": "2026-09-12T06:08:45.882Z"
+    },
+    {
+      "id": "news_TSLA_1789193295815_435",
+      "ticker": "TSLA",
+      "headline": "Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros",
+      "snippet": "Regulatory filings and fleet telemetry indicate rapid scale-up in autonomous ride-hailing trial operations ahead of investor conference.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T06:08:15.814Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T06:08:45.882Z"
+    },
+    {
+      "id": "chart_TSLA_1789193386347",
+      "ticker": "TSLA",
+      "pattern_type": "volume_spike",
+      "pattern_details": "Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20",
+      "price": 248.8,
+      "volume": "98.45M",
+      "rsi": 71.4,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:09:46.347Z",
+      "receivedAt": "2026-09-12T06:10:01.401Z"
+    },
+    {
+      "id": "news_TSLA_1789193401400_2",
+      "ticker": "TSLA",
+      "headline": "Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros",
+      "snippet": "Regulatory filings and fleet telemetry indicate rapid scale-up in autonomous ride-hailing trial operations ahead of investor conference.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T06:10:01.399Z",
+      "raw_sentiment_hint": "positive",
+      "receivedAt": "2026-09-12T06:10:01.402Z"
+    },
+    {
+      "id": "chart_NVDA_1789193386347",
+      "ticker": "NVDA",
+      "pattern_type": "ma_crossover",
+      "pattern_details": "Golden crossover: 20-day EMA crossed above 50-day SMA at $128.50 with RSI at 66.8",
+      "price": 218.29,
+      "volume": "72.30M",
+      "rsi": 66.8,
+      "technical_bias": "BULLISH",
+      "timestamp": "2026-09-12T06:09:46.347Z",
+      "receivedAt": "2026-09-12T06:10:16.427Z"
+    },
+    {
+      "id": "news_NVDA_1789193401400_466",
+      "ticker": "NVDA",
+      "headline": "NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth",
+      "snippet": "CEO unveils expanded hyperscaler partnerships and production ramp acceleration across global data centers.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T06:10:01.399Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T06:10:16.427Z"
+    },
+    {
+      "id": "news_AAPL_1789193401400_847",
+      "ticker": "AAPL",
+      "headline": "Apple Accelerates On-Device Neural Engine Compute for Upcoming iPhone Hardware Cycle",
+      "snippet": "Supply chain checks indicate increased chip packaging orders to handle private AI workload execution.",
+      "source": "Yahoo Finance Top Market News",
+      "timestamp": "2026-09-12T06:10:01.399Z",
+      "raw_sentiment_hint": "neutral",
+      "receivedAt": "2026-09-12T06:10:31.435Z"
     }
   ],
   "proposals": [
@@ -131,8 +371,409 @@
       "id": "prop_1789191262858_282",
       "status": "PENDING",
       "createdAt": "2026-09-12T05:34:22.858Z"
+    },
+    {
+      "ticker": "TSLA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "Strong positive catalyst detected for TSLA: \"Tesla surges 6% following announcement of accelerated Cybercab production a...\". Momentum suggests upside potential with favorable risk/reward.",
+      "confidence": "high",
+      "source_signal_id": "sig_TSLA_1789191885047_20",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Tesla surges 6% following announcement of accelerated Cybercab production and record European deliveries",
+      "snippet": "Elon Musk confirmed that commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
+      "id": "prop_1789191885475_826",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:44:45.475Z"
+    },
+    {
+      "ticker": "NVDA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "Strong positive catalyst detected for NVDA: \"NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infra...\". Momentum suggests upside potential with favorable risk/reward.",
+      "confidence": "high",
+      "source_signal_id": "sig_NVDA_1789191885047_944",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infrastructure demand soars",
+      "snippet": "CEO Jensen Huang noted cloud hyperscaler order books are filled well into next year, beating Wall Street consensus projections.",
+      "id": "prop_1789191885877_629",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:44:45.877Z"
+    },
+    {
+      "ticker": "AAPL",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Ambiguous signal for AAPL without decisive directional consensus. Recommending hold until clear volume confirmation emerges.",
+      "confidence": "medium",
+      "source_signal_id": "sig_AAPL_1789191885047_369",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Apple faces regulatory scrutiny over European App Store terms, shares dip 1.5%",
+      "snippet": "EU antitrust regulators have opened an inquiry into compliance with digital market guidelines affecting service revenue projections.",
+      "id": "prop_1789191886261_334",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:44:46.261Z"
+    },
+    {
+      "ticker": "MSFT",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Ambiguous signal for MSFT without decisive directional consensus. Recommending hold until clear volume confirmation emerges.",
+      "confidence": "medium",
+      "source_signal_id": "sig_MSFT_1789191885047_858",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Microsoft deepens AI enterprise copilot integrations across Azure cloud portfolio",
+      "snippet": "Satya Nadella emphasized high customer retention and accelerating annualized recurring revenue growth in commercial cloud.",
+      "id": "prop_1789191886640_849",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:44:46.640Z"
+    },
+    {
+      "ticker": "TSLA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "Strong positive catalyst detected for TSLA: \"Tesla surges 6% following announcement of accelerated Cybercab production a...\". Momentum suggests upside potential with favorable risk/reward.",
+      "confidence": "high",
+      "source_signal_id": "sig_TSLA_1789191910193_477",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Tesla surges 6% following announcement of accelerated Cybercab production and record European deliveries",
+      "snippet": "Elon Musk confirmed that commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
+      "id": "prop_1789191910559_587",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:45:10.559Z"
+    },
+    {
+      "ticker": "NVDA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "Strong positive catalyst detected for NVDA: \"NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infra...\". Momentum suggests upside potential with favorable risk/reward.",
+      "confidence": "high",
+      "source_signal_id": "sig_NVDA_1789191910194_313",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infrastructure demand soars",
+      "snippet": "CEO Jensen Huang noted cloud hyperscaler order books are filled well into next year, beating Wall Street consensus projections.",
+      "id": "prop_1789191910909_223",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:45:10.909Z"
+    },
+    {
+      "ticker": "AAPL",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Ambiguous signal for AAPL without decisive directional consensus. Recommending hold until clear volume confirmation emerges.",
+      "confidence": "medium",
+      "source_signal_id": "sig_AAPL_1789191910194_157",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Apple faces regulatory scrutiny over European App Store terms, shares dip 1.5%",
+      "snippet": "EU antitrust regulators have opened an inquiry into compliance with digital market guidelines affecting service revenue projections.",
+      "id": "prop_1789191911254_812",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:45:11.254Z"
+    },
+    {
+      "ticker": "MSFT",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Ambiguous signal for MSFT without decisive directional consensus. Recommending hold until clear volume confirmation emerges.",
+      "confidence": "medium",
+      "source_signal_id": "sig_MSFT_1789191910194_368",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Microsoft deepens AI enterprise copilot integrations across Azure cloud portfolio",
+      "snippet": "Satya Nadella emphasized high customer retention and accelerating annualized recurring revenue growth in commercial cloud.",
+      "id": "prop_1789191911606_21",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:45:11.606Z"
+    },
+    {
+      "ticker": "TSLA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "Strong positive catalyst detected for TSLA: \"Tesla surges 6% following announcement of accelerated Cybercab production a...\". Momentum suggests upside potential with favorable risk/reward.",
+      "confidence": "high",
+      "source_signal_id": "sig_TSLA_1789192293321_809",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Tesla surges 6% following announcement of accelerated Cybercab production and record European deliveries",
+      "snippet": "Elon Musk confirmed that commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
+      "id": "prop_1789192308346_621",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:51:48.346Z"
+    },
+    {
+      "ticker": "NVDA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "Strong positive catalyst detected for NVDA: \"NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infra...\". Momentum suggests upside potential with favorable risk/reward.",
+      "confidence": "high",
+      "source_signal_id": "sig_NVDA_1789192293321_158",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "NVIDIA announces massive Blackwell Ultra GPU ramp up as enterprise AI infrastructure demand soars",
+      "snippet": "CEO Jensen Huang noted cloud hyperscaler order books are filled well into next year, beating Wall Street consensus projections.",
+      "id": "prop_1789192323371_321",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:52:03.371Z"
+    },
+    {
+      "ticker": "AAPL",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Ambiguous signal for AAPL without decisive directional consensus. Recommending hold until clear volume confirmation emerges.",
+      "confidence": "medium",
+      "source_signal_id": "sig_AAPL_1789192293321_828",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Apple faces regulatory scrutiny over European App Store terms, shares dip 1.5%",
+      "snippet": "EU antitrust regulators have opened an inquiry into compliance with digital market guidelines affecting service revenue projections.",
+      "id": "prop_1789192338396_825",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:52:18.396Z"
+    },
+    {
+      "ticker": "MSFT",
+      "action": "hold",
+      "suggested_quantity": 0,
+      "rationale": "Ambiguous signal for MSFT without decisive directional consensus. Recommending hold until clear volume confirmation emerges.",
+      "confidence": "medium",
+      "source_signal_id": "sig_MSFT_1789192293321_937",
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "headline": "Microsoft deepens AI enterprise copilot integrations across Azure cloud portfolio",
+      "snippet": "Satya Nadella emphasized high customer retention and accelerating annualized recurring revenue growth in commercial cloud.",
+      "id": "prop_1789192353419_539",
+      "status": "PENDING",
+      "createdAt": "2026-09-12T05:52:33.419Z"
+    },
+    {
+      "id": "prop_NVDA_1789193310859",
+      "ticker": "NVDA",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for NVDA lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "chart: volume_spike (Live Screener Alert: Heavy institutional volume (72.302M vs 3M avg 132.797M) with price at $218.29 (-0.03%))",
+        "news: neutral sentiment (\"NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth\")"
+      ],
+      "source_signal_ids": [
+        "chart_NVDA_1789193280739",
+        "news_NVDA_1789193295815_179"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_NVDA_1789193280739",
+        "ticker": "NVDA",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Live Screener Alert: Heavy institutional volume (72.302M vs 3M avg 132.797M) with price at $218.29 (-0.03%)",
+        "price": 218.29,
+        "volume": "72.302M",
+        "rsi": 68.4,
+        "technical_bias": "NEUTRAL",
+        "timestamp": "2026-09-12T06:08:00.739Z"
+      },
+      "newsSignal": {
+        "id": "news_NVDA_1789193295815_179",
+        "ticker": "NVDA",
+        "headline": "NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth",
+        "snippet": "CEO unveils expanded hyperscaler partnerships and production ramp acceleration across global data centers.",
+        "source": "Yahoo Finance Top Market News",
+        "timestamp": "2026-09-12T06:08:15.814Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:08:30.859Z"
+    },
+    {
+      "id": "prop_AAPL_1789193325881",
+      "ticker": "AAPL",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for AAPL lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "chart: volume_spike (Live Screener Alert: Heavy institutional volume (41.982M vs 3M avg 53.863M) with price at $332.27 (+1.75%))",
+        "news: neutral sentiment (\"Apple Accelerates On-Device Neural Engine Compute for Upcoming iPhone Hardware Cycle\")"
+      ],
+      "source_signal_ids": [
+        "chart_AAPL_1789193280739",
+        "news_AAPL_1789193295815_286"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_AAPL_1789193280739",
+        "ticker": "AAPL",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Live Screener Alert: Heavy institutional volume (41.982M vs 3M avg 53.863M) with price at $332.27 (+1.75%)",
+        "price": 332.27,
+        "volume": "41.982M",
+        "rsi": 68.4,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:08:00.739Z"
+      },
+      "newsSignal": {
+        "id": "news_AAPL_1789193295815_286",
+        "ticker": "AAPL",
+        "headline": "Apple Accelerates On-Device Neural Engine Compute for Upcoming iPhone Hardware Cycle",
+        "snippet": "Supply chain checks indicate increased chip packaging orders to handle private AI workload execution.",
+        "source": "Yahoo Finance Top Market News",
+        "timestamp": "2026-09-12T06:08:15.814Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:08:45.881Z"
+    },
+    {
+      "id": "prop_TSLA_1789193340914",
+      "ticker": "TSLA",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for TSLA lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "chart: volume_spike (Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20)",
+        "news: neutral sentiment (\"Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros\")"
+      ],
+      "source_signal_ids": [
+        "chart_TSLA_1789193280739",
+        "news_TSLA_1789193295815_435"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TSLA_1789193280739",
+        "ticker": "TSLA",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20",
+        "price": 248.8,
+        "volume": "98.45M",
+        "rsi": 71.4,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:08:00.739Z"
+      },
+      "newsSignal": {
+        "id": "news_TSLA_1789193295815_435",
+        "ticker": "TSLA",
+        "headline": "Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros",
+        "snippet": "Regulatory filings and fleet telemetry indicate rapid scale-up in autonomous ride-hailing trial operations ahead of investor conference.",
+        "source": "Yahoo Finance Top Market News",
+        "timestamp": "2026-09-12T06:08:15.814Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:09:00.914Z"
+    },
+    {
+      "id": "prop_TSLA_1789193416426",
+      "ticker": "TSLA",
+      "action": "buy",
+      "suggested_quantity": 11,
+      "rationale": "High-conviction bullish convergence: Agent A1 detected Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20 at $248.8, reinforced by Agent A2 detecting positive news catalyst: \"Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros\". Both technical and fundamental lenses align.",
+      "confidence": "high",
+      "signals_considered": [
+        "chart: volume_spike (Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20)",
+        "news: positive sentiment (\"Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros\")"
+      ],
+      "source_signal_ids": [
+        "chart_TSLA_1789193386347",
+        "news_TSLA_1789193401400_2"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_TSLA_1789193386347",
+        "ticker": "TSLA",
+        "pattern_type": "volume_spike",
+        "pattern_details": "Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20",
+        "price": 248.8,
+        "volume": "98.45M",
+        "rsi": 71.4,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:09:46.347Z"
+      },
+      "newsSignal": {
+        "id": "news_TSLA_1789193401400_2",
+        "ticker": "TSLA",
+        "headline": "Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros",
+        "snippet": "Regulatory filings and fleet telemetry indicate rapid scale-up in autonomous ride-hailing trial operations ahead of investor conference.",
+        "source": "Yahoo Finance Top Market News",
+        "timestamp": "2026-09-12T06:10:01.399Z",
+        "raw_sentiment_hint": "positive"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:10:16.427Z"
+    },
+    {
+      "id": "prop_NVDA_1789193431434",
+      "ticker": "NVDA",
+      "action": "buy",
+      "suggested_quantity": 10,
+      "rationale": "Bullish technical breakout: Agent A1 detected Golden crossover: 20-day EMA crossed above 50-day SMA at $128.50 with RSI at 66.8 at $218.29, with supportive market backdrop: \"NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth\".",
+      "confidence": "medium",
+      "signals_considered": [
+        "chart: ma_crossover (Golden crossover: 20-day EMA crossed above 50-day SMA at $128.50 with RSI at 66.8)",
+        "news: neutral sentiment (\"NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth\")"
+      ],
+      "source_signal_ids": [
+        "chart_NVDA_1789193386347",
+        "news_NVDA_1789193401400_466"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "chartSignal": {
+        "id": "chart_NVDA_1789193386347",
+        "ticker": "NVDA",
+        "pattern_type": "ma_crossover",
+        "pattern_details": "Golden crossover: 20-day EMA crossed above 50-day SMA at $128.50 with RSI at 66.8",
+        "price": 218.29,
+        "volume": "72.30M",
+        "rsi": 66.8,
+        "technical_bias": "BULLISH",
+        "timestamp": "2026-09-12T06:09:46.347Z"
+      },
+      "newsSignal": {
+        "id": "news_NVDA_1789193401400_466",
+        "ticker": "NVDA",
+        "headline": "NVIDIA Announces Next-Generation Enterprise AI Silicon Platform with Triple Bandwidth",
+        "snippet": "CEO unveils expanded hyperscaler partnerships and production ramp acceleration across global data centers.",
+        "source": "Yahoo Finance Top Market News",
+        "timestamp": "2026-09-12T06:10:01.399Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:10:31.435Z"
+    },
+    {
+      "id": "prop_AAPL_1789193446455",
+      "ticker": "AAPL",
+      "action": "watch_only",
+      "suggested_quantity": 0,
+      "rationale": "Signals for AAPL lack decisive directional momentum. Recommending watch_only until clear breakout volume emerges.",
+      "confidence": "low",
+      "signals_considered": [
+        "news: neutral sentiment (\"Apple Accelerates On-Device Neural Engine Compute for Upcoming iPhone Hardware Cycle\")"
+      ],
+      "source_signal_ids": [
+        "news_AAPL_1789193401400_847"
+      ],
+      "engine": "Qwen 2.5 7B (Epsilon Strategist)",
+      "newsSignal": {
+        "id": "news_AAPL_1789193401400_847",
+        "ticker": "AAPL",
+        "headline": "Apple Accelerates On-Device Neural Engine Compute for Upcoming iPhone Hardware Cycle",
+        "snippet": "Supply chain checks indicate increased chip packaging orders to handle private AI workload execution.",
+        "source": "Yahoo Finance Top Market News",
+        "timestamp": "2026-09-12T06:10:01.399Z",
+        "raw_sentiment_hint": "neutral"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-09-12T06:10:46.456Z"
     }
   ],
   "tickerHistory": {},
-  "executionLog": []
+  "executionLog": [
+    {
+      "proposalId": "prop_test",
+      "ticker": "TSLA",
+      "action": "buy",
+      "quantity": 15,
+      "platform": "TradingView",
+      "prefilledSuccessfully": true,
+      "humanSubmitted": false,
+      "phase": "explored",
+      "executedAt": "2026-09-12T06:11:23.998Z"
+    }
+  ]
 }

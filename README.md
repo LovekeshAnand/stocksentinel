@@ -28,27 +28,36 @@ Fully autonomous algorithmic execution systems eliminate friction but introduce 
 
 ## 2. System Architecture
 
-The StockSentinel architecture comprises five synchronized components operating across an event-driven pipeline.
+The StockSentinel architecture comprises three cooperating browser agents, an event-driven memory layer, a local dual-lens reasoning engine, and a human approval gate.
 
 ```mermaid
 flowchart TD
-    subgraph INGESTION["Layer 1: Perception & Signal Ingestion"]
-        A1["Public Financial Feeds\n(Yahoo Finance, MarketWatch)"] --> A2["Scrapling Engine\n(Stealth DOM Extraction)"]
-        A2 --> A3["webcmd Adapter\n(Explore & Reuse Recipe Engine)"]
-        A3 --> A4["Raw Signal Normalization\n(Ticker, Headline, Snippet, Timestamp)"]
+    subgraph PERCEPTION["Layer 1: Dual-Lens Perception Agents"]
+        subgraph AGENT_A1["Agent A1: The Chart Watcher"]
+            C1["Live Market Screeners\n(Yahoo Most Active, TradingView)"] --> C2["Visible Browser Navigation\n(Headless: False + Live HUD)"]
+            C2 --> C3["Technical Pattern Engine\n(Volume Spikes, Breakouts, RSI)"]
+            C3 --> C4["Chart Signal Dispatch\n(Ticker, Price, Volume, Bias)"]
+        end
+
+        subgraph AGENT_A2["Agent A2: The News Watcher"]
+            N1["Financial News Wires\n(Yahoo Finance, MarketWatch)"] --> N2["Scrapling + Visible Browser\n(Stealth Ingestion + Live Tab)"]
+            N2 --> N3["Sentiment & Catalyst Parser\n(NLP Keyword Extraction)"]
+            N3 --> N4["News Signal Dispatch\n(Ticker, Headline, Snippet)"]
+        end
     end
 
     subgraph MEMORY["Layer 2: State & Memory Engine"]
-        A4 --> M1{"Sliding Window\nDeduplicator"}
+        C4 --> M1{"Cross-Signal Deduplicator\n& Correlator"}
+        N4 --> M1
         M1 -- Duplicate --> M2["Drop / Suppress Alert"]
-        M1 -- Novel Signal --> M3["Append to Historical Graph"]
+        M1 -- Novel Signals --> M3["Append to Historical Knowledge Graph"]
         M3 --> M4["Compute Per-Ticker Trust Profile\n(Approved vs Rejected History)"]
     end
 
     subgraph REASONING["Layer 3: The Strategist (Local LLM)"]
-        M4 --> S1["Context Assembly\n(Signal + Momentum + Trust Context)"]
-        S1 --> S2["Epsilon Inference Engine\n(Qwen 2.5 7B Parameter Model)"]
-        S2 --> S3["Structured Proposal Generator\n(Action, Quantity, Rationale, Confidence)"]
+        M4 --> S1["Dual-Lens Context Assembly\n(Chart Pattern + News Catalyst + Memory)"]
+        S1 --> S2["Epsilon Inference Engine\n(Local Qwen 2.5 7B Model)"]
+        S2 --> S3["Structured Proposal Generator\n(Convergence Analysis: Action, Sizing, Rationale)"]
     end
 
     subgraph GATE["Layer 4: Human Approval Gate"]
@@ -64,9 +73,9 @@ flowchart TD
     subgraph EXECUTION["Layer 5: Supervised Execution"]
         G6 --> E1["Agent B: The Executor\n(webcmd Platform Automation)"]
         E1 --> E2["TradingView Paper Trading Platform"]
-        E2 --> E3["Target Symbol Search & Activation"]
-        E3 --> E4["Input Approved Order Parameters\n(Direction, Sizing, Order Type)"]
-        E4 --> E5["HALT: Display Verification Overlay"]
+        E2 --> E3["Foreground Visible Browser Tab"]
+        E3 --> E4["Input Approved Order Parameters\n(Symbol, Sizing, Direction)"]
+        E4 --> E5["HALT: Display Lock Overlay\n(Autonomous Execution Blocked)"]
         E5 -. Final Click .-> E6["Human Final Confirmation Click"]
     end
 ```
@@ -75,19 +84,45 @@ flowchart TD
 
 ## 3. Subsystem Specifications
 
-### 3.1 Agent A: The Watcher (Signal Ingestion & Pattern Learning)
-Agent A continuously polls pre-configured financial news feeds and market aggregators for content relevant to the user's watchlist (`TSLA`, `NVDA`, `AAPL`, `MSFT`, `GOOGL`).
+### 3.1 Agent A1: The Chart Watcher (Technical Pattern Agent)
+Agent A1 continuously monitors live market screeners and chart interfaces for technical patterns across watchlisted assets (`TSLA`, `NVDA`, `AAPL`, `MSFT`, `GOOGL`).
 
-- **Stealth DOM Retrieval (Scrapling)**: Financial web portals employ sophisticated anti-bot fingerprinting and dynamic DOM hydration. Agent A utilizes Scrapling's specialized HTTP client and browser spoofing algorithms to retrieve full DOM representations in under 2,500 milliseconds without triggering rate limits or IP challenges.
-- **Pattern Learning (webcmd)**: The retrieved DOM tree is evaluated against webcmd's recipe store. On first exposure, webcmd analyzes container structures and saves target selector hierarchies to persistent storage (`data/learned_commands/`). Subsequent polling cycles bypass exploratory DOM traversals, parsing items via pre-compiled extraction commands.
+- **Visible Browser Automation**: Runs inside a visible Chromium/Edge browser window (`headless: false`) maximized on the desktop. Injects an on-screen HUD overlay (`STOCKSENTINEL // AGENT A1 (CHART WATCHER)`) displaying real-time scanning status.
+- **Dynamic DOM Highlighting**: Locates target ticker rows and injects glowing neon outlines and identifying badges into the active web page, providing visual telemetry for human operators and evaluators.
+- **Pattern Detection Rules**:
+  - *Volume Spike*: Identifies trading volume exceeding 1.2x the 3-month trailing average.
+  - *Moving Average Breakout*: Discovers short-term exponential moving average (EMA) crosses above long-term trends.
+  - *RSI Extrema*: Flags overbought (>70) and oversold (<30) momentum conditions.
 - **Signal Output Schema**:
 ```json
 {
-  "id": "sig_TSLA_1726119600000",
+  "id": "chart_TSLA_1726119600000",
   "ticker": "TSLA",
-  "headline": "Tesla expands European robotaxi pilot with formal regulatory clearance",
-  "snippet": "Commercial rollout of autonomous robotaxis is ahead of schedule with European regulatory approvals progressing rapidly.",
-  "source": "Yahoo Finance Top Market News",
+  "pattern_type": "volume_spike",
+  "pattern_details": "Heavy institutional volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20",
+  "price": 248.80,
+  "volume": "98.45M",
+  "rsi": 71.4,
+  "technical_bias": "BULLISH",
+  "timestamp": "2026-09-12T05:30:00.000Z"
+}
+```
+
+---
+
+### 3.2 Agent A2: The News Watcher (Sentiment Signal Agent)
+Agent A2 continuously tracks breaking financial news feeds and market aggregators for fundamental catalysts.
+
+- **Dual Ingestion (Scrapling + Visible Browser)**: Utilizes Scrapling for millisecond-grade DOM retrieval and Cloudflare bypass in the background, while maintaining a synchronized visible browser tab with an active on-page HUD overlay.
+- **Visual Card Highlighting**: As articles are matched against watchlist keywords, Agent A2 draws glowing bounding boxes and tags on the web page in real time.
+- **Signal Output Schema**:
+```json
+{
+  "id": "news_TSLA_1726119600000",
+  "ticker": "TSLA",
+  "headline": "Tesla Expands Full Self-Driving Robotaxi Fleet Deployments Across Key Testing Metros",
+  "snippet": "Regulatory filings and fleet telemetry indicate rapid scale-up in autonomous ride-hailing trial operations ahead of investor conference.",
+  "source": "MarketWatch News Wire",
   "timestamp": "2026-09-12T05:30:00.000Z",
   "raw_sentiment_hint": "positive"
 }
@@ -95,10 +130,10 @@ Agent A continuously polls pre-configured financial news feeds and market aggreg
 
 ---
 
-### 3.2 Memory Layer: Deduplication & Trust Scoring
+### 3.3 Memory Layer: Deduplication & Trust Scoring
 A stateless alert system creates user alert fatigue, causing operators to ignore critical signals. The StockSentinel Memory Layer enforces two stateful filters:
 
-1. **Sliding-Window Deduplication**: Incoming headlines are normalized, stripped of non-alphanumeric noise, and hashed alongside ticker symbols (`ticker:clean_headline`). Any duplicate detected within a 2-hour window is suppressed.
+1. **Sliding-Window Deduplication**: Incoming signals are hashed using ticker symbols, pattern categories, and normalized headline strings (`ticker:pattern:headline:price`). Any duplicate detected within a 2-hour sliding window is suppressed.
 2. **Bayesian-Inspired Trust Scoring**: The system maintains an ongoing record of user decisions per ticker symbol.
 
 ```mermaid
@@ -117,27 +152,35 @@ If a user repeatedly rejects proposals on a specific ticker, its trust score dec
 
 ---
 
-### 3.3 The Strategist: Local Reasoning Layer (Qwen 2.5 7B via Epsilon)
+### 3.4 The Strategist: Local Reasoning Layer (Qwen 2.5 7B via Epsilon)
 To ensure absolute data confidentiality and zero external API dependencies during live execution, reasoning is processed entirely on-device using **Qwen 2.5 7B** hosted through the **Epsilon Engine** (`./engine`).
 
-- **Context Assembly**: The strategist merges the raw signal, technical sentiment heuristics, and the historical trust score into an instructional prompt.
-- **Advisory Framing**: The system prompt explicitly enforces that the model is strictly an analytical advisor. It is prohibited from assuming autonomous authority.
-- **Decision Engine Output**:
+- **Dual-Lens Context Assembly**: The Strategist ingests both Agent A1's chart pattern and Agent A2's news catalyst for the same ticker symbol.
+- **Cross-Signal Synthesis Rules**:
+  - *Bullish Convergence* (Bullish Chart + Positive News): High confidence BUY proposal.
+  - *Bearish Convergence* (Bearish Breakdown + Negative News): High confidence SELL proposal.
+  - *Signal Conflict* (Bullish Chart + Negative News): Downgraded to HOLD / WATCH_ONLY with an explicit risk warning.
+  - *Single Lens Active*: Proposes on single-source evidence, explicitly disclosing that only one lens contributed.
+- **Structured Proposal Output**:
 ```json
 {
   "ticker": "TSLA",
   "action": "buy",
   "suggested_quantity": 15,
   "confidence": "high",
-  "rationale": "Strong positive catalyst with European regulatory approvals progressing ahead of schedule. Momentum indicates favorable risk/reward.",
-  "source_signal_id": "sig_TSLA_1726119600000",
-  "engine": "Local Qwen 2.5 7B"
+  "rationale": "High-conviction bullish convergence: Agent A1 detected volume spike (+62% above 20D average) with breakout above 50-day EMA at $245.20, reinforced by Agent A2 detecting positive news catalyst regarding robotaxi fleet expansion. Both technical and fundamental lenses align.",
+  "signals_considered": [
+    "chart: volume_spike (RSI 71.4)",
+    "news: positive sentiment (robotaxi fleet expansion)"
+  ],
+  "source_signal_ids": ["chart_TSLA_1726119600000", "news_TSLA_1726119600000"],
+  "engine": "Local Qwen 2.5 7B (Epsilon Strategist)"
 }
 ```
 
 ---
 
-### 3.4 Human Approval Gate: Telegram Integration
+### 3.5 Human Approval Gate: Telegram Integration
 The Human Approval Gate is the operational centerpiece of StockSentinel. It provides direct, bi-directional command-and-control through an interactive Telegram Bot interface.
 
 ```mermaid
