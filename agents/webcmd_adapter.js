@@ -9,6 +9,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { exec } = require('child_process');
+const os = require('os');
 const puppeteer = require('puppeteer-core');
 const settings = require('../config/settings');
 
@@ -45,35 +47,68 @@ class WebcmdAdapter {
         return p;
       }
     }
-    console.warn('[webcmd] WARNING: No browser executable found in standard paths. Falling back to "chrome".');
+    console.warn('[webcmd] WARNING: No browser executable found. Falling back to "chrome".');
     return 'chrome';
   }
 
   /**
-   * Launch browser instance (Visible by default for live judging and monitoring)
+   * Force-focus the Chrome window on Windows via PowerShell.
+   * Chrome may open behind other windows — this brings it to front.
+   */
+  focusWindowOnWindows() {
+    try {
+      // Use AppActivate to bring Chrome to the foreground
+      const ps = `Add-Type -AssemblyName Microsoft.VisualBasic; [Microsoft.VisualBasic.Interaction]::AppActivate('Chrome')`;
+      exec(`powershell -NonInteractive -WindowStyle Hidden -Command "${ps}"`, () => {});
+    } catch (e) { /* best-effort */ }
+  }
+
+  /**
+   * Launch browser instance — always visible, always in foreground.
+   *
+   * Root cause of "no browser visible": if Chrome is ALREADY running anywhere
+   * on the system (even minimized), Puppeteer's new instance connects to that
+   * existing process. The existing Chrome window stays hidden/behind.
+   *
+   * Fix: --user-data-dir with an ISOLATED temp profile forces a completely
+   * independent Chrome process that always spawns its own new OS window.
    */
   async getBrowser(headless = false) {
     if (!this.browser || !this.browser.connected) {
       const executablePath = this.getExecutablePath();
-      console.log(`[webcmd] Launching visible browser (headless=${headless})...`);
+
+      // Isolated temp profile — Chrome MUST open as its own new process & window
+      const userDataDir = path.join(os.tmpdir(), 'stocksentinel-chrome-profile');
+      if (!fs.existsSync(userDataDir)) {
+        fs.mkdirSync(userDataDir, { recursive: true });
+      }
+
+      console.log(`[webcmd] Launching isolated Chrome instance (headless=${headless})...`);
+      console.log(`[webcmd] Profile dir: ${userDataDir}`);
+
       this.browser = await puppeteer.launch({
         executablePath,
         headless: headless ? 'new' : false,
-        slowMo: headless ? 0 : 80, // 80ms slowdown makes every action visibly smooth
-        defaultViewport: null,     // Full responsive layout — no artificial viewport cap
+        slowMo: headless ? 0 : 60,  // 60ms per action — visibly smooth
+        userDataDir,                  // KEY: isolated profile = new OS window guaranteed
+        defaultViewport: null,        // Let Chrome fill screen naturally
         args: [
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-blink-features=AutomationControlled',
           '--disable-infobars',
-          '--disable-extensions',
+          '--new-window',             // Force brand-new OS window, not a tab
           '--start-maximized',
-          '--window-size=1440,900',
-          '--window-position=0,0'
+          '--window-position=0,0',
+          '--window-size=1440,900'
         ]
       });
       this.tabs = {};
-      console.log('[webcmd] Visible browser window launched on desktop.');
+
+      // After 1s, bring Chrome window to foreground (it may open behind taskbar)
+      setTimeout(() => this.focusWindowOnWindows(), 1000);
+
+      console.log('[webcmd] Browser launched. Window should now be visible on your desktop.');
     }
     return this.browser;
   }
